@@ -1,38 +1,8 @@
-# create-svelte
+# AHP's Streaming App
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+This project is in the initial development stages, but just to give a brief overview, I'm working on a perspective web application that will allow for public userbase to create, configure, and employ a host of different features and functionalities to enhance their streaming experience, particularly by creating graphical layouts that respond in real time to state variables that can be managed by a user interface as well as the deployment of a remote bot that can interface directly through a chat application.
 
-## Creating a project
+Currently in the initial stages I'm utilizing:
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+* SvelteKit - for frontend UI components as well as some Server Side Logic
+* SupaBase - for DB and user auth
