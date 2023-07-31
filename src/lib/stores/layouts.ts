@@ -17,5 +17,3 @@ const getLayoutNodes = async () => {
     }
 }
 getLayoutNodes()
-
-
