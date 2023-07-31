@@ -3,7 +3,8 @@
 
     export let node: Database['public']['Tables']['layout_nodes']['Row'];
 
-    let positionalCSS = `
+    let positionalCSS: string
+    $: positionalCSS = `
         top: ${node.top}px;
         left: ${node.left}px;
         width: ${node.width}px;
