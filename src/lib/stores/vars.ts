@@ -23,7 +23,7 @@ const getStateVarStore = async (): Promise<Readable<StateVariableArray>> => {
 
     const stateVarsStore = readable<StateVariableArray>(_stateVars, 
         (set) => {
-        const subscription = supabase.channel('any').on('postgres_changes', {
+        const subscription = supabase.channel('state_vars_realtime').on('postgres_changes', {
                 event: '*',
                 schema: 'public',
                 table: 'state_variables'

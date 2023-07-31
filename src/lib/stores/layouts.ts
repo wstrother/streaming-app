@@ -21,24 +21,25 @@ const getLayoutNodes = async (): Promise<LayoutNodeArray> => {
 const getLayoutNodeStore = async (): Promise<Readable<LayoutNodeArray>> => {
     const _layoutNodes: LayoutNodeArray = await getLayoutNodes()
 
+    console.log('inside getLayoutNodeStore')
     const layoutNodeStore = readable<LayoutNodeArray>(_layoutNodes,
         (set) => {
-        const subscription = supabase.channel('any').on('postgres_changes', {
-            event: '*',
-            schema: 'public',
-            table: 'layout_nodes'
-        },
-            async (payload) => {
-                console.log('update to layout_nodes detected')
-                console.log(payload)
-                if (payload.new) {
-                    const _newLayoutNodes: LayoutNodeArray = await getLayoutNodes()
-                    set(_newLayoutNodes)
+        const subscription = supabase.channel('layouts_realtime').on('postgres_changes', {
+                event: '*',
+                schema: 'public',
+                table: 'layout_nodes'
+            },
+                async (payload) => {
+                    console.log('update to layout_nodes detected')
+                    console.log(payload)
+                    if (payload.new) {
+                        const _newLayoutNodes: LayoutNodeArray = await getLayoutNodes()
+                        set(_newLayoutNodes)
+                    }
                 }
-            }
-        ).subscribe()
+            ).subscribe()
 
-        return () => {subscription.unsubscribe()}
+            return () => {subscription.unsubscribe()}
     })
 
     return layoutNodeStore
