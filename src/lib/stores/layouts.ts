@@ -1,19 +1,47 @@
-import { writable } from "svelte/store";
+import { readable, type Readable } from "svelte/store";
 import { supabase } from "$lib/supabaseClient";
 
 import type { Database } from '$lib/types/supabase';
 
 type LayoutNode = Database['public']['Tables']['layout_nodes']['Row']
+type LayoutNodeArray = Array<LayoutNode>
 
-export const layoutNodes = writable<Array<LayoutNode>>([]);
-
-const getLayoutNodes = async () => {
+const getLayoutNodes = async (): Promise<LayoutNodeArray> => {
     let {data, error} = await supabase.from('layout_nodes').select(`*`)
+
     if (error) {
         console.log(error)
     } else if (data) {
         console.log(data)
-        layoutNodes.set(data)
+        return data
     }
+    return []
 }
-getLayoutNodes()
+
+const getLayoutNodeStore = async (): Promise<Readable<LayoutNodeArray>> => {
+    const _layoutNodes: LayoutNodeArray = await getLayoutNodes()
+
+    const layoutNodeStore = readable<LayoutNodeArray>(_layoutNodes,
+        (set) => {
+        const subscription = supabase.channel('any').on('postgres_changes', {
+            event: '*',
+            schema: 'public',
+            table: 'layout_nodes'
+        },
+            async (payload) => {
+                console.log('update to layout_nodes detected')
+                console.log(payload)
+                if (payload.new) {
+                    const _newLayoutNodes: LayoutNodeArray = await getLayoutNodes()
+                    set(_layoutNodes)
+                }
+            }
+        ).subscribe()
+
+        return () => {subscription.unsubscribe()}
+    })
+
+    return layoutNodeStore
+}
+
+export const layoutNodes = await getLayoutNodeStore()
