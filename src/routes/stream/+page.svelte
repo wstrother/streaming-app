@@ -1,8 +1,10 @@
 <script>
     import { layoutNodes } from "$lib/stores/layouts";
-    
+
+    import LayoutNode from "$lib/components/layoutNode.svelte";
+
 </script>
 
 {#each $layoutNodes as node}
-    <b>{node.key}</b> {node.content}
+    <LayoutNode {node} />
 {/each}

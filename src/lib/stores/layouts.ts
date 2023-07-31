@@ -11,10 +11,10 @@ const getLayoutNodes = async () => {
     let {data, error} = await supabase.from('layout_nodes').select(`*`)
     if (error) {
         console.log(error)
-    } else {
+    } else if (data) {
         console.log(data)
+        layoutNodes.set(data)
     }
-
 }
 getLayoutNodes()
 
