@@ -33,7 +33,7 @@ const getLayoutNodeStore = async (): Promise<Readable<LayoutNodeArray>> => {
                 console.log(payload)
                 if (payload.new) {
                     const _newLayoutNodes: LayoutNodeArray = await getLayoutNodes()
-                    set(_layoutNodes)
+                    set(_newLayoutNodes)
                 }
             }
         ).subscribe()
