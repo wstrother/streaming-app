@@ -3,8 +3,8 @@ import { supabase } from "$lib/supabaseClient";
 
 import type { Database } from '$lib/types/supabase';
 
-type LayoutNode = Database['public']['Tables']['layout_nodes']['Row']
-type LayoutNodeArray = Array<LayoutNode>
+export type LayoutNode = Database['public']['Tables']['layout_nodes']['Row']
+export type LayoutNodeArray = Array<LayoutNode>
 
 const getLayoutNodes = async (): Promise<LayoutNodeArray> => {
     let {data, error} = await supabase.from('layout_nodes').select(`*`)

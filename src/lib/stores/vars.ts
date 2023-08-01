@@ -3,8 +3,8 @@ import { supabase } from "$lib/supabaseClient";
 
 import type { Database } from '$lib/types/supabase';
 
-type StateVariable = Database['public']['Tables']['state_variables']['Row']
-type StateVariableArray = Array<StateVariable>
+export type StateVariable = Database['public']['Tables']['state_variables']['Row']
+export type StateVariableArray = Array<StateVariable>
 
 const getStateVars = async (): Promise<StateVariableArray> => {
     let {data, error} = await supabase.from('state_variables').select(`*`)

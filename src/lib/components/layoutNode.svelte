@@ -1,22 +1,25 @@
 <script lang="ts">
-    import type { Database } from '$lib/types/supabase';
+    import type { LayoutNode } from '$lib/stores/layouts'
+    import type { StateVariable } from '$lib/stores/vars'
+    import { stateVariables } from '$lib/stores/vars'
 
-    export let node: Database['public']['Tables']['layout_nodes']['Row'];
+    export let node: LayoutNode
 
-    let positionalCSS: string
-    $: positionalCSS = `
-        top: ${node.top}px;
-        left: ${node.left}px;
-        width: ${node.width}px;
-        height: ${node.height}px;
-    `
+    let posCSS: string, wCSS: string, hCSS: string, inlineCSS: string
+    $: posCSS = `top: ${node.top}px; left: ${node.left}px;`
+    $: wCSS = node.width ? `width: ${node.width}px;` : ''
+    $: hCSS = node.height ? `height: ${node.height}px;` : ''
+    $: inlineCSS = `${posCSS}${wCSS}${hCSS}`
+
 </script>
 
 <div 
     id="layoutNode-{node.key}"
-    style={positionalCSS}
-    class="
-        bg-primary-500
+    style={inlineCSS}
+    class="{node.classes}
+        min-w-content
+        min-h-content
+        
         absolute
         layout-node"
 >
