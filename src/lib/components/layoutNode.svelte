@@ -1,9 +1,11 @@
 <script lang="ts">
-    import type { LayoutNode } from '$lib/stores/layouts'
+    import { createEventDispatcher } from 'svelte';
+    import type { LayoutNode } from '$lib/stores/layoutNodes'
     import type { StateVariable } from '$lib/stores/vars'
     import { stateVariables } from '$lib/stores/vars'
-
+    
     export let node: LayoutNode
+    const dispatch = createEventDispatcher()
 
     let posCSS: string, wCSS: string, hCSS: string, inlineCSS: string
     $: posCSS = `top: ${node.top}px; left: ${node.left}px;`
@@ -18,9 +20,14 @@
         })
         return value
     }
+    // bg-primary-500
 </script>
 
-<div 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<div
+    on:mouseover={(e) => dispatch(e.type, {node})}
+    on:mouseleave={(e) => dispatch(e.type, {node})}
     id="layoutNode-{node.key}"
     style={inlineCSS}
     class="{node.classes}

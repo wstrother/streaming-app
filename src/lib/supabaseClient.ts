@@ -4,9 +4,9 @@ import type { Database } from '$lib/types/supabase';
 
 export const supabase = createClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY)
 
-supabase.auth.onAuthStateChange((event, session) => {
-    console.log(event, session)
-})
+// supabase.auth.onAuthStateChange((event, session) => {
+//     console.log(event, session)
+// })
 
 // dev mode hack
 if (import.meta.env.DEV) {
