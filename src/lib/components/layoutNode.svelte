@@ -20,5 +20,5 @@
         absolute
         layout-node"
 >
-    {node.content ?? 'div'}
+    {node.content ?? ''}
 </div>
