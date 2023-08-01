@@ -11,6 +11,13 @@
     $: hCSS = node.height ? `height: ${node.height}px;` : ''
     $: inlineCSS = `${posCSS}${wCSS}${hCSS}`
 
+    const getSV = (vars: Array<StateVariable>) => {
+        let value = ''
+        vars.forEach(sv => {
+            if (sv.id === node.variable_id) value = sv.value ?? ''
+        })
+        return value
+    }
 </script>
 
 <div 
@@ -24,5 +31,11 @@
         cursor-pointer
         layout-node"
 >
-    {node.content ?? ''}
+    <span class="layout-node-content">
+        {node.content ?? ''}
+    </span>
+
+    <span class="layout-node-var">
+        {getSV($stateVariables)}
+    </span>
 </div>
