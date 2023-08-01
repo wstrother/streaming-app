@@ -19,8 +19,9 @@
     class="{node.classes}
         min-w-content
         min-h-content
-        
         absolute
+        select-none
+        cursor-pointer
         layout-node"
 >
     {node.content ?? ''}
