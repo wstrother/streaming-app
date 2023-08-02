@@ -12,6 +12,7 @@ const mousePosition = readable({x: 0, y: 0}, (set) => {
 
 const mouseHeld = readable(false, (set) => {
     const handleClick: EventListener = (event: Event) => {
+        console.log(event.type)
         if (event.type === "mousedown") set(true)
         if (event.type === "mouseup") set(false)
     }
@@ -19,6 +20,7 @@ const mouseHeld = readable(false, (set) => {
     ["mousedown","mouseup"].forEach(eventName => document.body.addEventListener(eventName, handleClick))
 
     return () => {
+        console.log('UNSUB');
         ["mousedown","mouseup"].forEach(eventName => document.body.removeEventListener(eventName,handleClick))
     }
 })

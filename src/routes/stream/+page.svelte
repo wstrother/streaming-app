@@ -21,14 +21,15 @@
         activeNode.set(null)
     }
 
+    let reset = 0
     $: if ($mouseHeld && $activeNode) {
-        console.log('moving')
         let [dx, dy] = [
             $mousePosition.x - originMouseX, 
             $mousePosition.y - originMouseY
         ]
         $activeNode.left = activeNodeX + dx
         $activeNode.top = activeNodeY + dy
+        reset += 1
     }
     
 
@@ -39,15 +40,17 @@
     src={streamBG} 
     alt="stream background"/>
     
-    {#each $layoutNodes as node}
-    <LayoutNode 
-    {node} 
-    on:mouseover={(e) => setActive(e.detail.node)}
-    on:mouseleave={(e) => unsetActive()}
-    />
-    {/each}
+    {#key reset}
+        {#each $layoutNodes as node}
+            <LayoutNode 
+            {node} 
+            on:mouseover={(e) => setActive(e.detail.node)}
+            on:mouseleave={(e) => unsetActive()}
+            />
+        {/each}
+    {/key}
 </div>
-{ [$mousePosition.x, $mousePosition.y] } / { $mouseHeld } / { $activeNode?.key ?? '' }
+{ [$mousePosition.x, $mousePosition.y] } / { $mouseHeld } / { $activeNode?.top }, { $activeNode?.left}
 
 <style>
     #stream-layout-container {
