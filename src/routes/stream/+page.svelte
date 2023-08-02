@@ -1,50 +1,12 @@
 <script lang='ts'>
     import { layoutNodes, type LayoutNode as LayoutNodeT } from "$lib/stores/layoutNodes"
-    // import { activeNode } from "$lib/stores/editor"
-    // import Mouse from "$lib/stores/mouse"
-    
     import LayoutNode from "$lib/components/layoutNode.svelte"
-    import streamBG from "$lib/images/twitchbg.png"
-    
-    // const { mousePosition, mouseHeld } = Mouse
-    // let [activeNodeX, activeNodeY] = [0, 0]
-    // let [originMouseX, originMouseY] = [0, 0]
-
-    // const setActive = (n: LayoutNodeT) => {
-    //     activeNode.set(n)
-    //     activeNodeX = n.left
-    //     activeNodeY = n.top
-    //     originMouseX = $mousePosition.x
-    //     originMouseY = $mousePosition.y
-    // }
-    // const unsetActive = () => {
-    //     activeNode.set(null)
-    // }
-
-    // let reset = 0
-    // $: if ($mouseHeld && $activeNode) {
-    //     let [dx, dy] = [
-    //         $mousePosition.x - originMouseX, 
-    //         $mousePosition.y - originMouseY
-    //     ]
-    //     $activeNode.left = activeNodeX + dx
-    //     $activeNode.top = activeNodeY + dy
-    //     reset += 1
-    // }
-    
+    // import streamBG from "$lib/images/twitchbg.png"
 
 </script>
 <div id="stream-layout-container">
-    <!-- <img 
-    draggable="false"
-    src={streamBG} 
-    alt="stream background"/> -->
-    
     {#each $layoutNodes as node}
-        <LayoutNode 
-        {node} 
-        
-        />
+        <LayoutNode {node} />
     {/each}
 </div>
 
@@ -55,9 +17,9 @@
         transform-origin: top left;
     }
 
-    #stream-layout-container img {
+    /* #stream-layout-container img {
         width: 1920px;
         height: 1080px;
         user-select: none;
-    }
+    } */
 </style>
