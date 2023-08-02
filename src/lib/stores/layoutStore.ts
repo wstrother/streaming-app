@@ -1,5 +1,6 @@
 import { readable, type Readable } from "svelte/store";
 import { supabase } from "$lib/supabaseClient";
+import { LayoutTree } from "$lib/classes/layoutTree";
 
 import type { Database } from '$lib/types/supabase';
 
@@ -17,28 +18,29 @@ const getLayoutNodes = async (): Promise<LayoutNodeArray> => {
     return []
 }
 
-const getLayoutNodeStore = async (): Promise<Readable<LayoutNodeArray>> => {
+const getLayoutNodeStore = async (): Promise<Readable<LayoutTree>> => {
     const _layoutNodes: LayoutNodeArray = await getLayoutNodes()
+    const layoutTree: LayoutTree = new LayoutTree(_layoutNodes)
 
-    const layoutNodeStore = readable<LayoutNodeArray>(_layoutNodes,
+    const layoutNodeStore = readable<LayoutTree>(layoutTree,
         (set) => {
         const subscription = supabase.channel('layouts_realtime').on('postgres_changes', {
                 event: '*',
                 schema: 'public',
                 table: 'layout_nodes'
             },
-                async (payload) => {
-                    if (payload.new) {
-                        const _newLayoutNodes: LayoutNodeArray = await getLayoutNodes()
-                        set(_newLayoutNodes)
-                    }
+            (payload) => {
+                if (payload.new) {
+                    layoutTree.updateNode(payload.new as LayoutNode)
+                    set(layoutTree)
                 }
-            ).subscribe()
+            }
+        ).subscribe()
 
-            return () => {subscription.unsubscribe()}
+        return () => {subscription.unsubscribe()}
     })
 
     return layoutNodeStore
 }
 
-export const layoutNodes = await getLayoutNodeStore()
+export const layoutTree = await getLayoutNodeStore()

@@ -1,10 +1,11 @@
 <script lang="ts">
     import { createEventDispatcher } from 'svelte';
-    import type { LayoutNode } from '$lib/stores/layoutNodes'
+    // import type { LayoutNode } from '$lib/stores/layoutNodes'
+    import type { LayoutNodeCls } from '$lib/classes/layoutTree'
     import type { StateVariable } from '$lib/stores/vars'
     import { stateVariables } from '$lib/stores/vars'
     
-    export let node: LayoutNode
+    export let node: LayoutNodeCls
     const dispatch = createEventDispatcher()
 
     let posCSS: string, wCSS: string, hCSS: string, inlineCSS: string

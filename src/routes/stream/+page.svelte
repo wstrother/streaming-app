@@ -1,11 +1,11 @@
 <script lang='ts'>
-    import { layoutNodes, type LayoutNode as LayoutNodeT } from "$lib/stores/layoutNodes"
+    import { layoutTree } from "$lib/stores/layoutStore"
     import LayoutNode from "$lib/components/layoutNode.svelte"
     // import streamBG from "$lib/images/twitchbg.png"
 
 </script>
 <div id="stream-layout-container">
-    {#each $layoutNodes as node}
+    {#each $layoutTree.nodes as node}
         <LayoutNode {node} />
     {/each}
 </div>
