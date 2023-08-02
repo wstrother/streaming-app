@@ -12,7 +12,6 @@ const getStateVars = async (): Promise<StateVariableArray> => {
     if (error) {
         console.log(error)
     } else if (data) {
-        console.log(data)
         return data
     }
     return []
@@ -29,8 +28,6 @@ const getStateVarStore = async (): Promise<Readable<StateVariableArray>> => {
                 table: 'state_variables'
             },
                 async (payload) => {
-                    console.log('update to state_variables detected')
-                    console.log(payload)
                     if (payload.new) {
                         const _newStateVars: StateVariableArray = await getStateVars()
                         set(_newStateVars)

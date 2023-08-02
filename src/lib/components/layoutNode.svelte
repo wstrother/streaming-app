@@ -21,6 +21,7 @@
         return value
     }
     // bg-primary-500
+    // text-xl
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->

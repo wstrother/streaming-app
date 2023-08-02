@@ -1,5 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Press+Start+2P&display=swap');
+
 html, body { @apply h-full overflow-hidden; }
 
 body {
     background-color: rgba(0, 0, 0, 0)
+}
+
+
+.layout-node {
+    @apply variant-ghost-secondary p-4 rounded-md text-sm;
+    @apply text-white flex items-center justify-between;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.layout-node-var {
+    @apply text-2xl pl-5;
+}
+
+#layoutNode-eevee_header {
+    @apply bg-secondary-500 text-2xl;
 }

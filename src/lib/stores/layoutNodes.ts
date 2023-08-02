@@ -12,7 +12,6 @@ const getLayoutNodes = async (): Promise<LayoutNodeArray> => {
     if (error) {
         console.log(error)
     } else if (data) {
-        console.log(data)
         return data
     }
     return []
@@ -29,8 +28,6 @@ const getLayoutNodeStore = async (): Promise<Readable<LayoutNodeArray>> => {
                 table: 'layout_nodes'
             },
                 async (payload) => {
-                    console.log('update to layout_nodes detected')
-                    console.log(payload)
                     if (payload.new) {
                         const _newLayoutNodes: LayoutNodeArray = await getLayoutNodes()
                         set(_newLayoutNodes)
