@@ -1,9 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher } from 'svelte';
-    // import type { LayoutNode } from '$lib/stores/layoutNodes'
     import type { LayoutNodeCls } from '$lib/classes/layoutTree'
-    import type { StateVariable } from '$lib/stores/varStore'
-    import { stateVariables } from '$lib/stores/varStore'
+    import type { StateVariableValue } from '$lib/classes/variableMap'
+    import { stateVariableStore } from '$lib/stores/varStore'
     
     export let node: LayoutNodeCls
     const dispatch = createEventDispatcher()
@@ -14,13 +13,10 @@
     $: hCSS = node.height ? `height: ${node.height}px;` : ''
     $: inlineCSS = `${posCSS}${wCSS}${hCSS}`
 
-    const getSV = (vars: Array<StateVariable>) => {
-        let value = ''
-        vars.forEach(sv => {
-            if (sv.id === node.variable_id) value = sv.value ?? ''
-        })
-        return value
-    }
+    let varValue: StateVariableValue = ''
+    $: if (node.variable_id) {
+            varValue = $stateVariableStore.getVarByID(node.variable_id)
+        }
     // bg-primary-500
     // text-xl
 </script>
@@ -45,6 +41,6 @@
     </span>
 
     <span class="layout-node-var">
-        {getSV($stateVariables)}
+        {varValue}
     </span>
 </div>

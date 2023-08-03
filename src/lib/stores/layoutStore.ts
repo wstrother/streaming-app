@@ -1,13 +1,13 @@
-import { readable, type Readable } from "svelte/store";
-import { supabase } from "$lib/supabaseClient";
-import { LayoutTree } from "$lib/classes/layoutTree";
+import { readable, type Readable } from "svelte/store"
+import { supabase } from "$lib/supabaseClient"
+import { LayoutTree } from "$lib/classes/layoutTree"
 
-import type { Database } from '$lib/types/supabase';
+import type { Database } from '$lib/types/supabase'
 
-export type LayoutNode = Database['public']['Tables']['layout_nodes']['Row']
-export type LayoutNodeArray = Array<LayoutNode>
+export type LayoutNodeDB = Database['public']['Tables']['layout_nodes']['Row']
+export type LayoutNodeDBArray = Array<LayoutNodeDB>
 
-const getLayoutNodes = async (): Promise<LayoutNodeArray> => {
+const getLayoutNodes = async (): Promise<LayoutNodeDBArray> => {
     let {data, error} = await supabase.from('layout_nodes').select(`*`)
 
     if (error) {
@@ -19,7 +19,7 @@ const getLayoutNodes = async (): Promise<LayoutNodeArray> => {
 }
 
 const getLayoutNodeStore = async (): Promise<Readable<LayoutTree>> => {
-    const _layoutNodes: LayoutNodeArray = await getLayoutNodes()
+    const _layoutNodes: LayoutNodeDBArray = await getLayoutNodes()
     const layoutTree: LayoutTree = new LayoutTree(_layoutNodes)
 
     const layoutNodeStore = readable<LayoutTree>(layoutTree,
@@ -31,7 +31,7 @@ const getLayoutNodeStore = async (): Promise<Readable<LayoutTree>> => {
             },
             (payload) => {
                 if (payload.new) {
-                    layoutTree.updateNode(payload.new as LayoutNode)
+                    layoutTree.updateNode(payload.new as LayoutNodeDB)
                     set(layoutTree)
                 }
             }
