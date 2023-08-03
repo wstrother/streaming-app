@@ -2,8 +2,8 @@
     import { createEventDispatcher } from 'svelte';
     // import type { LayoutNode } from '$lib/stores/layoutNodes'
     import type { LayoutNodeCls } from '$lib/classes/layoutTree'
-    import type { StateVariable } from '$lib/stores/vars'
-    import { stateVariables } from '$lib/stores/vars'
+    import type { StateVariable } from '$lib/stores/varStore'
+    import { stateVariables } from '$lib/stores/varStore'
     
     export let node: LayoutNodeCls
     const dispatch = createEventDispatcher()
