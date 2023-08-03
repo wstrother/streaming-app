@@ -1,12 +1,13 @@
-import { readable, type Readable } from "svelte/store";
-import { supabase } from "$lib/supabaseClient";
+import { readable, type Readable } from "svelte/store"
+import { supabase } from "$lib/supabaseClient"
+import { VariableMap } from "$lib/classes/variableMap"
 
-import type { Database } from '$lib/types/supabase';
+import type { Database } from '$lib/types/supabase'
 
-export type StateVariable = Database['public']['Tables']['state_variables']['Row']
-export type StateVariableArray = Array<StateVariable>
+export type StateVariableDB = Database['public']['Tables']['state_variables']['Row']
+export type StateVariableDBArray = Array<StateVariableDB>
 
-const getStateVars = async (): Promise<StateVariableArray> => {
+const getStateVars = async (): Promise<StateVariableDBArray> => {
     let {data, error} = await supabase.from('state_variables').select(`*`)
 
     if (error) {
@@ -17,28 +18,29 @@ const getStateVars = async (): Promise<StateVariableArray> => {
     return []
 }
 
-const getStateVarStore = async (): Promise<Readable<StateVariableArray>> => {
-    const _stateVars: StateVariableArray = await getStateVars()
+const getStateVarStore = async (): Promise<Readable<VariableMap>> => {
+    const _stateVars: StateVariableDBArray = await getStateVars()
+    const varMap: VariableMap = new VariableMap(_stateVars)
 
-    const stateVarsStore = readable<StateVariableArray>(_stateVars, 
+    const stateVarsStore = readable<VariableMap>(varMap, 
         (set) => {
         const subscription = supabase.channel('state_vars_realtime').on('postgres_changes', {
-                event: '*',
-                schema: 'public',
-                table: 'state_variables'
-            },
-                async (payload) => {
-                    if (payload.new) {
-                        const _newStateVars: StateVariableArray = await getStateVars()
-                        set(_newStateVars)
-                    }
+            event: '*',
+            schema: 'public',
+            table: 'state_variables'
+        },
+            (payload) => {
+                if (payload.new) {
+                    varMap.setVar(payload.new as StateVariableDB)
+                    set(varMap)
                 }
-            ).subscribe()
-        
-            return () => {subscription.unsubscribe()}
+            }
+        ).subscribe()
+    
+        return () => {subscription.unsubscribe()}
     })
 
     return stateVarsStore
 }
 
-export const stateVariables = await getStateVarStore()
+export const stateVariableStore = await getStateVarStore()
