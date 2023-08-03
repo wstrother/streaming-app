@@ -1,7 +1,7 @@
 import type { Database } from '$lib/types/supabase';
 
 type LayoutNodeDB = Database['public']['Tables']['layout_nodes']['Row']
-type LayoutNodeArray = Array<LayoutNodeDB>
+type LayoutNodeDBArray = Array<LayoutNodeDB>
 
 export class LayoutNodeCls {
     data: LayoutNodeDB
@@ -58,7 +58,7 @@ export class LayoutNodeCls {
 export class LayoutTree {
     _nodes: Map<string, LayoutNodeCls>
 
-    constructor(nodes: LayoutNodeArray) {
+    constructor(nodes: LayoutNodeDBArray) {
         this._nodes = new Map()
         nodes.forEach(node => {
             this._nodes.set(node.key, new LayoutNodeCls(node))
