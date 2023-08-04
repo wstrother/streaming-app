@@ -1,4 +1,4 @@
 import { writable } from "svelte/store"
-import type { LayoutNodeDB } from "$lib/stores/layoutStore"
+import type { LayoutNodeCls } from "$lib/classes/layoutTree"
 
-export const activeNode = writable<LayoutNodeDB|null>()
+export const activeNode = writable<LayoutNodeCls | null>()

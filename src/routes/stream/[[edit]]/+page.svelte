@@ -1,27 +1,35 @@
 <script lang='ts'>
+    import { page } from "$app/stores"
     import { layoutTree } from "$lib/stores/layoutStore"
+    import { activeNode } from "$lib/stores/editor.js"
     import LayoutNode from "$lib/components/layoutNode.svelte"
     import streamBG from "$lib/images/stream-bg.png"
-    import { page } from "$app/stores"
-    console.log()
 
     export let data
     let edit: boolean
     $: edit = data.edit
 
+    // document.body.addEventListener('mousedown', e => {
+    //     activeNode.set(null)
+    // })
 </script>
 
-<div id="stream-layout-container">
-    {#if !edit}
-        <div class="open-editor-panel">
-            <a 
-                href={`${$page.url.pathname}/edit`} 
-                class="bg-primary-500 p-4 h5 text-white m-4">
-                Edit Layout
-            </a>
-        </div>
-    {/if}
+<!-- 'Edit Layout' panel for switching to edit mode -->
+{#if !edit}
+    <div id="open-editor-panel">
+        <a 
+            href={`${$page.url.pathname}/edit`} 
+            class="bg-primary-500 p-4 h5 text-white m-4">
+            Edit Layout
+        </a>
+    </div>
+{/if}
 
+
+<!-- Optional stream bg and layout node tree -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div id="stream-layout-container" 
+    >
     {#if streamBG && edit}
         <img src={streamBG} alt="stream bg" />
     {/if}
@@ -31,13 +39,17 @@
     {/each}
 </div>
 
+<div id="node-info-panel">
+    { $activeNode?.key || ''}
+</div>
+
 <style>
-    .open-editor-panel {
+    #open-editor-panel {
         z-index: 2;
         opacity: 0;
         position: absolute;
     }
-    .open-editor-panel:hover {
+    #open-editor-panel:hover {
         opacity: 1;
     }
 
