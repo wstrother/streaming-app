@@ -2,6 +2,9 @@
     import { page } from "$app/stores"
     import { layoutTree } from "$lib/stores/layoutStore"
     import { activeNode } from "$lib/stores/editor.js"
+    import { mouse } from "$lib/stores/mouse.js"
+    import { onMount } from "svelte"
+
     import LayoutNode from "$lib/components/layoutNode.svelte"
     import ActiveNodePanel from "$lib/components/activeNodePanel.svelte"
     import streamBG from "$lib/images/stream-bg.png"
@@ -10,9 +13,13 @@
     let edit: boolean
     $: edit = data.edit
 
-    // document.body.addEventListener('mousedown', e => {
-    //     activeNode.set(null)
-    // })
+
+    let mousePosition, mouseHeld
+    onMount(() => {
+        mousePosition = mouse.mousePosition
+        mouseHeld = mouse.mouseHeld
+    })
+    
 </script>
 
 <!-- 'Edit Layout' panel for switching to edit mode -->
