@@ -10,3 +10,4 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 src/lib/images
 src/lib/images/*
+.todo
