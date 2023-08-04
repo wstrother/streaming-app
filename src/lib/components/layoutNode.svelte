@@ -5,6 +5,7 @@
     import { stateVariableStore } from '$lib/stores/varStore'
     
     export let node: LayoutNodeCls
+    export let edit: boolean
     const dispatch = createEventDispatcher()
 
     let posCSS: string, wCSS: string, hCSS: string, inlineCSS: string
@@ -34,6 +35,7 @@
         absolute
         select-none
         cursor-pointer
+        {edit ? 'layout-node-edit' : ''}
         layout-node"
 >
     <span class="layout-node-content">
