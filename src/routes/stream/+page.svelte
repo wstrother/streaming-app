@@ -1,11 +1,14 @@
 <script lang='ts'>
     import { layoutTree } from "$lib/stores/layoutStore"
     import LayoutNode from "$lib/components/layoutNode.svelte"
-    import streamBG from "$lib/images/stream-bg.png"
+    import streamBG from "$lib/images/stream-bgg.png"
 
 </script>
 <div id="stream-layout-container">
-    <img src={streamBG} alt="stream bg" />
+    {#if streamBG }
+        <img src={streamBG} alt="stream bg" />
+    {/if}
+    
     {#each $layoutTree.nodes as node}
         <LayoutNode {node} />
     {/each}
