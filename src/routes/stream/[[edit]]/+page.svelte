@@ -27,11 +27,11 @@
 
 
 <!-- Optional stream bg and layout node tree -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<div id="stream-layout-container" 
-    >
+<div id="stream-layout-container">
     {#if streamBG && edit}
-        <img src={streamBG} alt="stream bg" />
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+        <img src={streamBG} alt="stream bg" on:mousedown={() => {activeNode.set(null)}}/>
     {/if}
 
     {#each $layoutTree.nodes as node}
