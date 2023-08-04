@@ -1,1 +1,1 @@
-<a href='/stream'>Open Layout</a>
+<a href='/stream/edit'>Edit Layout</a>

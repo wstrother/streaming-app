@@ -3,7 +3,10 @@
     import LayoutNode from "$lib/components/layoutNode.svelte"
     import streamBG from "$lib/images/stream-bg.png"
 
+    // export let data
+
 </script>
+
 <div id="stream-layout-container">
     {#if streamBG }
         <img src={streamBG} alt="stream bg" />
