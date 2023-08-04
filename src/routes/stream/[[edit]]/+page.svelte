@@ -3,6 +3,7 @@
     import { layoutTree } from "$lib/stores/layoutStore"
     import { activeNode } from "$lib/stores/editor.js"
     import LayoutNode from "$lib/components/layoutNode.svelte"
+    import ActiveNodePanel from "$lib/components/activeNodePanel.svelte"
     import streamBG from "$lib/images/stream-bg.png"
 
     export let data
@@ -31,7 +32,7 @@
     {#if streamBG && edit}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-        <img src={streamBG} alt="stream bg" on:mousedown={() => {activeNode.set(null)}}/>
+        <img src={streamBG} alt="stream bg" on:mousedown={(e) => {e.preventDefault(); activeNode.set(null)}}/>
     {/if}
 
     {#each $layoutTree.nodes as node}
@@ -39,9 +40,7 @@
     {/each}
 </div>
 
-<div id="node-info-panel">
-    { $activeNode?.key || ''}
-</div>
+<ActiveNodePanel node={$activeNode}/>
 
 <style>
     #open-editor-panel {
