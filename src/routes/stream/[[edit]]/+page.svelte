@@ -50,7 +50,10 @@
         accent="accent-primary-500"
         bind:value={$scalePercent} 
         max={100} min={25} step={5}>
-            <span class="h3 text-white">Scale</span>
+        <div class="flex justify-between items-center text-white">
+            <div class="font-bold">Scale</div>
+            <div class="text-xs">{$scalePercent}%</div>
+        </div>
     </RangeSlider>
 </div>
 
