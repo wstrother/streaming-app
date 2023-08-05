@@ -21,9 +21,6 @@
 
         <span>top: {node.top}</span>
         <span>left: {node.left}</span>
-        <span>_top: {node.data.top}</span>
-        <span>_left: {node.data.left}</span>
-        <span>{node.unsaved}</span>
 
         {#if unsaved}
             <div class="variant-filled-warning rounded px-2 p-1 h4 mt-4">Unsaved Changes!</div>
