@@ -6,11 +6,13 @@
     import LayoutNode from "$lib/components/layoutNode.svelte"
     import ActiveNodePanel from "$lib/components/activeNodePanel.svelte"
     import streamBG from "$lib/images/stream-bg.png"
+    import { RangeSlider } from '@skeletonlabs/skeleton'
 
     export let data
     let edit: boolean
     $: edit = data.edit
     
+    let scale = 100
 </script>
 
 <!-- 'Edit Layout' panel for switching to edit mode -->
@@ -26,7 +28,7 @@
 
 
 <!-- Optional stream bg and layout node tree -->
-<div id="stream-layout-container">
+<div id="stream-layout-container" style={`transform: scale(${scale}%)`}>
     {#if streamBG && edit}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
@@ -42,6 +44,17 @@
     <ActiveNodePanel node={$activeNode}/>
 {/if}
 
+<div id="scale-slider-container" 
+    class="absolute m-4 bottom-0 w-[200px] variant-glass-primary p-4 rounded">
+    <RangeSlider 
+        name="scale-slider"
+        label="scale-slider"
+        accent="accent-primary-500"
+        bind:value={scale} 
+        max={100} step={5}>
+            <span class="h3 text-white">Scale</span>
+    </RangeSlider>
+</div>
 
 <style>
     #open-editor-panel {
@@ -54,7 +67,7 @@
     }
 
     #stream-layout-container {
-        display: block;
+        /* display: block; */
         /* transform: scale(75%); */
         transform-origin: top left;
     }
@@ -65,4 +78,7 @@
         user-select: none;
         z-index: -5;
     }
+
+    #scale-slider-container {opacity: 0;}
+    #scale-slider-container:hover {opacity: 1;}
 </style>

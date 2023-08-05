@@ -8,7 +8,7 @@
 
 {#if node}
     <div id="node-info-panel" 
-        class="variant-filled-primary 
+        class="variant-glass-primary 
             rounded px-4 pt-1 m-4 
             flex flex-col items-start justify-start
             h-[300px]
