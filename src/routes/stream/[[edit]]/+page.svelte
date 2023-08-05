@@ -12,6 +12,15 @@
     let edit: boolean
     $: edit = data.edit
     
+    const reset = () => {
+        if ($activeNode) activeNode.set($activeNode?.resetChanges())
+        $layoutTree.update()
+    }
+
+    const save = () => {
+        if ($activeNode) activeNode.set($activeNode?.saveChanges())
+        $layoutTree.update()
+    }
 </script>
 
 <!-- 'Edit Layout' panel for switching to edit mode -->
@@ -38,24 +47,28 @@
     {/each}
 </div>
 
+<!-- Beginning of actual edit UI elements -->
 {#if edit}
-    <ActiveNodePanel node={$activeNode}/>
-{/if}
-
-<div id="scale-slider-container" 
+    <ActiveNodePanel 
+        on:reset_active={reset}
+        on:save_active={save}
+        node={$activeNode}/>
+        
+    <div id="scale-slider-container" 
     class="absolute m-4 bottom-0 w-[200px] variant-glass-primary p-4 rounded">
-    <RangeSlider 
-        name="scale-slider"
-        label="scale-slider"
-        accent="accent-primary-500"
-        bind:value={$scalePercent} 
-        max={100} min={25} step={5}>
-        <div class="flex justify-between items-center text-white">
-            <div class="font-bold">Scale</div>
-            <div class="text-xs">{$scalePercent}%</div>
-        </div>
-    </RangeSlider>
-</div>
+        <RangeSlider 
+            name="scale-slider"
+            label="scale-slider"
+            accent="accent-primary-500"
+            bind:value={$scalePercent} 
+            max={100} min={25} step={5}>
+            <div class="flex justify-between items-center text-white">
+                <div class="font-bold">Scale</div>
+                <div class="text-xs">{$scalePercent}%</div>
+            </div>
+        </RangeSlider>
+    </div>
+{/if}
 
 <style>
     #open-editor-panel {
@@ -68,8 +81,6 @@
     }
 
     #stream-layout-container {
-        /* display: block; */
-        /* transform: scale(75%); */
         transform-origin: top left;
     }
 

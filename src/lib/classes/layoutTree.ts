@@ -16,6 +16,7 @@ export class LayoutNodeCls {
         this._position = [node.left, node.top]
         this._classes = node.classes ?? ''
         this._content = node.content ?? ''
+
     }
 
     get top(): number { return this._position[1] }
@@ -46,6 +47,21 @@ export class LayoutNodeCls {
         return this
     }
 
+    resetChanges(): LayoutNodeCls {
+        const node = this.data
+        this._size = [node.width, node.height]
+        this._position = [node.left, node.top]
+        this._classes = node.classes ?? ''
+        this._content = node.content ?? ''
+
+        return this
+    }
+
+    saveChanges(): LayoutNodeCls {
+
+        return this
+    }
+
     setCSS(classes: string) {
         this._classes = classes
     }
@@ -66,12 +82,15 @@ export class LayoutNodeCls {
 
 export class LayoutTree {
     _nodes: Map<string, LayoutNodeCls>
+    _update: Function | null
 
     constructor(nodes: LayoutNodeDBArray) {
         this._nodes = new Map()
         nodes.forEach(node => {
             this._nodes.set(node.key, new LayoutNodeCls(node))
         })
+
+        this._update = null
     }
 
     get nodes(): Array<LayoutNodeCls> {
@@ -85,6 +104,12 @@ export class LayoutTree {
         }
         
         this._nodes.set(node.key, new LayoutNodeCls(node))
+    }
+
+    update() {
+        if (this._update) {
+            this._update(this)
+        }
     }
 }
 

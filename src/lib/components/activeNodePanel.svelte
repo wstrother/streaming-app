@@ -1,5 +1,7 @@
 <script lang='ts'>
 	import type { LayoutNodeCls } from "$lib/classes/layoutTree"
+    import { createEventDispatcher } from "svelte"
+    const dispatch = createEventDispatcher()
 
     export let node: LayoutNodeCls | null
     let unsaved: boolean
@@ -25,7 +27,17 @@
         <span>left: {node.left}</span>
 
         {#if unsaved}
-            <div class="variant-filled-warning rounded px-2 p-1 h4 mt-4">Unsaved Changes!</div>
+            <div class="px-2 p-1 h4 mt-4 w-[100%] flex justify-around">
+                <button on:click={() => dispatch('save_active')}
+                    class="btn variant-filled-primary">
+                    Save
+                </button>
+                
+                <button on:click={() => dispatch('reset_active')} 
+                    class="btn variant-filled-primary">
+                    Reset
+                </button>
+            </div>
         {/if}
     </div>
 {/if}
