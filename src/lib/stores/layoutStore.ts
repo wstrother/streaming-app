@@ -24,6 +24,8 @@ const getLayoutNodeStore = async (): Promise<Readable<LayoutTree>> => {
 
     const layoutNodeStore = readable<LayoutTree>(layoutTree,
         (set) => {
+        layoutTree._update = set
+        
         const subscription = supabase.channel('layouts_realtime').on('postgres_changes', {
                 event: '*',
                 schema: 'public',

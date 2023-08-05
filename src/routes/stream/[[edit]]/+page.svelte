@@ -1,29 +1,48 @@
 <script lang='ts'>
-    import { layoutTree } from "$lib/stores/layoutStore"
-    import LayoutNode from "$lib/components/layoutNode.svelte"
-    import streamBG from "$lib/images/stream-bg.png"
     import { page } from "$app/stores"
-    console.log()
+    import { layoutTree } from "$lib/stores/layoutStore"
+    import { activeNode, scalePercent } from "$lib/stores/editor.js"
+
+    import LayoutNode from "$lib/components/layoutNode.svelte"
+    import ActiveNodePanel from "$lib/components/activeNodePanel.svelte"
+    import streamBG from "$lib/images/stream-bg.png"
+    import ScalePanel from "$lib/components/scalePanel.svelte"
 
     export let data
     let edit: boolean
     $: edit = data.edit
+    
+    const reset = () => {
+        if ($activeNode) activeNode.set($activeNode?.resetChanges())
+        $layoutTree.update()
+    }
 
+    const save = async () => {
+        if ($activeNode) {
+            const node = await $activeNode?.saveChanges()
+            activeNode.set(node)
+        }
+        $layoutTree.update()
+    }
 </script>
 
-<div id="stream-layout-container">
-    {#if !edit}
-        <div class="open-editor-panel">
-            <a 
-                href={`${$page.url.pathname}/edit`} 
-                class="bg-primary-500 p-4 h5 text-white m-4">
-                Edit Layout
-            </a>
-        </div>
-    {/if}
+<!-- 'Edit Layout' panel for switching to edit mode -->
+{#if !edit}
+    <div id="open-editor-panel">
+        <a 
+            href={`${$page.url.pathname}/edit`} 
+            class="bg-primary-500 p-4 h5 text-white m-4">
+            Edit Layout
+        </a>
+    </div>
+{/if}
 
+<!-- Optional stream bg and layout node tree -->
+<div id="stream-layout-container" style={`transform: scale(${$scalePercent}%)`}>
     {#if streamBG && edit}
-        <img src={streamBG} alt="stream bg" />
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+        <img src={streamBG} alt="stream bg" on:mousedown={(e) => {e.preventDefault(); activeNode.set(null)}}/>
     {/if}
 
     {#each $layoutTree.nodes as node}
@@ -31,19 +50,27 @@
     {/each}
 </div>
 
+<!-- Beginning of actual edit UI elements -->
+{#if edit}
+    <ActiveNodePanel 
+        on:reset_active={reset}
+        on:save_active={save}
+        node={$activeNode}/>
+        
+    <ScalePanel />
+{/if}
+
 <style>
-    .open-editor-panel {
+    #open-editor-panel {
         z-index: 2;
         opacity: 0;
         position: absolute;
     }
-    .open-editor-panel:hover {
+    #open-editor-panel:hover {
         opacity: 1;
     }
 
     #stream-layout-container {
-        display: block;
-        /* transform: scale(75%); */
         transform-origin: top left;
     }
 

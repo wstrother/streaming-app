@@ -1,12 +1,15 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
     import type { LayoutNodeCls } from '$lib/classes/layoutTree'
     import type { StateVariableValue } from '$lib/classes/variableMap'
     import { stateVariableStore } from '$lib/stores/varStore'
+    import { activeNode, scalePercent } from '$lib/stores/editor'
     
     export let node: LayoutNodeCls
     export let edit: boolean
-    const dispatch = createEventDispatcher()
+
+    let moving: boolean = false
+    let moveFactor: number = 1
+    $: moveFactor = 1 / ($scalePercent / 100)
 
     let posCSS: string, wCSS: string, hCSS: string, inlineCSS: string
     $: posCSS = `top: ${node.top}px; left: ${node.left}px;`
@@ -16,17 +19,34 @@
 
     let varValue: StateVariableValue = ''
     $: if (node.variable_id) {
-            varValue = $stateVariableStore.getVarByID(node.variable_id)
+        varValue = $stateVariableStore.getVarByID(node.variable_id)
+    }
+
+    function start() {
+		moving = true;
+        activeNode.set(node)
+	}
+	
+	function stop() {
+		moving = false;
+	}
+	
+	function move(e: MouseEvent) {
+        if (moving) {
+            node = node.move(e.movementX * moveFactor, e.movementY * moveFactor)
+            activeNode.set(node)
         }
-    // bg-primary-500
-    // text-xl
+	}	
+
 </script>
+
+<svelte:window on:mouseup={stop} on:mousemove={move}  />
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<!-- svelte-ignore a11y-interactive-supports-focus -->
 <div
-    on:mouseover={(e) => dispatch(e.type, {node})}
-    on:mouseleave={(e) => dispatch(e.type, {node})}
+    on:mousedown={start} 
     id="layoutNode-{node.key}"
     style={inlineCSS}
     class="{node.classes}
@@ -36,6 +56,7 @@
         select-none
         cursor-pointer
         {edit ? 'layout-node-edit' : ''}
+        {$activeNode?.id === node.id ? 'layout-node-active' : ''}
         layout-node"
 >
     <span class="layout-node-content">
