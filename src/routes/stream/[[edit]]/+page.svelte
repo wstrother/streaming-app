@@ -6,7 +6,7 @@
     import LayoutNode from "$lib/components/layoutNode.svelte"
     import ActiveNodePanel from "$lib/components/activeNodePanel.svelte"
     import streamBG from "$lib/images/stream-bg.png"
-    import { RangeSlider } from '@skeletonlabs/skeleton'
+    import ScalePanel from "$lib/components/scalePanel.svelte"
 
     export let data
     let edit: boolean
@@ -57,20 +57,7 @@
         on:save_active={save}
         node={$activeNode}/>
         
-    <div id="scale-slider-container" 
-    class="absolute m-4 bottom-0 w-[200px] variant-glass-primary p-4 rounded">
-        <RangeSlider 
-            name="scale-slider"
-            label="scale-slider"
-            accent="accent-primary-500"
-            bind:value={$scalePercent} 
-            max={100} min={25} step={5}>
-            <div class="flex justify-between items-center text-white">
-                <div class="font-bold">Scale</div>
-                <div class="text-xs">{$scalePercent}%</div>
-            </div>
-        </RangeSlider>
-    </div>
+    <ScalePanel />
 {/if}
 
 <style>
@@ -93,7 +80,4 @@
         user-select: none;
         z-index: -5;
     }
-
-    #scale-slider-container {opacity: 0;}
-    #scale-slider-container:hover {opacity: 1;}
 </style>
