@@ -11,8 +11,10 @@
         class="variant-filled-primary 
             rounded px-4 pt-1 m-4 
             flex flex-col items-start justify-start
-            max-h-[300px]
-            min-w-[400px]
+            h-[300px]
+            w-[400px]
+            top-0 right-0
+            absolute
             text-white">
 
         <span class="h3 mb-2">
