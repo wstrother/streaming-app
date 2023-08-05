@@ -49,7 +49,7 @@
         label="scale-slider"
         accent="accent-primary-500"
         bind:value={$scalePercent} 
-        max={100} step={5}>
+        max={100} min={25} step={5}>
             <span class="h3 text-white">Scale</span>
     </RangeSlider>
 </div>
