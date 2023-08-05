@@ -37,17 +37,26 @@ export class LayoutNodeCls {
         this._position = [left, top]
     }
 
+    // the self return pattern is a reminder that the object mutation
+    // must use an assignment statement to trigger reactivity
+    move(dx: number, dy: number): LayoutNodeCls {
+        let [x, y] = this._position
+        this.setPosition(x + dx, y + dy)
+
+        return this
+    }
+
     setCSS(classes: string) {
         this._classes = classes
     }
 
     get unsaved() {
         return (
-            this.left !== this.data.left &&
-            this.top !== this.data.top &&
-            this.width !== this.data.width &&
-            this.height !== this.data.height &&
-            this.classes !== this.data.classes &&
+            this.left !== this.data.left ||
+            this.top !== this.data.top ||
+            this.width !== this.data.width ||
+            this.height !== this.data.height ||
+            this.classes !== this.data.classes ||
             this.content !== this.data.content
         )
     }

@@ -12,13 +12,6 @@
     export let data
     let edit: boolean
     $: edit = data.edit
-
-
-    let mousePosition, mouseHeld
-    onMount(() => {
-        mousePosition = mouse.mousePosition
-        mouseHeld = mouse.mouseHeld
-    })
     
 </script>
 
@@ -48,6 +41,7 @@
 </div>
 
 <ActiveNodePanel node={$activeNode}/>
+
 
 <style>
     #open-editor-panel {

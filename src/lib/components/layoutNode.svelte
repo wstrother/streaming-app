@@ -6,6 +6,7 @@
     
     export let node: LayoutNodeCls
     export let edit: boolean
+    let moving: boolean = false
 
     let posCSS: string, wCSS: string, hCSS: string, inlineCSS: string
     $: posCSS = `top: ${node.top}px; left: ${node.left}px;`
@@ -15,16 +16,34 @@
 
     let varValue: StateVariableValue = ''
     $: if (node.variable_id) {
-            varValue = $stateVariableStore.getVarByID(node.variable_id)
-        }
+        varValue = $stateVariableStore.getVarByID(node.variable_id)
+    }
+
+    function start() {
+		moving = true;
+        activeNode.set(node)
+	}
+	
+	function stop() {
+		moving = false;
+	}
+	
+	function move(e: MouseEvent) {
+			if (moving) {
+                node = node.move(e.movementX, e.movementY)
+                activeNode.set(node)
+			}
+	}	
 
 </script>
+
+<svelte:window on:mouseup={stop} on:mousemove={move}  />
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <!-- svelte-ignore a11y-interactive-supports-focus -->
 <div
-    on:mousedown={e => {activeNode.set(node)}}
+    on:mousedown={start} 
     id="layoutNode-{node.key}"
     style={inlineCSS}
     class="{node.classes}
