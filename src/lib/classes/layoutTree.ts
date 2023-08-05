@@ -51,13 +51,21 @@ export class LayoutNodeCls {
     }
 
     get unsaved() {
+        let comps = [
+            this.left !== this.data.left,
+            this.top !== this.data.top,
+            this.width !== this.data.width,
+            this.height !== this.data.height,
+            this.classes !== this.data.classes,
+            this.content !== this.data.content
+        ]
         return (
             this.left !== this.data.left ||
             this.top !== this.data.top ||
             this.width !== this.data.width ||
             this.height !== this.data.height ||
-            this.classes !== this.data.classes ||
-            this.content !== this.data.content
+            this.classes !== (this.data.classes ?? '') ||
+            this.content !== (this.data.content ?? '')
         )
     }
 
