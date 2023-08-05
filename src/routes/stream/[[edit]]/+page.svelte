@@ -2,8 +2,6 @@
     import { page } from "$app/stores"
     import { layoutTree } from "$lib/stores/layoutStore"
     import { activeNode } from "$lib/stores/editor.js"
-    import { mouse } from "$lib/stores/mouse.js"
-    import { onMount } from "svelte"
 
     import LayoutNode from "$lib/components/layoutNode.svelte"
     import ActiveNodePanel from "$lib/components/activeNodePanel.svelte"

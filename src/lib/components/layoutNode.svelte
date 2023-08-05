@@ -29,10 +29,10 @@
 	}
 	
 	function move(e: MouseEvent) {
-			if (moving) {
-                node = node.move(e.movementX, e.movementY)
-                activeNode.set(node)
-			}
+        if (moving) {
+            node = node.move(e.movementX, e.movementY)
+            activeNode.set(node)
+        }
 	}	
 
 </script>
