@@ -17,8 +17,11 @@
         $layoutTree.update()
     }
 
-    const save = () => {
-        if ($activeNode) activeNode.set($activeNode?.saveChanges())
+    const save = async () => {
+        if ($activeNode) {
+            const node = await $activeNode?.saveChanges()
+            activeNode.set(node)
+        }
         $layoutTree.update()
     }
 </script>

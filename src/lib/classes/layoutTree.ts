@@ -1,4 +1,5 @@
 import type { Database } from '$lib/types/supabase';
+import { supabase } from '$lib/supabaseClient';
 
 type LayoutNodeDB = Database['public']['Tables']['layout_nodes']['Row']
 type LayoutNodeDBArray = Array<LayoutNodeDB>
@@ -57,7 +58,15 @@ export class LayoutNodeCls {
         return this
     }
 
-    saveChanges(): LayoutNodeCls {
+    async saveChanges(): Promise<LayoutNodeCls> {
+        this.data.top = this.top
+        this.data.left = this.left
+        
+        const { error } = await supabase.from('layout_nodes')
+            .update({top:this.top, left:this.left})
+            .eq('id', this.id)
+
+        if (error) console.log(error)
 
         return this
     }
@@ -76,7 +85,6 @@ export class LayoutNodeCls {
             this.content !== (this.data.content ?? '')
         )
     }
-
 }
 
 
