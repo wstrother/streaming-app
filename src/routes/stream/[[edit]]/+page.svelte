@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { page } from "$app/stores"
     import { layoutTree } from "$lib/stores/layoutStore"
-    import { activeNode } from "$lib/stores/editor.js"
+    import { activeNode, scalePercent } from "$lib/stores/editor.js"
 
     import LayoutNode from "$lib/components/layoutNode.svelte"
     import ActiveNodePanel from "$lib/components/activeNodePanel.svelte"
@@ -12,7 +12,6 @@
     let edit: boolean
     $: edit = data.edit
     
-    let scale = 100
 </script>
 
 <!-- 'Edit Layout' panel for switching to edit mode -->
@@ -26,9 +25,8 @@
     </div>
 {/if}
 
-
 <!-- Optional stream bg and layout node tree -->
-<div id="stream-layout-container" style={`transform: scale(${scale}%)`}>
+<div id="stream-layout-container" style={`transform: scale(${$scalePercent}%)`}>
     {#if streamBG && edit}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
@@ -50,7 +48,7 @@
         name="scale-slider"
         label="scale-slider"
         accent="accent-primary-500"
-        bind:value={scale} 
+        bind:value={$scalePercent} 
         max={100} step={5}>
             <span class="h3 text-white">Scale</span>
     </RangeSlider>

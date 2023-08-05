@@ -34,7 +34,7 @@ export class LayoutNodeCls {
     }
 
     setPosition(left: number, top: number) {
-        this._position = [left, top]
+        this._position = [Math.round(left), Math.round(top)]
     }
 
     // the self return pattern is a reminder that the object mutation

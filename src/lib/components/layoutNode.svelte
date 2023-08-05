@@ -2,11 +2,14 @@
     import type { LayoutNodeCls } from '$lib/classes/layoutTree'
     import type { StateVariableValue } from '$lib/classes/variableMap'
     import { stateVariableStore } from '$lib/stores/varStore'
-    import { activeNode } from '$lib/stores/editor'
+    import { activeNode, scalePercent } from '$lib/stores/editor'
     
     export let node: LayoutNodeCls
     export let edit: boolean
+
     let moving: boolean = false
+    let moveFactor: number = 1
+    $: moveFactor = 1 / ($scalePercent / 100)
 
     let posCSS: string, wCSS: string, hCSS: string, inlineCSS: string
     $: posCSS = `top: ${node.top}px; left: ${node.left}px;`
@@ -30,7 +33,7 @@
 	
 	function move(e: MouseEvent) {
         if (moving) {
-            node = node.move(e.movementX, e.movementY)
+            node = node.move(e.movementX * moveFactor, e.movementY * moveFactor)
             activeNode.set(node)
         }
 	}	
