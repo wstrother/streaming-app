@@ -38,7 +38,9 @@
     {/each}
 </div>
 
-<ActiveNodePanel node={$activeNode}/>
+{#if edit}
+    <ActiveNodePanel node={$activeNode}/>
+{/if}
 
 
 <style>

@@ -53,6 +53,7 @@
         select-none
         cursor-pointer
         {edit ? 'layout-node-edit' : ''}
+        {$activeNode?.id === node.id ? 'layout-node-active' : ''}
         layout-node"
 >
     <span class="layout-node-content">
