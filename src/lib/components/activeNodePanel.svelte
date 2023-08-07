@@ -1,14 +1,43 @@
 <script lang='ts'>
 	import type { LayoutNodeCls } from "$lib/classes/layoutTree"
+    import { layoutTree } from "$lib/stores/layoutStore"
     import { createEventDispatcher } from "svelte"
+    import { activeNode } from "$lib/stores/editor"
     const dispatch = createEventDispatcher()
 
-    export let node: LayoutNodeCls | null
     let unsaved: boolean
-    $: unsaved = node?.unsaved || false
+    $: unsaved = $activeNode?.unsaved || false
+
+    let top: number, left: number, content: string, editing: boolean
+    $: if ($activeNode && !editing) {
+        top = $activeNode.top
+        left = $activeNode.left
+        content = $activeNode.content
+    }
+
+    const startEditing = () => {
+        editing = true
+    }
+
+    const endEditing = () => {
+        editing = false
+        if ($activeNode) {
+            $activeNode.setContent(content)
+            activeNode.set($activeNode.setPosition(left, top))
+        }
+        $layoutTree.update()
+    }
+
+    const onkey = (e: KeyboardEvent) => {
+        if (e.key === 'Enter') endEditing()
+        else {
+            if (!editing) startEditing()
+        }
+    }
+
 </script>
 
-{#if node}
+{#if $activeNode}
     <div id="node-info-panel" 
         class="variant-glass-primary 
             rounded px-4 pt-1 m-4 
@@ -20,11 +49,38 @@
             text-white">
 
         <span class="h3 mb-2">
-            { node?.key || ''}
+            { $activeNode?.key || ''}
         </span>
 
-        <span>top: {node.top}</span>
-        <span>left: {node.left}</span>
+        <label for="top-input" class="label flex items-center w-[100%]">
+            <span class="mr-4">Top:</span>
+            <input name="top-input" type='number' class="input variant-form-material"
+                bind:value={top} 
+                on:focus={startEditing}
+                on:blur={endEditing}
+                on:keyup={onkey}
+            />
+        </label>
+
+        <label for="left-input" class="label flex items-center w-[100%]">
+            <span class="mr-4">Left:</span>
+            <input name="left-input" type='number' class="input variant-form-material"
+                bind:value={left} 
+                on:focus={startEditing}
+                on:blur={endEditing}
+                on:keyup={onkey}
+            />
+        </label>
+
+        <label for="content-input" class="label flex flex-col items-start w-[100%]">
+            <span class="mr-4">Content:</span>
+            <input name="content-input" type='text' class="input variant-form-material"
+                bind:value={content} 
+                on:focus={startEditing}
+                on:blur={endEditing}
+                on:keyup={onkey}
+            />
+        </label>
 
         {#if unsaved}
             <div class="px-2 p-1 h4 mt-4 w-[100%] flex justify-around">

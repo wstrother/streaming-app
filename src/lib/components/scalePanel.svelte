@@ -1,6 +1,16 @@
 <script lang="ts">
     import { RangeSlider } from "@skeletonlabs/skeleton"
     import { scalePercent } from "$lib/stores/editor"
+
+    function wheel(e: WheelEvent) {
+        e.preventDefault()
+
+        if (e.deltaY > 0) {
+            scalePercent.set(Math.max($scalePercent - 5, 25))
+        } else if (e.deltaY < 0) {
+            scalePercent.set(Math.min($scalePercent + 5, 100))
+        }
+    }
 </script>
 
 <div id="scale-slider-container" 
@@ -18,6 +28,8 @@
         </div>
     </RangeSlider>
 </div>
+
+<svelte:window on:wheel={wheel} />
 
 <style>
     #scale-slider-container {opacity: 0;}

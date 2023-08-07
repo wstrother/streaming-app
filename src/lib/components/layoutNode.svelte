@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { LayoutNodeCls } from '$lib/classes/layoutTree'
     import type { StateVariableValue } from '$lib/classes/variableMap'
+    import { layoutTree } from '$lib/stores/layoutStore'
     import { stateVariableStore } from '$lib/stores/varStore'
     import { activeNode, scalePercent } from '$lib/stores/editor'
     
@@ -35,6 +36,7 @@
         if (moving) {
             node = node.move(e.movementX * moveFactor, e.movementY * moveFactor)
             activeNode.set(node)
+            $layoutTree.update()
         }
 	}	
 

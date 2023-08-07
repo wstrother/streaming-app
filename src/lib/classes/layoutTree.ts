@@ -1,5 +1,7 @@
 import type { Database } from '$lib/types/supabase';
 import { supabase } from '$lib/supabaseClient';
+import type Layout from '../../routes/+layout.svelte';
+import type LayoutNode from '$lib/components/layoutNode.svelte';
 
 type LayoutNodeDB = Database['public']['Tables']['layout_nodes']['Row']
 type LayoutNodeDBArray = Array<LayoutNodeDB>
@@ -31,16 +33,23 @@ export class LayoutNodeCls {
     get id(): number { return this.data.id }
     get key(): string { return this.data.key }
 
-    setSize(width: number, height: number) {
-        this._size = [width, height]
-    }
-
-    setPosition(left: number, top: number) {
-        this._position = [Math.round(left), Math.round(top)]
-    }
-
     // the self return pattern is a reminder that the object mutation
     // must use an assignment statement to trigger reactivity
+    setSize(width: number, height: number): LayoutNodeCls {
+        this._size = [width, height]
+        return this
+    }
+
+    setPosition(left: number, top: number): LayoutNodeCls {
+        this._position = [Math.round(left), Math.round(top)]
+        return this
+    }
+
+    setContent(content: string): LayoutNodeCls {
+        this._content = content
+        return this
+    }
+
     move(dx: number, dy: number): LayoutNodeCls {
         let [x, y] = this._position
         this.setPosition(x + dx, y + dy)
@@ -61,9 +70,11 @@ export class LayoutNodeCls {
     async saveChanges(): Promise<LayoutNodeCls> {
         this.data.top = this.top
         this.data.left = this.left
+        this.data.content = this.content
         
+        // prefer to send less data
         const { error } = await supabase.from('layout_nodes')
-            .update({top:this.top, left:this.left})
+            .update({top:this.top, left:this.left, content:this.content})
             .eq('id', this.id)
 
         if (error) console.log(error)
