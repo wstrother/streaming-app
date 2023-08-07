@@ -9,6 +9,7 @@
     import ActiveNodePanel from "$lib/components/activeNodePanel.svelte"
     import ScalePanel from "$lib/components/scalePanel.svelte"
     import UnsavedPanel from "$lib/components/unsavedPanel.svelte"
+    import { wheel } from "$lib/stores/editor.js"
 
     export let data
     let edit: boolean
@@ -35,6 +36,7 @@
     const saveAll = () => {unsavedNodes.forEach(n=>save(n))}
     const resetAll = () => {unsavedNodes.forEach(n=>reset(n))}
 
+    
 </script>
 
 <!-- 'Edit Layout' panel for switching to edit mode -->
@@ -50,6 +52,7 @@
 
 <!-- Optional stream bg and layout node tree -->
 <div id="stream-layout-container" 
+    on:wheel={wheel}
     style={edit ? `transform: scale(${$scalePercent}%)` : ''}>
     {#if streamBG && edit}
         <!-- svelte-ignore a11y-no-static-element-interactions -->

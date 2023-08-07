@@ -1,12 +1,11 @@
 <script>
-	// import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
-    // import '@skeletonlabs/skeleton/styles/skeleton.css';
-	// import '../app.postcss';
+	import { wheel } from '$lib/stores/editor'
     export let data;
 </script>
 
 {#if data.edit}
-    <div id='faux-bg' />
+    <div id='faux-bg'/>
+    <div id='scale-bg' on:wheel={wheel}/>
 {/if}
 
 <slot />
@@ -18,5 +17,11 @@
         width: 100vw;
         height: 100vh;
         z-index: -100;
+    }
+
+    #scale-bg {
+        position: absolute;
+        width: 100vw;
+        height: 100vw;
     }
 </style>
