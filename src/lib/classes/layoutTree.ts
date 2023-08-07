@@ -1,5 +1,7 @@
 import type { Database } from '$lib/types/supabase';
 import { supabase } from '$lib/supabaseClient';
+import type Layout from '../../routes/+layout.svelte';
+import type LayoutNode from '$lib/components/layoutNode.svelte';
 
 type LayoutNodeDB = Database['public']['Tables']['layout_nodes']['Row']
 type LayoutNodeDBArray = Array<LayoutNodeDB>
@@ -43,6 +45,11 @@ export class LayoutNodeCls {
         return this
     }
 
+    setContent(content: string): LayoutNodeCls {
+        this._content = content
+        return this
+    }
+
     move(dx: number, dy: number): LayoutNodeCls {
         let [x, y] = this._position
         this.setPosition(x + dx, y + dy)
@@ -63,9 +70,11 @@ export class LayoutNodeCls {
     async saveChanges(): Promise<LayoutNodeCls> {
         this.data.top = this.top
         this.data.left = this.left
+        this.data.content = this.content
         
+        // prefer to send less data
         const { error } = await supabase.from('layout_nodes')
-            .update({top:this.top, left:this.left})
+            .update({top:this.top, left:this.left, content:this.content})
             .eq('id', this.id)
 
         if (error) console.log(error)

@@ -8,10 +8,11 @@
     let unsaved: boolean
     $: unsaved = $activeNode?.unsaved || false
 
-    let top: number, left: number, editing: boolean
+    let top: number, left: number, content: string, editing: boolean
     $: if ($activeNode && !editing) {
         top = $activeNode.top
         left = $activeNode.left
+        content = $activeNode.content
     }
 
     const startEditing = () => {
@@ -21,6 +22,7 @@
     const endEditing = () => {
         editing = false
         if ($activeNode) {
+            $activeNode.setContent(content)
             activeNode.set($activeNode.setPosition(left, top))
         }
         $layoutTree.update()
@@ -64,6 +66,16 @@
             <span class="mr-4">Left:</span>
             <input name="left-input" type='number' class="input variant-form-material"
                 bind:value={left} 
+                on:focus={startEditing}
+                on:blur={endEditing}
+                on:keyup={onkey}
+            />
+        </label>
+
+        <label for="content-input" class="label flex flex-col items-start w-[100%]">
+            <span class="mr-4">Content:</span>
+            <input name="content-input" type='text' class="input variant-form-material"
+                bind:value={content} 
                 on:focus={startEditing}
                 on:blur={endEditing}
                 on:keyup={onkey}
