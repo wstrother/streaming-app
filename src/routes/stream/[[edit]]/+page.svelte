@@ -2,11 +2,13 @@
     import { page } from "$app/stores"
     import { layoutTree } from "$lib/stores/layoutStore"
     import { activeNode, scalePercent } from "$lib/stores/editor.js"
+	import type { LayoutNodeCls } from "$lib/classes/layoutTree.js"
 
+    import streamBG from "$lib/images/stream-bg.png"
     import LayoutNode from "$lib/components/layoutNode.svelte"
     import ActiveNodePanel from "$lib/components/activeNodePanel.svelte"
-    import streamBG from "$lib/images/stream-bg.png"
     import ScalePanel from "$lib/components/scalePanel.svelte"
+    import UnsavedPanel from "$lib/components/unsavedPanel.svelte"
 
     export let data
     let edit: boolean
@@ -23,6 +25,10 @@
             activeNode.set(nodeSaved)
         }
         $layoutTree.update()
+    }
+
+    const getUnsaved = (): Array<LayoutNodeCls> => {
+        return $layoutTree.nodes.filter(n => n.unsaved)
     }
 </script>
 
@@ -55,10 +61,11 @@
 {#if edit}
     <ActiveNodePanel 
         on:reset_active={reset}
-        on:save_active={save}
-        node={$activeNode}/>
+        on:save_active={save}/>
         
     <ScalePanel />
+
+    <UnsavedPanel />
 {/if}
 
 <style>
