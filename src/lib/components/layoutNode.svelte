@@ -4,7 +4,6 @@
     import { layoutTree } from '$lib/stores/layoutStore'
     import { stateVariableStore } from '$lib/stores/varStore'
     import { activeNode, scalePercent } from '$lib/stores/editor'
-	import Layout from '../../routes/+layout.svelte';
     
     export let node: LayoutNodeCls
     export let edit: boolean

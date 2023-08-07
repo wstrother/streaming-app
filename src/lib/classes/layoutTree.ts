@@ -31,16 +31,18 @@ export class LayoutNodeCls {
     get id(): number { return this.data.id }
     get key(): string { return this.data.key }
 
-    setSize(width: number, height: number) {
-        this._size = [width, height]
-    }
-
-    setPosition(left: number, top: number) {
-        this._position = [Math.round(left), Math.round(top)]
-    }
-
     // the self return pattern is a reminder that the object mutation
     // must use an assignment statement to trigger reactivity
+    setSize(width: number, height: number): LayoutNodeCls {
+        this._size = [width, height]
+        return this
+    }
+
+    setPosition(left: number, top: number): LayoutNodeCls {
+        this._position = [Math.round(left), Math.round(top)]
+        return this
+    }
+
     move(dx: number, dy: number): LayoutNodeCls {
         let [x, y] = this._position
         this.setPosition(x + dx, y + dy)
