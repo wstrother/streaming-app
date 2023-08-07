@@ -14,6 +14,10 @@
     export let data
     let edit: boolean
     $: edit = data.edit
+
+    const selectNode = (node: LayoutNodeCls) => {
+        if (edit) activeNode.set(node)
+    }
     
     const reset = (node: LayoutNodeCls|null) => {
         if (!node) return

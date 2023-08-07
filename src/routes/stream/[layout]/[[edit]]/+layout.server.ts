@@ -6,6 +6,7 @@ export function load({ params }) {
     }
 
     return {
-        edit: params.edit === 'edit'
+        edit: params.edit === 'edit',
+        layout_name: params.layout
     }
 }

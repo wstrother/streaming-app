@@ -24,8 +24,10 @@
     }
 
     function start() {
-		moving = true;
-        activeNode.set(node)
+        if (edit) {
+            moving = true;
+            activeNode.set(node)
+        }
 	}
 	
 	function stop() {
