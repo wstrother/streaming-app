@@ -38,7 +38,8 @@
 {/if}
 
 <!-- Optional stream bg and layout node tree -->
-<div id="stream-layout-container" style={`transform: scale(${$scalePercent}%)`}>
+<div id="stream-layout-container" 
+    style={edit ? `transform: scale(${$scalePercent}%)` : ''}>
     {#if streamBG && edit}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
