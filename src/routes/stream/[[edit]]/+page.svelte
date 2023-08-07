@@ -14,22 +14,27 @@
     let edit: boolean
     $: edit = data.edit
     
-    const reset = () => {
-        if ($activeNode) activeNode.set($activeNode?.resetChanges())
+    const reset = (node: LayoutNodeCls|null) => {
+        if (!node) return
+
+        const nodeReset = node.resetChanges()
+        if ($activeNode?.id === node.id) activeNode.set(nodeReset)
         $layoutTree.update()
     }
 
-    const save = async () => {
-        if ($activeNode) {
-            const nodeSaved = await $activeNode?.saveChanges()
-            activeNode.set(nodeSaved)
-        }
+    const save = async (node: LayoutNodeCls|null) => {
+        if (!node) return
+
+        const nodeSaved = await node.saveChanges()
+        if ($activeNode?.id === node.id) activeNode.set(nodeSaved)
         $layoutTree.update()
     }
 
-    const getUnsaved = (): Array<LayoutNodeCls> => {
-        return $layoutTree.nodes.filter(n => n.unsaved)
-    }
+    let unsavedNodes: Array<LayoutNodeCls>
+    $: unsavedNodes = $layoutTree.nodes.filter(n=>n.unsaved)
+    const saveAll = () => {unsavedNodes.forEach(n=>save(n))}
+    const resetAll = () => {unsavedNodes.forEach(n=>reset(n))}
+
 </script>
 
 <!-- 'Edit Layout' panel for switching to edit mode -->
@@ -60,12 +65,15 @@
 <!-- Beginning of actual edit UI elements -->
 {#if edit}
     <ActiveNodePanel 
-        on:reset_active={reset}
-        on:save_active={save}/>
+        on:reset_active={() => reset($activeNode)}
+        on:save_active={() => save($activeNode)}/>
         
     <ScalePanel />
 
-    <UnsavedPanel />
+    <UnsavedPanel 
+        on:reset_all={resetAll}
+        on:save_all={saveAll}
+    />
 {/if}
 
 <style>
