@@ -50,13 +50,25 @@
             { $activeNode?.key || ''}
         </span>
 
-        <input 
-            bind:value={top} type='number' class='text-black'
-            on:focus={startEditing}
-            on:blur={endEditing}
-            on:keyup={onkey}
-        />
-        <span>left: {left}</span>
+        <label for="top-input" class="label flex items-center w-[100%]">
+            <span class="mr-4">Top:</span>
+            <input name="top-input" type='number' class="input variant-form-material"
+                bind:value={top} 
+                on:focus={startEditing}
+                on:blur={endEditing}
+                on:keyup={onkey}
+            />
+        </label>
+
+        <label for="left-input" class="label flex items-center w-[100%]">
+            <span class="mr-4">Left:</span>
+            <input name="left-input" type='number' class="input variant-form-material"
+                bind:value={left} 
+                on:focus={startEditing}
+                on:blur={endEditing}
+                on:keyup={onkey}
+            />
+        </label>
 
         {#if unsaved}
             <div class="px-2 p-1 h4 mt-4 w-[100%] flex justify-around">
