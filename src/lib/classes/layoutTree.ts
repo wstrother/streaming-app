@@ -7,18 +7,19 @@ type LayoutNodeDBArray = Array<LayoutNodeDB>
 
 export class LayoutNodeCls {
     data: LayoutNodeDB
+    tree: LayoutTreeCls
     _size: [number, number]
     _position: [number, number]
     _classes: string
     _content: string
 
-    constructor(node: LayoutNodeDB) {
+    constructor(node: LayoutNodeDB, tree: LayoutTreeCls) {
         this.data = node
+        this.tree = tree
         this._size = [node.width, node.height]
         this._position = [node.left, node.top]
         this._classes = node.classes ?? ''
         this._content = node.content ?? ''
-
     }
 
     get top(): number { return this._position[1] }
@@ -36,24 +37,29 @@ export class LayoutNodeCls {
     // must use an assignment statement to trigger reactivity
     setSize(width: number, height: number): LayoutNodeCls {
         this._size = [width, height]
+        
+        this.tree.broadcastChanges()
         return this
     }
 
     setPosition(left: number, top: number): LayoutNodeCls {
         this._position = [Math.round(left), Math.round(top)]
+        
+        this.tree.broadcastChanges()
         return this
     }
 
     setContent(content: string): LayoutNodeCls {
         this._content = content
+
+        this.tree.broadcastChanges()
         return this
     }
 
     move(dx: number, dy: number): LayoutNodeCls {
         let [x, y] = this._position
-        this.setPosition(x + dx, y + dy)
-
-        return this
+        
+        return this.setPosition(x + dx, y + dy)
     }
 
     resetChanges(): LayoutNodeCls {
@@ -63,6 +69,7 @@ export class LayoutNodeCls {
         this._classes = node.classes ?? ''
         this._content = node.content ?? ''
 
+        this.tree.broadcastChanges()
         return this
     }
 
@@ -78,11 +85,15 @@ export class LayoutNodeCls {
 
         if (error) console.log(error)
 
+        this.tree.broadcastChanges()
         return this
     }
 
     setCSS(classes: string) {
         this._classes = classes
+
+        this.tree.broadcastChanges()
+        return this
     }
 
     get unsaved() {
@@ -99,38 +110,33 @@ export class LayoutNodeCls {
 
 
 export class LayoutTreeCls {
-    _nodes: Array<LayoutNodeCls>
+    nodes: Array<LayoutNodeCls>
     _store: Writable<Array<LayoutNodeCls>>
-    update: Function
-    set: Function
-    subscribe: Function
 
     constructor() {
-        console.log('BEING CONSTRUCTED')
-        debugger
-        this._nodes = []
-        this._store = writable(this._nodes)
-       
-        this.update = this._store.update
-        this.set = this._store.set
-        this.subscribe = this._store.subscribe
+        this.nodes = []
+        this._store = writable(this.nodes)
     }
 
     setNodes(nodes: LayoutNodeDBArray) {
         nodes.forEach(node => {
-            this._nodes.push(new LayoutNodeCls(node))
+            this.nodes.push(new LayoutNodeCls(node, this))
         })
     }
 
     updateNode(node: LayoutNodeDB) {
-        const index = this._nodes.findIndex(n=>n.id===node.id)
-        const nodeCls = this._nodes[index]
+        const index = this.nodes.findIndex(n=>n.id===node.id)
+        const nodeCls = this.nodes[index]
 
         if (nodeCls && nodeCls.unsaved) {
             console.warn(`${nodeCls.key} was updated in DB while changes were unsaved`)
         }
         
-        this._nodes[index] = new LayoutNodeCls(node)
+        this.nodes[index] = new LayoutNodeCls(node, this)
+    }
+
+    broadcastChanges() {
+        this._store.set(this.nodes)
     }
 }
 
