@@ -5,7 +5,7 @@
     
     export let node: LayoutNodeCls
     export let edit: boolean
-    let varValue = subscribeVariable(node.variable_id)
+    const varValue = subscribeVariable(node.variable_id)
 
     let posCSS: string, wCSS: string, hCSS: string, inlineCSS: string
     $: posCSS = `top: ${node.top}px; left: ${node.left}px;`
