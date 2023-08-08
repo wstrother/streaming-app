@@ -1,7 +1,6 @@
-import type { Database } from '$lib/types/supabase';
-import { supabase } from '$lib/supabaseClient';
-import type Layout from '../../routes/+layout.svelte';
-import type LayoutNode from '$lib/components/layoutNode.svelte';
+import type { Database } from '$lib/types/supabase'
+import { supabase } from '$lib/supabaseClient'
+import { writable, type Writable } from 'svelte/store'
 
 type LayoutNodeDB = Database['public']['Tables']['layout_nodes']['Row']
 type LayoutNodeDBArray = Array<LayoutNodeDB>
@@ -99,36 +98,46 @@ export class LayoutNodeCls {
 }
 
 
-export class LayoutTree {
-    _nodes: Map<string, LayoutNodeCls>
-    _update: Function | null
+export class LayoutTreeCls {
+    _nodes: Array<LayoutNodeCls>
+    _store: Writable<Array<LayoutNodeCls>>
+    update: Function
+    set: Function
+    subscribe: Function
 
-    constructor(nodes: LayoutNodeDBArray) {
-        this._nodes = new Map()
-        nodes.forEach(node => {
-            this._nodes.set(node.key, new LayoutNodeCls(node))
-        })
-
-        this._update = null
+    constructor() {
+        console.log('BEING CONSTRUCTED')
+        debugger
+        this._nodes = []
+        this._store = writable(this._nodes)
+       
+        this.update = this._store.update
+        this.set = this._store.set
+        this.subscribe = this._store.subscribe
     }
 
-    get nodes(): Array<LayoutNodeCls> {
-        return Array.from(this._nodes.values())
+    setNodes(nodes: LayoutNodeDBArray) {
+        nodes.forEach(node => {
+            this._nodes.push(new LayoutNodeCls(node))
+        })
     }
 
     updateNode(node: LayoutNodeDB) {
-        const nodeCls = this._nodes.get(node.key)
+        const index = this._nodes.findIndex(n=>n.id===node.id)
+        const nodeCls = this._nodes[index]
+
         if (nodeCls && nodeCls.unsaved) {
             console.warn(`${nodeCls.key} was updated in DB while changes were unsaved`)
         }
         
-        this._nodes.set(node.key, new LayoutNodeCls(node))
-    }
-
-    update() {
-        if (this._update) {
-            this._update(this)
-        }
+        this._nodes[index] = new LayoutNodeCls(node)
     }
 }
 
+const layoutTree = new LayoutTreeCls()
+export const layoutNodes = {
+    subscribe: layoutTree._store.subscribe,
+    set: layoutTree._store.set,
+    update: layoutTree._store.update,
+    setNodes: (nodes: Array<LayoutNodeDB>) => layoutTree.setNodes(nodes)
+}
