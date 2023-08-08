@@ -1,6 +1,9 @@
-<script>
+<script lang="ts">
+    import { layoutNodes } from '$lib/classes/layoutTree.js'
 	import { wheel } from '$lib/stores/editor'
-    export let data;
+    export let data
+
+    layoutNodes.setNodes(data.nodes)
 </script>
 
 {#if data.edit}

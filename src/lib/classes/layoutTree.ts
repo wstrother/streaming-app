@@ -1,25 +1,25 @@
-import type { Database } from '$lib/types/supabase';
-import { supabase } from '$lib/supabaseClient';
-import type Layout from '../../routes/+layout.svelte';
-import type LayoutNode from '$lib/components/layoutNode.svelte';
+import type { Database } from '$lib/types/supabase'
+import { supabase } from '$lib/supabaseClient'
+import { writable, type Writable } from 'svelte/store'
 
 type LayoutNodeDB = Database['public']['Tables']['layout_nodes']['Row']
 type LayoutNodeDBArray = Array<LayoutNodeDB>
 
 export class LayoutNodeCls {
     data: LayoutNodeDB
+    tree: LayoutTreeCls
     _size: [number, number]
     _position: [number, number]
     _classes: string
     _content: string
 
-    constructor(node: LayoutNodeDB) {
+    constructor(node: LayoutNodeDB, tree: LayoutTreeCls) {
         this.data = node
+        this.tree = tree
         this._size = [node.width, node.height]
         this._position = [node.left, node.top]
         this._classes = node.classes ?? ''
         this._content = node.content ?? ''
-
     }
 
     get top(): number { return this._position[1] }
@@ -37,24 +37,29 @@ export class LayoutNodeCls {
     // must use an assignment statement to trigger reactivity
     setSize(width: number, height: number): LayoutNodeCls {
         this._size = [width, height]
+        
+        this.tree.broadcastChanges()
         return this
     }
 
     setPosition(left: number, top: number): LayoutNodeCls {
         this._position = [Math.round(left), Math.round(top)]
+        
+        this.tree.broadcastChanges()
         return this
     }
 
     setContent(content: string): LayoutNodeCls {
         this._content = content
+
+        this.tree.broadcastChanges()
         return this
     }
 
     move(dx: number, dy: number): LayoutNodeCls {
         let [x, y] = this._position
-        this.setPosition(x + dx, y + dy)
-
-        return this
+        
+        return this.setPosition(x + dx, y + dy)
     }
 
     resetChanges(): LayoutNodeCls {
@@ -64,6 +69,7 @@ export class LayoutNodeCls {
         this._classes = node.classes ?? ''
         this._content = node.content ?? ''
 
+        this.tree.broadcastChanges()
         return this
     }
 
@@ -79,11 +85,15 @@ export class LayoutNodeCls {
 
         if (error) console.log(error)
 
+        this.tree.broadcastChanges()
         return this
     }
 
     setCSS(classes: string) {
         this._classes = classes
+
+        this.tree.broadcastChanges()
+        return this
     }
 
     get unsaved() {
@@ -99,36 +109,41 @@ export class LayoutNodeCls {
 }
 
 
-export class LayoutTree {
-    _nodes: Map<string, LayoutNodeCls>
-    _update: Function | null
+export class LayoutTreeCls {
+    nodes: Array<LayoutNodeCls>
+    _store: Writable<Array<LayoutNodeCls>>
 
-    constructor(nodes: LayoutNodeDBArray) {
-        this._nodes = new Map()
-        nodes.forEach(node => {
-            this._nodes.set(node.key, new LayoutNodeCls(node))
-        })
-
-        this._update = null
+    constructor() {
+        this.nodes = []
+        this._store = writable(this.nodes)
     }
 
-    get nodes(): Array<LayoutNodeCls> {
-        return Array.from(this._nodes.values())
+    setNodes(nodes: LayoutNodeDBArray) {
+        nodes.forEach(node => {
+            this.nodes.push(new LayoutNodeCls(node, this))
+        })
     }
 
     updateNode(node: LayoutNodeDB) {
-        const nodeCls = this._nodes.get(node.key)
+        const index = this.nodes.findIndex(n=>n.id===node.id)
+        const nodeCls = this.nodes[index]
+
         if (nodeCls && nodeCls.unsaved) {
             console.warn(`${nodeCls.key} was updated in DB while changes were unsaved`)
         }
         
-        this._nodes.set(node.key, new LayoutNodeCls(node))
+        this.nodes[index] = new LayoutNodeCls(node, this)
     }
 
-    update() {
-        if (this._update) {
-            this._update(this)
-        }
+    broadcastChanges() {
+        this._store.set(this.nodes)
     }
 }
 
+const layoutTree = new LayoutTreeCls()
+export const layoutNodes = {
+    subscribe: layoutTree._store.subscribe,
+    set: layoutTree._store.set,
+    update: layoutTree._store.update,
+    setNodes: (nodes: Array<LayoutNodeDB>) => layoutTree.setNodes(nodes)
+}

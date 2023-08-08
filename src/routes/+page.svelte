@@ -1,1 +1,1 @@
-<a href='/stream/edit'>Edit Layout</a>
+<a href='/stream/eevee_challenge'>Edit Layout</a>

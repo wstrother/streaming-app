@@ -1,6 +1,4 @@
 <script lang='ts'>
-	import type { LayoutNodeCls } from "$lib/classes/layoutTree"
-    import { layoutTree } from "$lib/stores/layoutStore"
     import { createEventDispatcher } from "svelte"
     import { activeNode } from "$lib/stores/editor"
     const dispatch = createEventDispatcher()
@@ -25,7 +23,6 @@
             $activeNode.setContent(content)
             activeNode.set($activeNode.setPosition(left, top))
         }
-        $layoutTree.update()
     }
 
     const onkey = (e: KeyboardEvent) => {

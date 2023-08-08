@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { page } from "$app/stores"
-    import { layoutTree } from "$lib/stores/layoutStore"
     import { activeNode, scalePercent } from "$lib/stores/editor.js"
+    import { layoutNodes } from "$lib/classes/layoutTree.js"
 	import type { LayoutNodeCls } from "$lib/classes/layoutTree.js"
 
     import streamBG from "$lib/images/stream-bg.png"
@@ -14,13 +14,17 @@
     export let data
     let edit: boolean
     $: edit = data.edit
+
+    const unselectNode = () => {
+        if (edit) activeNode.set(null)
+    }
     
     const reset = (node: LayoutNodeCls|null) => {
         if (!node) return
 
         const nodeReset = node.resetChanges()
         if ($activeNode?.id === node.id) activeNode.set(nodeReset)
-        $layoutTree.update()
+        // $layoutTree.update()
     }
 
     const save = async (node: LayoutNodeCls|null) => {
@@ -28,17 +32,16 @@
 
         const nodeSaved = await node.saveChanges()
         if ($activeNode?.id === node.id) activeNode.set(nodeSaved)
-        $layoutTree.update()
+        // $layoutTree.update()
     }
 
     let unsavedNodes: Array<LayoutNodeCls>
-    $: unsavedNodes = $layoutTree.nodes.filter(n=>n.unsaved)
+    $: unsavedNodes = $layoutNodes.filter(n=>n.unsaved)
     const saveAll = () => {unsavedNodes.forEach(n=>save(n))}
     const resetAll = () => {unsavedNodes.forEach(n=>reset(n))}
 
     
 </script>
-
 <!-- 'Edit Layout' panel for switching to edit mode -->
 {#if !edit}
     <div id="open-editor-panel">
@@ -57,10 +60,10 @@
     {#if streamBG && edit}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-        <img src={streamBG} alt="stream bg" on:mousedown={(e) => {e.preventDefault(); activeNode.set(null)}}/>
+        <img src={streamBG} alt="stream bg" on:mousedown|preventDefault={() => unselectNode}/>
     {/if}
 
-    {#each $layoutTree.nodes as node}
+    {#each $layoutNodes as node}
         <LayoutNode {node} {edit}/>
     {/each}
 </div>

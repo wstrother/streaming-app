@@ -1,12 +1,12 @@
 <script lang='ts'>
+    import { layoutNodes } from "$lib/classes/layoutTree"
     import type { LayoutNodeCls } from "$lib/classes/layoutTree"
-    import { layoutTree } from "$lib/stores/layoutStore"
     import { activeNode } from "$lib/stores/editor"
     import { createEventDispatcher } from "svelte"
     const dispatch = createEventDispatcher()
 
     let nodes: Array<LayoutNodeCls>
-    $: nodes = $layoutTree.nodes.filter(n => n.unsaved)
+    $: nodes = $layoutNodes.filter(n => n.unsaved)
 </script>
 
 {#if nodes.length}
