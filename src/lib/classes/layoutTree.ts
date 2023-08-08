@@ -2,8 +2,8 @@ import type { Database } from '$lib/types/supabase'
 import { supabase } from '$lib/supabaseClient'
 import { writable, type Writable } from 'svelte/store'
 
-type LayoutNodeDB = Database['public']['Tables']['layout_nodes']['Row']
-type LayoutNodeDBArray = Array<LayoutNodeDB>
+export type LayoutNodeDB = Database['public']['Tables']['layout_nodes']['Row']
+export type LayoutNodeDBArray = Array<LayoutNodeDB>
 
 export class LayoutNodeCls {
     data: LayoutNodeDB
@@ -133,6 +133,7 @@ export class LayoutTreeCls {
         }
         
         this.nodes[index] = new LayoutNodeCls(node, this)
+        this.broadcastChanges()
     }
 
     broadcastChanges() {
@@ -145,5 +146,6 @@ export const layoutNodes = {
     subscribe: layoutTree._store.subscribe,
     set: layoutTree._store.set,
     update: layoutTree._store.update,
-    setNodes: (nodes: Array<LayoutNodeDB>) => layoutTree.setNodes(nodes)
+    setNodes: (nodes: Array<LayoutNodeDB>) => layoutTree.setNodes(nodes),
+    updateNode: (node: LayoutNodeDB) => layoutTree.updateNode(node)
 }

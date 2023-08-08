@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { layoutNodes } from '$lib/classes/layoutTree.js'
+    import { layoutNodes, type LayoutNodeDB } from '$lib/classes/layoutTree.js'
     import { stateVariables, type StateVariableDB } from '$lib/classes/stateVariables.js'
     import { supabase } from '$lib/supabaseClient.js';
 	import { wheel } from '$lib/stores/editor'
@@ -11,9 +11,16 @@
     supabase.channel('state_vars_realtime').on('postgres_changes', 
         {event: '*', schema: 'public', table: 'state_variables'},
         payload => {
-            console.log(payload.new)
             if (payload.new) {
                 stateVariables.setVar(payload.new as StateVariableDB)
+            }
+        }).subscribe()
+    
+        supabase.channel('layout_nodes_realtime').on('postgres_changes', 
+        {event: '*', schema: 'public', table: 'layout_nodes'},
+        payload => {
+            if (payload.new) {
+                layoutNodes.updateNode(payload.new as LayoutNodeDB)
             }
         }).subscribe()
 </script>
