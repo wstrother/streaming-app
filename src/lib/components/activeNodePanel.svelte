@@ -1,14 +1,16 @@
 <script lang='ts'>
     import { createEventDispatcher } from "svelte"
     import { activeNode } from "$lib/stores/editor"
-    import { subscribeVariable, type StateVariableValue } from "$lib/classes/stateVariables"
+    import { subscribeVariable, stateVariables, type StateVariableValue, type VarSubscription } from "$lib/classes/stateVariables"
     const dispatch = createEventDispatcher()
 
     let editing: boolean = false
     let unsaved: boolean
     $: unsaved = $activeNode?.unsaved || false
     
-    let stateVariable = subscribeVariable($activeNode?.variable_id || null)
+    let stateVariable: VarSubscription 
+    $: stateVariable = subscribeVariable($activeNode?.variable_id || null)
+
     let top: number, left: number, content: string, varValue: StateVariableValue
     $: if ($activeNode && !editing) {
         top = $activeNode.top
@@ -26,6 +28,9 @@
         if ($activeNode) {
             $activeNode.setContent(content)
             activeNode.set($activeNode.setPosition(left, top))
+            if ($activeNode.variable_id) {
+                stateVariables.setVar()
+            }
         }
     }
 
