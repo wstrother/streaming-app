@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { layoutNodes } from '$lib/classes/layoutTree'
     import type { LayoutNodeCls } from '$lib/classes/layoutTree'
     import type { StateVariableValue } from '$lib/classes/variableMap'
     import { stateVariableStore } from '$lib/stores/varStore'

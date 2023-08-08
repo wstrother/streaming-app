@@ -1,8 +1,7 @@
 <script lang='ts'>
     import { page } from "$app/stores"
     import { activeNode, scalePercent } from "$lib/stores/editor.js"
-    import { layoutNodes } from "$lib/classes/layoutTree.js"
-	import type { LayoutNodeCls } from "$lib/classes/layoutTree.js"
+    import { layoutNodes, type LayoutNodeCls } from "$lib/classes/layoutTree.js"
 
     import streamBG from "$lib/images/stream-bg.png"
     import LayoutNode from "$lib/components/layoutNode.svelte"
@@ -24,7 +23,6 @@
 
         const nodeReset = node.resetChanges()
         if ($activeNode?.id === node.id) activeNode.set(nodeReset)
-        // $layoutTree.update()
     }
 
     const save = async (node: LayoutNodeCls|null) => {
@@ -32,7 +30,6 @@
 
         const nodeSaved = await node.saveChanges()
         if ($activeNode?.id === node.id) activeNode.set(nodeSaved)
-        // $layoutTree.update()
     }
 
     let unsavedNodes: Array<LayoutNodeCls>
