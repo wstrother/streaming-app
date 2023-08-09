@@ -28,9 +28,11 @@
         if ($activeNode) {
             $activeNode.setContent(content)
             activeNode.set($activeNode.setPosition(left, top))
-            if ($activeNode.variable_id) {
-                stateVariables.setVar()
-            }
+
+            // TODO
+            // if ($activeNode.variable_id) {
+            //     stateVariables.setVar()
+            // }
         }
     }
 
@@ -88,7 +90,7 @@
             />
         </label>
 
-        {#if $activeNode?.variable_id}
+        <!-- {#if $activeNode?.variable_id}
             <label for="value-input" class="label flex flex-col items-start w-[100%]">
                 <span class="mr-4">Value:</span>
                 <input name="value-input" type='text' class="input variant-form-material"
@@ -98,7 +100,7 @@
                     on:keyup={onkey}
                 />
             </label>
-        {/if}
+        {/if} -->
 
         {#if unsaved}
             <div class="px-2 p-1 h4 mt-4 w-[100%] flex justify-around">
