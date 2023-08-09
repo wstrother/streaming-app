@@ -1,21 +1,23 @@
+import { supabase } from "$lib/supabaseClient"
 import type { Database } from "$lib/types/supabase"
 
-type DatabaseTableName = keyof Database['public']['Tables']
-type DatabaseTable = Database['public']['Tables']
-type DatabaseRow<T extends DatabaseTableName> = DatabaseTable[T]['Row']
-type DatabaseUpdate<T extends DatabaseTableName> = DatabaseTable[T]['Update']
-
-type DatabaseColumnName<T extends DatabaseTableName> = keyof DatabaseRow<T> & keyof DatabaseUpdate<T>
-type DatabaseColumnValue<T extends DatabaseTableName, C extends DatabaseColumnName<T>> = DatabaseRow<T>[C]
+export type DatabaseTableName = keyof Database['public']['Tables']
+export type DatabaseTable = Database['public']['Tables']
+export type DatabaseRow<T extends DatabaseTableName> = DatabaseTable[T]['Row']
+export type DatabaseUpdate<T extends DatabaseTableName> = DatabaseTable[T]['Update']
+export type DatabaseColumnName<T extends DatabaseTableName> = keyof DatabaseRow<T> & keyof DatabaseUpdate<T>
+export type DatabaseColumnValue<T extends DatabaseTableName, C extends DatabaseColumnName<T>> = DatabaseRow<T>[C]
 
 
 export class ProxyDBRow<T extends DatabaseTableName> {
     data: DatabaseRow<T>
     changes: DatabaseUpdate<T>
+    query: ProxyDBQuery<T>
 
-    constructor(data: DatabaseRow<T>) {
+    constructor(data: DatabaseRow<T>, query: ProxyDBQuery<T>) {
         this.data = data
         this.changes = {}
+        this.query = query
     }
 
     get id(): number {
@@ -24,6 +26,11 @@ export class ProxyDBRow<T extends DatabaseTableName> {
 
     get unsaved(): boolean {
         return Boolean(Object.keys(this.changes).length)
+    }
+
+    getColumn<C extends DatabaseColumnName<T>>(name: C): DatabaseColumnValue<T, C> {
+        if (name in this.changes) {return this.changes[name] as DatabaseColumnValue<T, C>}
+        else return this.data[name]
     }
 
     setColumn<C extends DatabaseColumnName<T>>(name: DatabaseColumnName<T>, value: DatabaseColumnValue<T, C>) {
@@ -52,13 +59,27 @@ export class ProxyDBRow<T extends DatabaseTableName> {
             )
         })
     }
+
+    resetChanges() {
+        this.changes = {}
+    }
+
+    async saveChanges(table: DatabaseTableName): Promise<ProxyDBRow<T>> {
+        const { error } = await supabase.from(table)
+            .update(this.changes).eq('id', this.data.id)
+        
+        if (error) throw Error(error.message)
+
+        this.resetChanges()
+        return this
+    }
 }
 
 export class ProxyDBQuery<T extends DatabaseTableName> {
     rows: ProxyDBRow<T>[] = []
 
     setRows(rows: DatabaseRow<T>[]) {
-        this.rows = rows.map(r=>new ProxyDBRow<T>(r))
+        this.rows = rows.map(r=>new ProxyDBRow<T>(r, this))
     }
 
     getRow(id: number): ProxyDBRow<T> {
