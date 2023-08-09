@@ -1,14 +1,35 @@
 <script lang="ts">
-    import { layoutNodes } from '$lib/classes/layoutTree.js'
+    import { layoutNodes  } from '$lib/classes/layoutTree.js'
+    import { stateVariables } from '$lib/classes/stateVariables.js'
+    import { activeNode } from '$lib/stores/editor'
+    import { supabase } from '$lib/supabaseClient.js'
 	import { wheel } from '$lib/stores/editor'
     export let data
 
     layoutNodes.setNodes(data.nodes)
+    stateVariables.setVars(data.stateVariables)
+
+    supabase.channel('state_vars_realtime').on('postgres_changes', 
+        {event: '*', schema: 'public', table: 'state_variables'},
+        payload => {
+            if (payload.new) {
+                stateVariables.updateVar(payload.new)
+            }
+        }).subscribe()
+    
+        supabase.channel('layout_nodes_realtime').on('postgres_changes', 
+        {event: '*', schema: 'public', table: 'layout_nodes'},
+        payload => {
+            if (payload.new) {
+                layoutNodes.updateNode(payload.new)
+            }
+        }).subscribe()
 </script>
 
 {#if data.edit}
     <div id='faux-bg'/>
-    <div id='scale-bg' on:wheel={wheel}/>
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <div id='scale-bg' on:wheel={wheel} on:mousedown={() => activeNode.set(null)}/>
 {/if}
 
 <slot />

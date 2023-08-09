@@ -3,10 +3,11 @@
     import { activeNode } from "$lib/stores/editor"
     const dispatch = createEventDispatcher()
 
+    let editing: boolean = false
     let unsaved: boolean
     $: unsaved = $activeNode?.unsaved || false
-
-    let top: number, left: number, content: string, editing: boolean
+    
+    let top: number, left: number, content: string
     $: if ($activeNode && !editing) {
         top = $activeNode.top
         left = $activeNode.left
