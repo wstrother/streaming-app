@@ -67,8 +67,8 @@ export class LayoutNodeCls extends ProxyDBRow<'layout_nodes'> {
         return this.update({})
     }
 
-    async saveChanges(): Promise<LayoutNodeCls> {
-        await super.saveChanges('layout_nodes')
+    async saveChangesToDB(): Promise<LayoutNodeCls> {
+        await super.saveChangesToDB('layout_nodes')
         
         this.tree.broadcastChanges()
         return this
@@ -89,8 +89,8 @@ export class LayoutTreeCls extends ProxyDBQuery<'layout_nodes', LayoutNodeCls> {
         this.broadcastChanges()
     }
 
-    updateNode(node: LayoutNodeRow) {
-        super.updateRow(node, node.id)
+    updateNode(node: LayoutNodeUpdate, id: number) {
+        super.updateRow(node, id)
         this.broadcastChanges()
     }
 
@@ -105,5 +105,5 @@ export const layoutNodes = {
     set: layoutTree._store.set,
     update: layoutTree._store.update,
     setNodes: (nodes: LayoutNodeRow[]) => layoutTree.setNodes(nodes),
-    updateNode: (node: LayoutNodeRow) => layoutTree.updateNode(node)
+    updateNode: (node: LayoutNodeUpdate, id: number) => layoutTree.updateNode(node, id)
 }

@@ -62,16 +62,20 @@ export class ProxyDBRow<T extends DatabaseTableName> {
         this.changes = {}
     }
 
-    async saveChanges(table: DatabaseTableName): Promise<ProxyDBRow<T>> {
+    async saveChangesToDB(table: DatabaseTableName): Promise<ProxyDBRow<T>> {
         const { error } = await supabase.from(table)
             .update(this.changes).eq('id', this.data.id)
         
         if (error) throw Error(error.message)
 
-        Object.assign(this.data, this.changes)
-        this.changes = {}
+        this.saveChangesToProxy()
 
         return this
+    }
+
+    saveChangesToProxy() {
+        Object.assign(this.data, this.changes)
+        this.changes = {}
     }
 }
 
@@ -88,5 +92,6 @@ export class ProxyDBQuery<T extends DatabaseTableName, R extends ProxyDBRow<T>> 
     updateRow(changes: DatabaseUpdate<T>, id: number) {
         const proxy = this.getRow(id)
         proxy.update(changes)
+        proxy.saveChangesToProxy()
     }
 }

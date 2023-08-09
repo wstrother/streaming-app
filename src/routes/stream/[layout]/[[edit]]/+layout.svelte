@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { layoutNodes, type LayoutNodeDB } from '$lib/classes/layoutTree.js'
+    import { layoutNodes  } from '$lib/classes/layoutTree.js'
     import { stateVariables, type StateVariableDB } from '$lib/classes/stateVariables.js'
     import { activeNode } from '$lib/stores/editor'
     import { supabase } from '$lib/supabaseClient.js'
@@ -21,7 +21,7 @@
         {event: '*', schema: 'public', table: 'layout_nodes'},
         payload => {
             if (payload.new) {
-                layoutNodes.updateNode(payload.new as LayoutNodeDB)
+                layoutNodes.updateNode(payload.new, payload.new.id)
             }
         }).subscribe()
 </script>

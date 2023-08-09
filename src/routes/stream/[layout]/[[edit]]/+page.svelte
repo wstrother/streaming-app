@@ -28,7 +28,7 @@
     const save = async (node: LayoutNodeCls|null) => {
         if (!node) return
 
-        const nodeSaved = await node.saveChanges()
+        const nodeSaved = await node.saveChangesToDB()
         if ($activeNode?.id === node.id) activeNode.set(nodeSaved)
     }
 
