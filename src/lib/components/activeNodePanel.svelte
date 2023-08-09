@@ -1,22 +1,17 @@
 <script lang='ts'>
     import { createEventDispatcher } from "svelte"
     import { activeNode } from "$lib/stores/editor"
-    import { subscribeVariable, stateVariables, type StateVariableValue, type VarSubscription } from "$lib/classes/stateVariables"
     const dispatch = createEventDispatcher()
 
     let editing: boolean = false
     let unsaved: boolean
     $: unsaved = $activeNode?.unsaved || false
     
-    let stateVariable: VarSubscription 
-    $: stateVariable = subscribeVariable($activeNode?.variable_id || null)
-
-    let top: number, left: number, content: string, varValue: StateVariableValue
+    let top: number, left: number, content: string
     $: if ($activeNode && !editing) {
         top = $activeNode.top
         left = $activeNode.left
         content = $activeNode.content
-        varValue = $stateVariable
     }
 
     const startEditing = () => {
@@ -28,11 +23,6 @@
         if ($activeNode) {
             $activeNode.setContent(content)
             activeNode.set($activeNode.setPosition(left, top))
-
-            // TODO
-            // if ($activeNode.variable_id) {
-            //     stateVariables.setVar()
-            // }
         }
     }
 
@@ -89,18 +79,6 @@
                 on:keyup={onkey}
             />
         </label>
-
-        <!-- {#if $activeNode?.variable_id}
-            <label for="value-input" class="label flex flex-col items-start w-[100%]">
-                <span class="mr-4">Value:</span>
-                <input name="value-input" type='text' class="input variant-form-material"
-                    bind:value={varValue} 
-                    on:focus={startEditing}
-                    on:blur={endEditing}
-                    on:keyup={onkey}
-                />
-            </label>
-        {/if} -->
 
         {#if unsaved}
             <div class="px-2 p-1 h4 mt-4 w-[100%] flex justify-around">

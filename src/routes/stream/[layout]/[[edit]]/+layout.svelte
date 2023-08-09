@@ -1,19 +1,19 @@
 <script lang="ts">
     import { layoutNodes  } from '$lib/classes/layoutTree.js'
-    import { stateVariables, type StateVariableDB } from '$lib/classes/stateVariables.js'
+    import { stateVariables } from '$lib/classes/stateVariables.js'
     import { activeNode } from '$lib/stores/editor'
     import { supabase } from '$lib/supabaseClient.js'
 	import { wheel } from '$lib/stores/editor'
     export let data
 
     layoutNodes.setNodes(data.nodes)
-    stateVariables.setVariables(data.stateVariables)
+    stateVariables.setVars(data.stateVariables)
 
     supabase.channel('state_vars_realtime').on('postgres_changes', 
         {event: '*', schema: 'public', table: 'state_variables'},
         payload => {
             if (payload.new) {
-                stateVariables.setVar(payload.new as StateVariableDB)
+                stateVariables.updateVar(payload.new)
             }
         }).subscribe()
     

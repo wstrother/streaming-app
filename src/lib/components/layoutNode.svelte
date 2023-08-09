@@ -1,11 +1,11 @@
 <script lang="ts">
     import type { LayoutNodeCls } from '$lib/classes/layoutTree'
-    import { subscribeVariable } from '$lib/classes/stateVariables'
+    import { getVarStore } from '$lib/classes/stateVariables'
     import { activeNode, scalePercent } from '$lib/stores/editor'
     
     export let node: LayoutNodeCls
     export let edit: boolean
-    const varValue = subscribeVariable(node.variable_id)
+    const varValue = getVarStore(node.variable_id)
 
     let posCSS: string, wCSS: string, hCSS: string, inlineCSS: string
     $: posCSS = `top: ${node.top}px; left: ${node.left}px;`
@@ -60,7 +60,9 @@
         {node.content ?? ''}
     </span>
 
+    {#if node.variable_id}
     <span class="layout-node-var">
         {$varValue}
     </span>
+    {/if}
 </div>
