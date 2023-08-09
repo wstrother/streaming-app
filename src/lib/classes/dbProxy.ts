@@ -4,10 +4,12 @@ type DatabaseTableName = keyof Database['public']['Tables']
 type DatabaseTable = Database['public']['Tables']
 type DatabaseRow<T extends DatabaseTableName> = DatabaseTable[T]['Row']
 type DatabaseUpdate<T extends DatabaseTableName> = DatabaseTable[T]['Update']
+
 type DatabaseColumnName<T extends DatabaseTableName> = keyof DatabaseRow<T> & keyof DatabaseUpdate<T>
 type DatabaseColumnValue<T extends DatabaseTableName, C extends DatabaseColumnName<T>> = DatabaseRow<T>[C]
 
-class ProxyDBRow<T extends DatabaseTableName> {
+
+export class ProxyDBRow<T extends DatabaseTableName> {
     data: DatabaseRow<T>
     changes: DatabaseUpdate<T>
 
@@ -24,7 +26,6 @@ class ProxyDBRow<T extends DatabaseTableName> {
         return Boolean(Object.keys(this.changes).length)
     }
 
-    // setColumn<C extends DatabaseColumnName<T>, CVal extends DatabaseRow<T>[C]>(name: C, value: CVal) {
     setColumn<C extends DatabaseColumnName<T>>(name: DatabaseColumnName<T>, value: DatabaseColumnValue<T, C>) {
         const isOriginalValue = (this.data[name] === value)
         const isUnsavedChange = (name in this.changes)
@@ -41,5 +42,34 @@ class ProxyDBRow<T extends DatabaseTableName> {
         }
 
         this.changes[name] = value
+    }
+
+    update(changes: DatabaseUpdate<T>) {
+        Object.entries(changes).forEach(([key , value]) => {
+            this.setColumn(
+                key as DatabaseColumnName<T>, 
+                value as DatabaseColumnValue<T, DatabaseColumnName<T>>
+            )
+        })
+    }
+}
+
+export class ProxyDBQuery<T extends DatabaseTableName> {
+    rows: ProxyDBRow<T>[] = []
+
+    setRows(rows: DatabaseRow<T>[]) {
+        this.rows = rows.map(r=>new ProxyDBRow<T>(r))
+    }
+
+    getRow(id: number): ProxyDBRow<T> {
+        const index = this.rows.findIndex(r=>r.id===id)
+        const proxy = this.rows[index]
+        if (proxy) { return proxy }
+        else throw Error(`No results found with id ${id}`)
+    }
+
+    updateRow(changes: DatabaseUpdate<T>, id: number) {
+        const proxy = this.getRow(id)
+        proxy.update(changes)
     }
 }
