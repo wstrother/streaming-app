@@ -21,7 +21,7 @@
         {event: '*', schema: 'public', table: 'layout_nodes'},
         payload => {
             if (payload.new) {
-                layoutNodes.updateNode(payload.new, payload.new.id)
+                layoutNodes.updateNode(payload.new)
             }
         }).subscribe()
 </script>

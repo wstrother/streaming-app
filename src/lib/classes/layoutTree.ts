@@ -105,5 +105,7 @@ export const layoutNodes = {
     set: layoutTree._store.set,
     update: layoutTree._store.update,
     setNodes: (nodes: LayoutNodeRow[]) => layoutTree.setNodes(nodes),
-    updateNode: (node: LayoutNodeUpdate, id: number) => layoutTree.updateNode(node, id)
+    updateNode: (node: LayoutNodeUpdate) => {
+        layoutTree.updateNode(node, node?.id as number)
+    }
 }
