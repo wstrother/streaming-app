@@ -9,7 +9,7 @@ export class LayoutNodeCls extends ProxyDBRow<'layout_nodes'> {
     tree: LayoutTreeCls
 
     constructor(node: LayoutNodeRow, tree: LayoutTreeCls) {
-        super(node, tree)
+        super(node)
         this.tree = tree
     }
 
@@ -33,7 +33,7 @@ export class LayoutNodeCls extends ProxyDBRow<'layout_nodes'> {
     }
 
     get position(): [number, number] {
-        return [this.top, this.left]
+        return [this.left, this.top]
     }
 
     // the self return pattern is a reminder that the object mutation
@@ -68,14 +68,16 @@ export class LayoutNodeCls extends ProxyDBRow<'layout_nodes'> {
     }
 
     async saveChanges(): Promise<LayoutNodeCls> {
-        super.saveChanges('layout_nodes')
-        return this.update({})
+        await super.saveChanges('layout_nodes')
+        
+        this.tree.broadcastChanges()
+        return this
     }
 }
 
 
-export class LayoutTreeCls extends ProxyDBQuery<'layout_nodes'> {
-    _store: Writable<ProxyDBRow<'layout_nodes'>[]>
+export class LayoutTreeCls extends ProxyDBQuery<'layout_nodes', LayoutNodeCls> {
+    _store: Writable<LayoutNodeCls[]>
 
     constructor() {
         super()
@@ -83,7 +85,8 @@ export class LayoutTreeCls extends ProxyDBQuery<'layout_nodes'> {
     }
 
     setNodes(nodes: LayoutNodeRow[]) {
-        super.setRows(nodes)
+        this.rows = nodes.map(r=>new LayoutNodeCls(r, this))
+        this.broadcastChanges()
     }
 
     updateNode(node: LayoutNodeRow) {
@@ -101,6 +104,6 @@ export const layoutNodes = {
     subscribe: layoutTree._store.subscribe,
     set: layoutTree._store.set,
     update: layoutTree._store.update,
-    setNodes: (nodes: Array<LayoutNodeRow>) => layoutTree.setNodes(nodes),
+    setNodes: (nodes: LayoutNodeRow[]) => layoutTree.setNodes(nodes),
     updateNode: (node: LayoutNodeRow) => layoutTree.updateNode(node)
 }

@@ -42,7 +42,7 @@ export class VariableMap {
 const varMap = new VariableMap()
 const varStore = writable(varMap)
 
-type VarSubscription = Writable<StateVariableValue>|Readable<StateVariableValue>
+export type VarSubscription = Writable<StateVariableValue>|Readable<StateVariableValue>
 export function subscribeVariable(id: number|null): VarSubscription {
     if (id) return derived(varStore, vm=>vm.getVarByID(id))
 

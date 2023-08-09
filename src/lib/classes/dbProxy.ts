@@ -12,12 +12,10 @@ export type DatabaseColumnValue<T extends DatabaseTableName, C extends DatabaseC
 export class ProxyDBRow<T extends DatabaseTableName> {
     data: DatabaseRow<T>
     changes: DatabaseUpdate<T>
-    query: ProxyDBQuery<T>
 
-    constructor(data: DatabaseRow<T>, query: ProxyDBQuery<T>) {
+    constructor(data: DatabaseRow<T>) {
         this.data = data
         this.changes = {}
-        this.query = query
     }
 
     get id(): number {
@@ -70,17 +68,15 @@ export class ProxyDBRow<T extends DatabaseTableName> {
         
         if (error) throw Error(error.message)
 
-        this.resetChanges()
+        Object.assign(this.data, this.changes)
+        this.changes = {}
+
         return this
     }
 }
 
-export class ProxyDBQuery<T extends DatabaseTableName> {
-    rows: ProxyDBRow<T>[] = []
-
-    setRows(rows: DatabaseRow<T>[]) {
-        this.rows = rows.map(r=>new ProxyDBRow<T>(r, this))
-    }
+export class ProxyDBQuery<T extends DatabaseTableName, R extends ProxyDBRow<T>> {
+    rows: R[] = []
 
     getRow(id: number): ProxyDBRow<T> {
         const index = this.rows.findIndex(r=>r.id===id)
