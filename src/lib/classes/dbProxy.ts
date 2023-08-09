@@ -1,16 +1,17 @@
 import type { Database } from "$lib/types/supabase"
 
-type DatabaseTable = Database['public']['Tables'][keyof Database['public']['Tables']]
-type DatabaseRow = DatabaseTable['Row']
-type DatabaseColumnValue = DatabaseRow[keyof DatabaseRow]
-type DatabaseUpdate = DatabaseTable['Update']
-type DatabaseColumnName = keyof DatabaseUpdate | keyof DatabaseRow
+type DatabaseTableName = keyof Database['public']['Tables']
+type DatabaseTable = Database['public']['Tables']
+type DatabaseRow<T extends DatabaseTableName> = DatabaseTable[T]['Row']
+type DatabaseUpdate<T extends DatabaseTableName> = DatabaseTable[T]['Update']
+type DatabaseColumnName<T extends DatabaseTableName> = keyof DatabaseRow<T> & keyof DatabaseUpdate<T>
+type DatabaseColumnValue<T extends DatabaseTableName, C extends DatabaseColumnName<T>> = DatabaseRow<T>[C]
 
-class ProxyDBRow {
-    data: DatabaseRow
-    changes: DatabaseUpdate
+class ProxyDBRow<T extends DatabaseTableName> {
+    data: DatabaseRow<T>
+    changes: DatabaseUpdate<T>
 
-    constructor(data: DatabaseRow) {
+    constructor(data: DatabaseRow<T>) {
         this.data = data
         this.changes = {}
     }
@@ -23,7 +24,8 @@ class ProxyDBRow {
         return Boolean(Object.keys(this.changes).length)
     }
 
-    setColumn(name: DatabaseColumnName, value: DatabaseColumnValue) {
+    // setColumn<C extends DatabaseColumnName<T>, CVal extends DatabaseRow<T>[C]>(name: C, value: CVal) {
+    setColumn<C extends DatabaseColumnName<T>>(name: DatabaseColumnName<T>, value: DatabaseColumnValue<T, C>) {
         const isOriginalValue = (this.data[name] === value)
         const isUnsavedChange = (name in this.changes)
         const isUnsavedValue = (value === this.changes[name])
