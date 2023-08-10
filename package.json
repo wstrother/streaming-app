@@ -34,7 +34,8 @@
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.0",
 		"vite": "^4.4.2",
-		"vitest": "^0.34.1"
+		"vitest": "^0.34.1",
+		"vitest-svelte-kit": "^0.0.7"
 	},
 	"type": "module",
 	"dependencies": {
