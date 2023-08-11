@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { page } from "$app/stores"
     import { activeNode, scalePercent } from "$lib/stores/editor.js"
-    import { layoutNodes, type LayoutNodeCls } from "$lib/classes/layoutTree.js"
+    import { layoutNodes, type LayoutNodeCls } from "$lib/classes/layoutNodes.js"
 
     import streamBG from "$lib/images/stream-bg.png"
     import LayoutNode from "$lib/components/layoutNode.svelte"

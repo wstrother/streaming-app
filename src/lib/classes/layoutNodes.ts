@@ -1,21 +1,18 @@
-import { writable, type Writable } from 'svelte/store'
-import { ProxyDBRow, ProxyDBQuery } from './dbProxy'
+import { writable } from 'svelte/store'
+import { ProxyDBRow } from './dbProxy'
 import type { DatabaseRow, DatabaseUpdate } from './dbProxy'
 
-type LayoutNodeRow = DatabaseRow<'layout_nodes'>
-type LayoutNodeUpdate = DatabaseUpdate<'layout_nodes'>
+export type LayoutNodeRow = DatabaseRow<'layout_nodes'>
+export type LayoutNodeUpdate = DatabaseUpdate<'layout_nodes'>
+
 
 export class LayoutNodeCls extends ProxyDBRow<'layout_nodes'> {
-    tree: LayoutTreeCls
-
-    constructor(node: LayoutNodeRow, tree: LayoutTreeCls) {
-        super(node)
-        this.tree = tree
+    constructor(node: LayoutNodeRow, broadcast: Function | null) {
+        super(node, broadcast)
     }
 
     update(changes: LayoutNodeUpdate): LayoutNodeCls {
         super.update(changes)
-        this.tree.broadcastChanges()
         return this
     }
 
@@ -69,43 +66,39 @@ export class LayoutNodeCls extends ProxyDBRow<'layout_nodes'> {
 
     async saveChangesToDB(): Promise<LayoutNodeCls> {
         await super.saveChangesToDB('layout_nodes')
-        
-        this.tree.broadcastChanges()
         return this
     }
 }
 
 
-export class LayoutTreeCls extends ProxyDBQuery<'layout_nodes', LayoutNodeCls> {
-    _store: Writable<LayoutNodeCls[]>
+const {subscribe, set, update} = writable<LayoutNodeCls[]>([])
 
-    constructor() {
-        super()
-        this._store = writable(this.rows)
-    }
 
-    setNodes(nodes: LayoutNodeRow[]) {
-        this.rows = nodes.map(r=>new LayoutNodeCls(r, this))
-        this.broadcastChanges()
-    }
+export function updateNode(nodes: LayoutNodeCls[], update: LayoutNodeUpdate) {
+    if (!update.id) throw Error('No ID passed in update to layout_nodes')
 
-    updateNode(node: LayoutNodeUpdate, id: number) {
-        super.updateRow(node, id)
-        this.broadcastChanges()
-    }
+    const index = nodes.findIndex(n=>n.id===update.id)
+    const node = nodes[index]
 
-    broadcastChanges() {
-        this._store.set(this.rows)
-    }
+    if (!node) throw Error(`No node found with ID:${update.id}`)
+
+    node.update(update)
+    node.saveChangesToProxy()
 }
 
-const layoutTree = new LayoutTreeCls()
+export function getNodes(nodes: LayoutNodeRow[]) {
+    const nodesCls: LayoutNodeCls[] = []
+    const broadcast = () => set(nodesCls)
+
+    nodes.forEach(n => {
+        nodesCls.push(
+            new LayoutNodeCls(n, broadcast)
+        )
+    })
+
+    return nodesCls
+}
+
 export const layoutNodes = {
-    subscribe: layoutTree._store.subscribe,
-    set: layoutTree._store.set,
-    update: layoutTree._store.update,
-    setNodes: (nodes: LayoutNodeRow[]) => layoutTree.setNodes(nodes),
-    updateNode: (node: LayoutNodeUpdate) => {
-        layoutTree.updateNode(node, node?.id as number)
-    }
+    subscribe, set, update
 }
