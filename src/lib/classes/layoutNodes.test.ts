@@ -7,9 +7,9 @@ describe('LayoutNodeProxy', () => {
     beforeEach(() => {
         broadcast.mockClear()
         nodeProxy = new LayoutNodeProxy({
-            classes: "",
-            content: "",
-            created_at: "",
+            classes: "bg-primary-500",
+            content: "varkey:",
+            created_at: "1",
             height: 100,
             id: 1,
             key: "test_node",
@@ -23,27 +23,45 @@ describe('LayoutNodeProxy', () => {
     })
 
     test("That it exposes column names as properties", () => {
+        expect(nodeProxy.classes).toBe("bg-primary-500")
+        expect(nodeProxy.content).toBe("varkey:")
+        expect(nodeProxy.key).toBe("test_node")
+        expect(nodeProxy.variable_id).toBe(1)
+        expect(nodeProxy.top).toBe(100)
+        expect(nodeProxy.left).toBe(100)
+        expect(nodeProxy.width).toBe(100)
+        expect(nodeProxy.height).toBe(100)
 
     })
 
-    test("That its size can be set directly", () => {
+    test("That its size can be referenced and set directly", () => {
+        expect(nodeProxy.size).toStrictEqual([100, 100])
+        nodeProxy.setSize(200, 200)
+        expect(nodeProxy.size).toStrictEqual([200, 200])
+        expect(nodeProxy.width).toBe(200)
+        expect(nodeProxy.height).toBe(200)
         
     })
 
-    test("That its position can be set directly to the nearest integer value", () => {
-        
+    test("That its position can be referenced and set directly to the nearest integer value", () => {
+        expect(nodeProxy.position).toStrictEqual([100, 100])
+        nodeProxy.setPosition(100.9, 150)
+        expect(nodeProxy.position).toStrictEqual([101, 150])
     })
 
     test("That its content can be set directly", () => {
-        
+        nodeProxy.setContent('new content')
+        expect(nodeProxy.content).toBe('new content')
     })
 
     test("That it can be moved by a dx, dy value", () => {
-        
+        nodeProxy.move(50, 50)
+        expect(nodeProxy.position).toStrictEqual([150, 150])
     })
 
     test("That its CSS classes can be set directly", () => {
-        
+        nodeProxy.setCSS('bg-primary-800')
+        expect(nodeProxy.classes).toBe('bg-primary-800')
     })
 
     // test("That it saves its changes to the DB by updating the 'layout_nodes' table", () => {

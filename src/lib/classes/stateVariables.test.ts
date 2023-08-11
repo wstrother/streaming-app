@@ -16,7 +16,8 @@ describe('StateVariableProxy', () => {
     })
 
     test("that it exposes its value and key as properties", () => {
-        
+        expect(varProxy.key).toBe("test")
+        expect(varProxy.value).toBe("cool")
     })
 })
 
