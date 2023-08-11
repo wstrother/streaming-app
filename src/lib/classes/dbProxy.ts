@@ -88,20 +88,3 @@ export class ProxyDBRow<T extends DatabaseTableName> {
         if (this._broadcast) this._broadcast()
     }
 }
-
-export class ProxyDBQuery<T extends DatabaseTableName, R extends ProxyDBRow<T>> {
-    rows: R[] = []
-
-    getRow(id: number): ProxyDBRow<T> {
-        const index = this.rows.findIndex(r=>r.id===id)
-        const proxy = this.rows[index]
-        if (proxy) { return proxy }
-        else throw Error(`No results found with id ${id}`)
-    }
-
-    updateRow(changes: DatabaseUpdate<T>, id: number) {
-        const proxy = this.getRow(id)
-        proxy.update(changes)
-        proxy.saveChangesToProxy()
-    }
-}
