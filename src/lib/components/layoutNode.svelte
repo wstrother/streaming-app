@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { LayoutNodeCls } from '$lib/classes/layoutTree'
+    import type { LayoutNodeCls } from '$lib/classes/layoutNodes'
     import { getVarStore } from '$lib/classes/stateVariables'
     import { activeNode, scalePercent } from '$lib/stores/editor'
     

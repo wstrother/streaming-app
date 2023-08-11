@@ -1,5 +1,5 @@
 import { writable, type Writable } from "svelte/store"
-import type { LayoutNodeCls } from "$lib/classes/layoutTree"
+import type { LayoutNodeCls } from "$lib/classes/layoutNodes"
 import { localStorageStore } from '@skeletonlabs/skeleton'
 import { get } from "svelte/store"
 

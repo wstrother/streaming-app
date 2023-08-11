@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { layoutNodes, getNodes, updateNode, type LayoutNodeUpdate } from '$lib/classes/layoutTree.js'
+    import { layoutNodes, getNodes, updateNode, type LayoutNodeUpdate } from '$lib/classes/layoutNodes.js'
     import { stateVariables } from '$lib/classes/stateVariables.js'
     import { activeNode } from '$lib/stores/editor'
     import { supabase } from '$lib/supabaseClient.js'

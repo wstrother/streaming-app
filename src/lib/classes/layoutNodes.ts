@@ -1,20 +1,18 @@
-import { writable, type Writable } from 'svelte/store'
-import { ProxyDBRow, ProxyDBQuery } from './dbProxy'
+import { writable } from 'svelte/store'
+import { ProxyDBRow } from './dbProxy'
 import type { DatabaseRow, DatabaseUpdate } from './dbProxy'
 
 export type LayoutNodeRow = DatabaseRow<'layout_nodes'>
 export type LayoutNodeUpdate = DatabaseUpdate<'layout_nodes'>
 
-export class LayoutNodeCls extends ProxyDBRow<'layout_nodes'> {
-    // tree: LayoutTreeCls
 
+export class LayoutNodeCls extends ProxyDBRow<'layout_nodes'> {
     constructor(node: LayoutNodeRow, broadcast: Function | null) {
         super(node, broadcast)
     }
 
     update(changes: LayoutNodeUpdate): LayoutNodeCls {
         super.update(changes)
-        // this.tree.broadcastChanges()
         return this
     }
 
@@ -73,29 +71,8 @@ export class LayoutNodeCls extends ProxyDBRow<'layout_nodes'> {
 }
 
 
-// export class LayoutTreeCls extends ProxyDBQuery<'layout_nodes', LayoutNodeCls> {
-//     _store: Writable<LayoutNodeCls[]>
-
-//     constructor() {
-//         super()
-//         this._store = writable(this.rows)
-//     }
-
-
-
-
-//     broadcastChanges() {
-    //         this._store.set(this.rows)
-    //     }
-    // }
-    
-    // const layoutTree = new LayoutTreeCls()
 const {subscribe, set, update} = writable<LayoutNodeCls[]>([])
-    
-// export function updateNode(node: LayoutNodeUpdate, id: number) {
-//     super.updateRow(node, id)
-//     set(rows)
-// }
+
 
 export function updateNode(nodes: LayoutNodeCls[], update: LayoutNodeUpdate) {
     if (!update.id) throw Error('No ID passed in update to layout_nodes')
@@ -106,7 +83,6 @@ export function updateNode(nodes: LayoutNodeCls[], update: LayoutNodeUpdate) {
     if (!node) throw Error(`No node found with ID:${update.id}`)
 
     node.update(update)
-    // return nodesCls
 }
 
 export function getNodes(nodes: LayoutNodeRow[]) {
@@ -124,10 +100,5 @@ export function getNodes(nodes: LayoutNodeRow[]) {
 
 export const layoutNodes = {
     subscribe, set, update,
-    
-    // setNodes,
 
-    // updateNode: (node: LayoutNodeUpdate) => {
-    //     layoutTree.updateNode(node, node?.id as number)
-    // }
 }

@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { layoutNodes, type LayoutNodeCls } from "$lib/classes/layoutTree"
+    import { layoutNodes, type LayoutNodeCls } from "$lib/classes/layoutNodes"
     import { activeNode } from "$lib/stores/editor"
     import { createEventDispatcher } from "svelte"
     const dispatch = createEventDispatcher()
