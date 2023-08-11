@@ -1,17 +1,24 @@
 <script lang='ts'>
     import { createEventDispatcher } from "svelte"
-    import { activeNode } from "$lib/stores/editor"
+    import { activeNodeID } from "$lib/stores/editor"
+	import { LayoutNodeProxy, layoutNodes } from "$lib/classes/layoutNodes";
     const dispatch = createEventDispatcher()
 
+    let activeNode: LayoutNodeProxy | null
+    const getNodeByID = (nodes: LayoutNodeProxy[], id: number|null): LayoutNodeProxy|null => {
+        return nodes.filter(n=>n.id===id)[0] ?? null
+    }
+    $: activeNode = getNodeByID($layoutNodes, $activeNodeID)
+    
     let editing: boolean = false
     let unsaved: boolean
-    $: unsaved = $activeNode?.unsaved || false
+    $: unsaved = activeNode?.unsaved || false
     
     let top: number, left: number, content: string
-    $: if ($activeNode && !editing) {
-        top = $activeNode.top
-        left = $activeNode.left
-        content = $activeNode.content
+    $: if (activeNode && !editing) {
+        top = activeNode.top
+        left = activeNode.left
+        content = activeNode.content
     }
 
     const startEditing = () => {
@@ -20,9 +27,9 @@
 
     const endEditing = () => {
         editing = false
-        if ($activeNode) {
-            $activeNode.setContent(content)
-            activeNode.set($activeNode.setPosition(left, top))
+        if (activeNode) {
+            activeNode.setContent(content)
+            activeNode.setPosition(left, top)
         }
     }
 
@@ -35,7 +42,7 @@
 
 </script>
 
-{#if $activeNode}
+{#if activeNode}
     <div id="node-info-panel" 
         class="variant-glass-primary 
             rounded px-4 pt-1 m-4 
@@ -47,7 +54,7 @@
             text-white">
 
         <span class="h3 mb-2">
-            { $activeNode?.key || ''}
+            { activeNode.key }
         </span>
 
         <label for="top-input" class="label flex items-center w-[100%]">

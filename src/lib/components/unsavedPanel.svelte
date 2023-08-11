@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes"
-    import { activeNode } from "$lib/stores/editor"
+    import { activeNodeID } from "$lib/stores/editor"
     import { createEventDispatcher } from "svelte"
     const dispatch = createEventDispatcher()
 
@@ -16,7 +16,7 @@
         {#each nodes as node}
             <button 
                 class="btn btn-sm mb-1 variant-ghost-primary" 
-                on:click={() => activeNode.set(node)}>
+                on:click={() => activeNodeID.set(node)}>
                 {node.key}
             </button>
         {/each}

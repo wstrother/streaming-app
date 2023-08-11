@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { page } from "$app/stores"
-    import { activeNode, scalePercent } from "$lib/stores/editor.js"
+    import { activeNodeID, scalePercent } from "$lib/stores/editor.js"
     import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
 
     import streamBG from "$lib/images/stream-bg.png"
@@ -14,22 +14,29 @@
     let edit: boolean
     $: edit = data.edit
 
+    let activeNode: LayoutNodeProxy | null
+    const getNodeByID = (nodes: LayoutNodeProxy[], id: number|null): LayoutNodeProxy|null => {
+        return nodes.filter(n=>n.id===id)[0] ?? null
+    }
+    $: activeNode = getNodeByID($layoutNodes, $activeNodeID)
+
+
     const unselectNode = () => {
-        if (edit) activeNode.set(null)
+        if (edit) activeNodeID.set(null)
     }
     
     const reset = (node: LayoutNodeProxy|null) => {
         if (!node) return
 
-        const nodeReset = node.resetChanges()
-        if ($activeNode?.id === node.id) activeNode.set(nodeReset)
+        node.resetChanges()
+        // if ($activeNodeID === node.id) activeNode.set(nodeReset)
     }
 
     const save = async (node: LayoutNodeProxy|null) => {
         if (!node) return
 
-        const nodeSaved = await node.saveChangesToDB()
-        if ($activeNode?.id === node.id) activeNode.set(nodeSaved)
+        await node.saveChangesToDB()
+        // if ($activeNode?.id === node.id) activeNode.set(node.id)
     }
 
     let unsavedNodes: LayoutNodeProxy[]
@@ -69,8 +76,8 @@
 <!-- Beginning of actual edit UI elements -->
 {#if edit}
     <ActiveNodePanel 
-        on:reset_active={() => reset($activeNode)}
-        on:save_active={() => save($activeNode)}/>
+        on:reset_active={() => reset(activeNode)}
+        on:save_active={() => save(activeNode)}/>
         
     <ScalePanel />
 

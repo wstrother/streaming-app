@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { LayoutNodeProxy } from '$lib/classes/layoutNodes'
     import { stateVariables } from '$lib/classes/stateVariables'
-    import { activeNode, scalePercent } from '$lib/stores/editor'
+    import { activeNodeID, scalePercent } from '$lib/stores/editor'
     
     export let node: LayoutNodeProxy
     export let edit: boolean
@@ -20,7 +20,7 @@
     function start() {
         if (edit) {
             moving = true;
-            activeNode.set(node)
+            activeNodeID.set(node.id)
         }
 	}
 	
@@ -31,7 +31,7 @@
 	function move(e: MouseEvent) {
         if (moving) {
             node = node.move(e.movementX * moveFactor, e.movementY * moveFactor)
-            activeNode.set(node)
+            // activeNode.set(node)
         }
 	}	
 
@@ -53,7 +53,7 @@
         select-none
         cursor-pointer
         {edit ? 'layout-node-edit' : ''}
-        {$activeNode?.id === node.id ? 'layout-node-active' : ''}
+        {$activeNodeID === node.id ? 'layout-node-active' : ''}
         layout-node"
 >
     <span class="layout-node-content">
