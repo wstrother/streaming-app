@@ -38,7 +38,6 @@ export class ProxyDBRow<T extends DatabaseTableName> {
         const isUnsavedChange = (name in this.changes)
         const isUnsavedValue = (value === this.changes[name])
 
-        debugger
         if (!isUnsavedChange) {
             if (isOriginalValue) return
         }

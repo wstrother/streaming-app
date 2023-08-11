@@ -83,6 +83,7 @@ export function updateNode(nodes: LayoutNodeCls[], update: LayoutNodeUpdate) {
     if (!node) throw Error(`No node found with ID:${update.id}`)
 
     node.update(update)
+    node.saveChangesToProxy()
 }
 
 export function getNodes(nodes: LayoutNodeRow[]) {
@@ -99,6 +100,5 @@ export function getNodes(nodes: LayoutNodeRow[]) {
 }
 
 export const layoutNodes = {
-    subscribe, set, update,
-
+    subscribe, set, update
 }

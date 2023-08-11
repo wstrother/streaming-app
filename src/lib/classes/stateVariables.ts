@@ -1,59 +1,76 @@
 import { writable, type Writable, derived, type Readable } from 'svelte/store'
-import { ProxyDBRow, ProxyDBQuery } from './dbProxy'
+import { ProxyDBRow } from './dbProxy'
 import type { DatabaseRow, DatabaseUpdate } from './dbProxy'
 
-type StateVariableRow = DatabaseRow<'state_variables'>
-type StateVariableUpdate = DatabaseUpdate<'state_variables'>
+export type StateVariableRow = DatabaseRow<'state_variables'>
+export type StateVariableUpdate = DatabaseUpdate<'state_variables'>
 
 export class StateVariableCls extends ProxyDBRow<'state_variables'> {
-    varMap: VariableMap
-
-    constructor(stateVar: StateVariableRow, varMap: VariableMap) {
-        super(stateVar)
-        this.varMap = varMap
+    constructor(stateVar: StateVariableRow, broadcast: Function | null) {
+        super(stateVar, broadcast)
     }
 
     get value(): string | null {
-        return this.data.value
+        return this.getColumn('value')
     }
 
     get key(): string {
-        return this.data.key
+        return this.getColumn('key')
     }
 }
 
-export class VariableMap extends ProxyDBQuery<'state_variables', StateVariableCls> {
-    _store: Writable<StateVariableCls[]>
+// export class VariableMap extends ProxyDBQuery<'state_variables', StateVariableCls> {
+//     _store: Writable<StateVariableCls[]>
 
-    constructor() {
-        super()
-        this._store = writable(this.rows)
+//     constructor() {
+//         super()
+//         this._store = writable(this.rows)
+//     }
+
+
+//     broadcastChanges() {
+    //         this._store.set(this.rows)
+    //     }
+    // }
+    
+    // const varMap = new VariableMap()
+    
+const varStore = writable<StateVariableCls[]>([])
+
+export function getVars(vars: StateVariableRow[]) {
+    const varsCls: StateVariableCls[] = []
+    const broadcast = () => {
+        varStore.set(varsCls)
     }
 
-    setVars(vars: StateVariableRow[]) {
-        this.rows = vars.map(r=>new StateVariableCls(r, this))
-        this.broadcastChanges()
-    }
+    vars.forEach(v => {
+        varsCls.push(
+            new StateVariableCls(v, broadcast)
+        )
+    })
 
-    updateVar(node: StateVariableUpdate, id: number) {
-        super.updateRow(node, id)
-        this.broadcastChanges()
-    }
-
-    broadcastChanges() {
-        this._store.set(this.rows)
-    }
+    return varsCls
 }
 
-const varMap = new VariableMap()
+export function updateVar(vars: StateVariableCls[], update: StateVariableUpdate) {
+    if (!update.id) throw Error('No ID passed in update to state_variables')
 
-function getVarById(vars: StateVariableCls[], id: number | null): string | null {
+    const index = vars.findIndex(v=>v.id===update.id)
+    const sv = vars[index]
+
+    if (!sv) throw Error(`No variable found with ID:${update.id}`)
+
+    sv.update(update)
+    sv.saveChangesToProxy()
+}
+
+export function getVarById(vars: StateVariableCls[], id: number | null): string | null {
     const value = vars.filter(v => v.id===id)[0].value
     if (value === undefined) return null
     return value
 }
 
-function getVarByKey(vars: StateVariableCls[], key: string) {
+export function getVarByKey(vars: StateVariableCls[], key: string) {
     const value = vars.filter(v => v.key===key)[0].value
     if (value === undefined) return null
     return value
@@ -62,22 +79,15 @@ function getVarByKey(vars: StateVariableCls[], key: string) {
 export type VarValue = string | null | undefined
 export type VarStore = Readable<VarValue>
 
-export function getVarStore(id: number|null): Readable<string | null | undefined> {
-    if (id) { return derived(varMap._store, vars => getVarById(vars, id)) }
-    else return writable('')
+export function getVarStore(id: number|null): Readable<VarValue> {
+    if (id) { return derived(varStore, (vars) => {
+        return getVarById(vars, id)
+    })
+    } else return writable('')
 }
 
 export const stateVariables = {
-    set: varMap._store.set, 
-    update: varMap._store.update, 
-    subscribe: varMap._store.subscribe,
-
-    setVars: (vars: StateVariableRow[]) => varMap.setVars(vars),
-
-    updateVar: (stateVar: StateVariableUpdate) => {
-        varMap.updateVar(stateVar, stateVar?.id as number)
-    },
-
-    getVarById,
-    getVarByKey
+    subscribe: varStore.subscribe, 
+    set: varStore.set, 
+    update: varStore.update
 }
