@@ -1,4 +1,4 @@
-import { writable, type Writable, derived, type Readable } from 'svelte/store'
+import { writable, derived, type Readable } from 'svelte/store'
 import { ProxyDBRow } from './dbProxy'
 import type { DatabaseRow, DatabaseUpdate } from './dbProxy'
 
@@ -18,22 +18,6 @@ export class StateVariableCls extends ProxyDBRow<'state_variables'> {
         return this.getColumn('key')
     }
 }
-
-// export class VariableMap extends ProxyDBQuery<'state_variables', StateVariableCls> {
-//     _store: Writable<StateVariableCls[]>
-
-//     constructor() {
-//         super()
-//         this._store = writable(this.rows)
-//     }
-
-
-//     broadcastChanges() {
-    //         this._store.set(this.rows)
-    //     }
-    // }
-    
-    // const varMap = new VariableMap()
     
 const varStore = writable<StateVariableCls[]>([])
 
