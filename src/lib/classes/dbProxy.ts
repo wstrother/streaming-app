@@ -68,15 +68,13 @@ export class ProxyDBRow<T extends DatabaseTableName> {
         this.broadcast()
     }
 
-    async saveChangesToDB(table: DatabaseTableName): Promise<ProxyDBRow<T>> {
+    async saveChangesToDB(table: DatabaseTableName) {
         const { error } = await supabase.from(table)
             .update(this.changes).eq('id', this.data.id)
         
         if (error) throw Error(error.message)
 
         this.saveChangesToProxy()
-
-        return this
     }
 
     saveChangesToProxy() {

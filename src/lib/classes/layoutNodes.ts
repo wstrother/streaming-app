@@ -33,40 +33,36 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
         return [this.left, this.top]
     }
 
-    // the self return pattern is a reminder that the object mutation
-    // must use an assignment statement to trigger reactivity
-    setSize(width: number, height: number): LayoutNodeProxy {
-        return this.update({width, height})
+    setSize(width: number, height: number) {
+        this.update({width, height})
     }
 
-    setPosition(left: number, top: number): LayoutNodeProxy {
-        return this.update({
+    setPosition(left: number, top: number) {
+        this.update({
             left: Math.round(left),
             top: Math.round(top)
         })
     }
 
-    setContent(content: string): LayoutNodeProxy {
-        return this.update({content})
+    setContent(content: string) {
+        this.update({content})
     }
 
-    move(dx: number, dy: number): LayoutNodeProxy {
+    move(dx: number, dy: number) {
         let [x, y] = this.position
-        return this.setPosition(x + dx, y + dy)
+        this.setPosition(x + dx, y + dy)
     }
 
     setCSS(classes: string) {
-        return this.update({classes})
+        this.update({classes})
     }
     
-    resetChanges(): LayoutNodeProxy {
+    resetChanges() {
         super.resetChanges()
-        return this.update({})
     }
 
-    async saveChangesToDB(): Promise<LayoutNodeProxy> {
+    async saveChangesToDB() {
         await super.saveChangesToDB('layout_nodes')
-        return this
     }
 }
 
