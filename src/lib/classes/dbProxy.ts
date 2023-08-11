@@ -45,6 +45,7 @@ export class ProxyDBRow<T extends DatabaseTableName> {
             if (isUnsavedValue) return
             if (isOriginalValue) {
                 delete this.changes[name]
+                this.broadcast()
                 return
             }
         }
