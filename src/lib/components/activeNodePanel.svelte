@@ -1,14 +1,12 @@
 <script lang='ts'>
     import { createEventDispatcher } from "svelte"
     import { activeNodeID } from "$lib/stores/editor"
-	import { LayoutNodeProxy, layoutNodes } from "$lib/classes/layoutNodes";
+	import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
     const dispatch = createEventDispatcher()
 
+    // TODO: why can't these lines be combined in this file?
     let activeNode: LayoutNodeProxy | null
-    const getNodeByID = (nodes: LayoutNodeProxy[], id: number|null): LayoutNodeProxy|null => {
-        return nodes.filter(n=>n.id===id)[0] ?? null
-    }
-    $: activeNode = getNodeByID($layoutNodes, $activeNodeID)
+    $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeNodeID)
     
     let editing: boolean = false
     let unsaved: boolean

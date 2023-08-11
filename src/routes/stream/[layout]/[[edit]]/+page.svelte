@@ -14,11 +14,7 @@
     let edit: boolean
     $: edit = data.edit
 
-    let activeNode: LayoutNodeProxy | null
-    const getNodeByID = (nodes: LayoutNodeProxy[], id: number|null): LayoutNodeProxy|null => {
-        return nodes.filter(n=>n.id===id)[0] ?? null
-    }
-    $: activeNode = getNodeByID($layoutNodes, $activeNodeID)
+    let activeNode: LayoutNodeProxy | null = layoutNodes.getNodeByID($layoutNodes, $activeNodeID)
 
 
     const unselectNode = () => {
@@ -29,14 +25,12 @@
         if (!node) return
 
         node.resetChanges()
-        // if ($activeNodeID === node.id) activeNode.set(nodeReset)
     }
 
     const save = async (node: LayoutNodeProxy|null) => {
         if (!node) return
 
         await node.saveChangesToDB()
-        // if ($activeNode?.id === node.id) activeNode.set(node.id)
     }
 
     let unsavedNodes: LayoutNodeProxy[]

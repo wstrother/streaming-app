@@ -87,5 +87,9 @@ export const layoutNodes = {
         return getProxies<'layout_nodes', LayoutNodeRow, LayoutNodeProxy>(
             nodes, set, LayoutNodeProxy
         )
+    },
+
+    getNodeByID: (nodes: LayoutNodeProxy[], id: number|null): LayoutNodeProxy|null => {
+        return nodes.filter(n=>n.id===id)[0] ?? null
     }
 }

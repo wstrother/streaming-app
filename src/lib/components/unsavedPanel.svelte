@@ -16,7 +16,7 @@
         {#each nodes as node}
             <button 
                 class="btn btn-sm mb-1 variant-ghost-primary" 
-                on:click={() => activeNodeID.set(node)}>
+                on:click={() => activeNodeID.set(node.id)}>
                 {node.key}
             </button>
         {/each}
