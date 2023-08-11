@@ -12,10 +12,12 @@ export type DatabaseColumnValue<T extends DatabaseTableName, C extends DatabaseC
 export class ProxyDBRow<T extends DatabaseTableName> {
     data: DatabaseRow<T>
     changes: DatabaseUpdate<T>
+    _broadcast: Function | null
 
-    constructor(data: DatabaseRow<T>) {
+    constructor(data: DatabaseRow<T>, broadcast: Function | null = null) {
         this.data = data
         this.changes = {}
+        this._broadcast = broadcast
     }
 
     get id(): number {
@@ -49,6 +51,7 @@ export class ProxyDBRow<T extends DatabaseTableName> {
         }
 
         this.changes[name] = value
+        this.broadcast()
     }
 
     update(changes: DatabaseUpdate<T>) {
@@ -62,6 +65,7 @@ export class ProxyDBRow<T extends DatabaseTableName> {
 
     resetChanges() {
         this.changes = {}
+        this.broadcast()
     }
 
     async saveChangesToDB(table: DatabaseTableName): Promise<ProxyDBRow<T>> {
@@ -78,6 +82,11 @@ export class ProxyDBRow<T extends DatabaseTableName> {
     saveChangesToProxy() {
         Object.assign(this.data, this.changes)
         this.changes = {}
+        this.broadcast()
+    }
+
+    broadcast() {
+        if (this._broadcast) this._broadcast()
     }
 }
 
