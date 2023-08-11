@@ -1,15 +1,9 @@
 import { error as routeError } from '@sveltejs/kit'
 import { supabase } from "$lib/supabaseClient"
-import type { Database } from '$lib/types/supabase'
-
-type LayoutNodeDB = Database['public']['Tables']['layout_nodes']['Row']
-type LayoutNodeDBArray = Array<LayoutNodeDB>
-type LayoutDB = Database['public']['Tables']['layouts']['Row']
-type StateVariableDB = Database['public']['Tables']['state_variables']['Row']
-type StateVariableDBArray = Array<StateVariableDB>
+import type { DatabaseRow } from '$lib/classes/dbProxy'
 
 
-const getLayoutData = async (layoutName: string): Promise<LayoutDB> => {
+const getLayoutData = async (layoutName: string): Promise<DatabaseRow<'layouts'>> => {
     let {data, error} = await supabase.from('layouts')
         .select('*').eq('name', layoutName).single()
 
@@ -21,7 +15,7 @@ const getLayoutData = async (layoutName: string): Promise<LayoutDB> => {
     return data
 }
 
-const getLayoutNodes = async (layoutID: number): Promise<LayoutNodeDBArray> => {
+const getLayoutNodes = async (layoutID: number): Promise<DatabaseRow<'layout_nodes'>[]> => {
     let {data, error} = await supabase.from('layout_nodes')
         .select(`*`).eq('layout_id', layoutID)
 
@@ -33,7 +27,7 @@ const getLayoutNodes = async (layoutID: number): Promise<LayoutNodeDBArray> => {
     return []
 }
 
-const getStateVariables = async (): Promise<StateVariableDBArray> => {
+const getStateVariables = async (): Promise<DatabaseRow<'state_variables'>[]> => {
     let {data, error} = await supabase.from('state_variables').select(`*`)
 
     if (error) {
