@@ -1,7 +1,7 @@
 <script lang="ts">
     import { layoutNodes, type LayoutNodeUpdate } from '$lib/classes/layoutNodes.js'
     import { stateVariables, type StateVariableUpdate } from '$lib/classes/stateVariables.js'
-    import { activeNode } from '$lib/stores/editor'
+    import { activeNodeID } from '$lib/stores/editor'
     import { supabase } from '$lib/supabaseClient.js'
 	import { wheel } from '$lib/stores/editor'
     export let data
@@ -30,7 +30,7 @@
 {#if data.edit}
     <div id='faux-bg'/>
     <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div id='scale-bg' on:wheel={wheel} on:mousedown={() => activeNode.set(null)}/>
+    <div id='scale-bg' on:wheel={wheel} on:mousedown={() => activeNodeID.set(null)}/>
 {/if}
 
 <slot />
