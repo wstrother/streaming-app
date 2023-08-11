@@ -1,20 +1,20 @@
 <script lang="ts">
-    import { layoutNodes, getNodes, updateNode, type LayoutNodeUpdate } from '$lib/classes/layoutNodes.js'
-    import { stateVariables, getVars, updateVar, type StateVariableUpdate } from '$lib/classes/stateVariables.js'
+    import { layoutNodes, type LayoutNodeUpdate } from '$lib/classes/layoutNodes.js'
+    import { stateVariables, type StateVariableUpdate } from '$lib/classes/stateVariables.js'
     import { activeNode } from '$lib/stores/editor'
     import { supabase } from '$lib/supabaseClient.js'
 	import { wheel } from '$lib/stores/editor'
     export let data
 
-    layoutNodes.set(getNodes(data.nodes))
+    layoutNodes.set(layoutNodes.getNodes(data.nodes))
 
-    stateVariables.set(getVars(data.stateVariables))
+    stateVariables.set(stateVariables.getVars(data.stateVariables))
 
     supabase.channel('state_vars_realtime').on('postgres_changes', 
         {event: '*', schema: 'public', table: 'state_variables'},
         payload => {
             if (payload.new) {
-                updateVar($stateVariables, payload.new as StateVariableUpdate)
+                stateVariables.updateVar($stateVariables, payload.new as StateVariableUpdate)
             }
         }).subscribe()
     
@@ -22,7 +22,7 @@
         {event: '*', schema: 'public', table: 'layout_nodes'},
         payload => {
             if (payload.new) {
-                updateNode($layoutNodes, payload.new as LayoutNodeUpdate)
+                layoutNodes.updateNode($layoutNodes, payload.new as LayoutNodeUpdate)
             }
         }).subscribe()
 </script>

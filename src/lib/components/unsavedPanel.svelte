@@ -1,10 +1,10 @@
 <script lang='ts'>
-    import { layoutNodes, type LayoutNodeCls } from "$lib/classes/layoutNodes"
+    import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes"
     import { activeNode } from "$lib/stores/editor"
     import { createEventDispatcher } from "svelte"
     const dispatch = createEventDispatcher()
 
-    let nodes: Array<LayoutNodeCls>
+    let nodes: LayoutNodeProxy[]
     $: nodes = $layoutNodes.filter(n => n.unsaved)
 </script>
 

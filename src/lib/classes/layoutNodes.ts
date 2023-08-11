@@ -1,17 +1,17 @@
 import { writable } from 'svelte/store'
-import { ProxyDBRow } from './dbProxy'
+import { ProxyDBRow, getProxies, updateProxy } from './dbProxy'
 import type { DatabaseRow, DatabaseUpdate } from './dbProxy'
 
 export type LayoutNodeRow = DatabaseRow<'layout_nodes'>
 export type LayoutNodeUpdate = DatabaseUpdate<'layout_nodes'>
 
 
-export class LayoutNodeCls extends ProxyDBRow<'layout_nodes'> {
+export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
     constructor(node: LayoutNodeRow, broadcast: Function | null) {
         super(node, broadcast)
     }
 
-    update(changes: LayoutNodeUpdate): LayoutNodeCls {
+    update(changes: LayoutNodeUpdate): LayoutNodeProxy {
         super.update(changes)
         return this
     }
@@ -35,22 +35,22 @@ export class LayoutNodeCls extends ProxyDBRow<'layout_nodes'> {
 
     // the self return pattern is a reminder that the object mutation
     // must use an assignment statement to trigger reactivity
-    setSize(width: number, height: number): LayoutNodeCls {
+    setSize(width: number, height: number): LayoutNodeProxy {
         return this.update({width, height})
     }
 
-    setPosition(left: number, top: number): LayoutNodeCls {
+    setPosition(left: number, top: number): LayoutNodeProxy {
         return this.update({
             left: Math.round(left),
             top: Math.round(top)
         })
     }
 
-    setContent(content: string): LayoutNodeCls {
+    setContent(content: string): LayoutNodeProxy {
         return this.update({content})
     }
 
-    move(dx: number, dy: number): LayoutNodeCls {
+    move(dx: number, dy: number): LayoutNodeProxy {
         let [x, y] = this.position
         return this.setPosition(x + dx, y + dy)
     }
@@ -59,46 +59,33 @@ export class LayoutNodeCls extends ProxyDBRow<'layout_nodes'> {
         return this.update({classes})
     }
     
-    resetChanges(): LayoutNodeCls {
+    resetChanges(): LayoutNodeProxy {
         super.resetChanges()
         return this.update({})
     }
 
-    async saveChangesToDB(): Promise<LayoutNodeCls> {
+    async saveChangesToDB(): Promise<LayoutNodeProxy> {
         await super.saveChangesToDB('layout_nodes')
         return this
     }
 }
 
 
-const {subscribe, set, update} = writable<LayoutNodeCls[]>([])
+const {subscribe, set, update} = writable<LayoutNodeProxy[]>([])
 
-
-export function updateNode(nodes: LayoutNodeCls[], update: LayoutNodeUpdate) {
-    if (!update.id) throw Error('No ID passed in update to layout_nodes')
-
-    const index = nodes.findIndex(n=>n.id===update.id)
-    const node = nodes[index]
-
-    if (!node) throw Error(`No node found with ID:${update.id}`)
-
-    node.update(update)
-    node.saveChangesToProxy()
-}
-
-export function getNodes(nodes: LayoutNodeRow[]) {
-    const nodesCls: LayoutNodeCls[] = []
-    const broadcast = () => set(nodesCls)
-
-    nodes.forEach(n => {
-        nodesCls.push(
-            new LayoutNodeCls(n, broadcast)
-        )
-    })
-
-    return nodesCls
-}
 
 export const layoutNodes = {
-    subscribe, set, update
+    subscribe, set, update,
+
+    updateNode: (nodes: LayoutNodeProxy[], update: LayoutNodeUpdate) => {
+        updateProxy<'layout_nodes', LayoutNodeProxy>(
+            nodes, update, 'layout_nodes'
+        )
+    },
+
+    getNodes: (nodes: LayoutNodeRow[]): LayoutNodeProxy[] => {
+        return getProxies<'layout_nodes', LayoutNodeRow, LayoutNodeProxy>(
+            nodes, set, LayoutNodeProxy
+        )
+    }
 }

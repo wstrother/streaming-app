@@ -1,10 +1,10 @@
 import { writable, type Writable } from "svelte/store"
-import type { LayoutNodeCls } from "$lib/classes/layoutNodes"
+import type { LayoutNodeProxy } from "$lib/classes/layoutNodes"
 import { localStorageStore } from '@skeletonlabs/skeleton'
 import { get } from "svelte/store"
 
 
-export const activeNode = writable<LayoutNodeCls | null>()
+export const activeNode = writable<LayoutNodeProxy | null>()
 
 export const scalePercent: Writable<number> = localStorageStore('scalePercent', 100)
 
