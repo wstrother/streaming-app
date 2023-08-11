@@ -30,8 +30,7 @@
 	
 	function move(e: MouseEvent) {
         if (moving) {
-            node = node.move(e.movementX * moveFactor, e.movementY * moveFactor)
-            // activeNode.set(node)
+            node.move(e.movementX * moveFactor, e.movementY * moveFactor)
         }
 	}	
 
