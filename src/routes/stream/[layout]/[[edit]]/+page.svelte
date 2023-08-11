@@ -14,7 +14,8 @@
     let edit: boolean
     $: edit = data.edit
 
-    let activeNode: LayoutNodeProxy | null = layoutNodes.getNodeByID($layoutNodes, $activeNodeID)
+    let activeNode: LayoutNodeProxy | null 
+    $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeNodeID)
 
 
     const unselectNode = () => {
@@ -22,6 +23,7 @@
     }
     
     const reset = (node: LayoutNodeProxy|null) => {
+        debugger
         if (!node) return
 
         node.resetChanges()

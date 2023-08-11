@@ -4,7 +4,6 @@
 	import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
     const dispatch = createEventDispatcher()
 
-    // TODO: why can't these lines be combined in this file?
     let activeNode: LayoutNodeProxy | null
     $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeNodeID)
     
