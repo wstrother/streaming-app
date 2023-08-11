@@ -1,11 +1,11 @@
 <script lang="ts">
-    import type { LayoutNodeCls } from '$lib/classes/layoutNodes'
-    import { getVarStore } from '$lib/classes/stateVariables'
+    import type { LayoutNodeProxy } from '$lib/classes/layoutNodes'
+    import { stateVariables } from '$lib/classes/stateVariables'
     import { activeNode, scalePercent } from '$lib/stores/editor'
     
-    export let node: LayoutNodeCls
+    export let node: LayoutNodeProxy
     export let edit: boolean
-    const varValue = getVarStore(node.variable_id)
+    const varValue = stateVariables.getVarStore(node.variable_id)
 
     let posCSS: string, wCSS: string, hCSS: string, inlineCSS: string
     $: posCSS = `top: ${node.top}px; left: ${node.left}px;`

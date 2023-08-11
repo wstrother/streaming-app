@@ -88,3 +88,33 @@ export class ProxyDBRow<T extends DatabaseTableName> {
         if (this._broadcast) this._broadcast()
     }
 }
+
+export function updateProxy<T extends DatabaseTableName, P extends ProxyDBRow<T>>(
+    proxies: P[], update: DatabaseUpdate<T>, tableName: DatabaseTableName) {
+    
+    if (!update.id) throw Error(`No ID passed in update to '${tableName}'`)
+
+    const index = proxies.findIndex(v=>v.id===update.id)
+    const proxy = proxies[index]
+
+    if (!proxy) throw Error(`No '${tableName}' row found with ID:${update.id}`)
+
+    proxy.update(update)
+    proxy.saveChangesToProxy()
+}
+
+export function getProxies<T extends DatabaseTableName, R extends DatabaseRow<T>, P extends ProxyDBRow<T>>(
+    rows: R[], set: Function, constructor: { new(row: R, bc: Function): P}): P[] {
+
+    const proxies: P[] = []
+    const broadcast = () => set(proxies)
+
+    rows.forEach(row => {
+        proxies.push(
+            // new LayoutNodeCls(n, broadcast)
+            new constructor(row, broadcast)
+        )
+    })
+
+    return proxies
+}

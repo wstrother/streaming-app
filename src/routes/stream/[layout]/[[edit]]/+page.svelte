@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { page } from "$app/stores"
     import { activeNode, scalePercent } from "$lib/stores/editor.js"
-    import { layoutNodes, type LayoutNodeCls } from "$lib/classes/layoutNodes.js"
+    import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
 
     import streamBG from "$lib/images/stream-bg.png"
     import LayoutNode from "$lib/components/layoutNode.svelte"
@@ -18,21 +18,21 @@
         if (edit) activeNode.set(null)
     }
     
-    const reset = (node: LayoutNodeCls|null) => {
+    const reset = (node: LayoutNodeProxy|null) => {
         if (!node) return
 
         const nodeReset = node.resetChanges()
         if ($activeNode?.id === node.id) activeNode.set(nodeReset)
     }
 
-    const save = async (node: LayoutNodeCls|null) => {
+    const save = async (node: LayoutNodeProxy|null) => {
         if (!node) return
 
         const nodeSaved = await node.saveChangesToDB()
         if ($activeNode?.id === node.id) activeNode.set(nodeSaved)
     }
 
-    let unsavedNodes: Array<LayoutNodeCls>
+    let unsavedNodes: LayoutNodeProxy[]
     $: unsavedNodes = $layoutNodes.filter(n=>n.unsaved)
     const saveAll = () => {unsavedNodes.forEach(n=>save(n))}
     const resetAll = () => {unsavedNodes.forEach(n=>reset(n))}
