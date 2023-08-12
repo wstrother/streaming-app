@@ -1,26 +1,31 @@
 import { writable } from "svelte/store"
 import UnsavedPanel from "./unsavedPanel.svelte"
+import { layoutNodes } from "$lib/classes/layoutNodes"
 import { render, screen } from '@testing-library/svelte'
 
-vi.mock('$lib/classes/layoutNodes', () => {
-    const mockNodes = []
+// vi.mock('$lib/classes/layoutNodes', () => {
+//     const mockNodes = []
 
-    const {subscribe, set, update} = writable(mockNodes)
+//     const {subscribe, set, update} = writable(mockNodes)
 
-    return {
-        layoutNodes: { subscribe, set, update }
-    }
-})
+//     return {
+//         layoutNodes: { subscribe, set, update }
+//     }
+// })
+
 
 describe("UnsavedPanel", () => {
     
-
     test("that it lists unsaved layout nodes", () => {
+        const {set, subscribe} = writable<any[]>([])
+        vi.spyOn(layoutNodes, 'subscribe').mockImplementation(subscribe)
+        
         render(UnsavedPanel)
         
-        expect(screen.queryByText('Unsaved Changes:')).toBeNull()
+        expect(screen.queryByText('Unsaved Changes:')).toBeTruthy()
+        expect(screen.queryByText('test_node')).toBeTruthy()
 
-        // How do I reference the mocked store so that I can call the set function and change its value???
 
+        // expect(screen.queryByText('test_node')).toBeTruthy()
     })
 })
