@@ -11,6 +11,7 @@
         <div class="variant-glass-primary text-white rounded m-4 p-4">
             <span class="h3">{sv.key}</span>
             
+            <!-- Type '"key"' is not assignable to type '"created_at" | "id" | "user_id"'.ts(2322) -->
             <ProxyInput proxy={sv} attr='key' />
 
             <ProxyInput proxy={sv} attr='value' inputType={valueType(sv.value)} />

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { DatabaseColumnName, DatabaseTableName, ProxyDBRow } from "$lib/classes/dbProxy";
     
-    export let proxy: ProxyDBRow<'layout_nodes' | 'state_variables'>
-    export let attr: DatabaseColumnName<'layout_nodes'> | DatabaseColumnName<'state_variables'>
+    export let proxy: ProxyDBRow<DatabaseTableName>
+    export let attr: DatabaseColumnName<DatabaseTableName>
 
     export let inputType: 'string'|'number' = 'string'
 
