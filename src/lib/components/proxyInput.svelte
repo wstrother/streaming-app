@@ -3,14 +3,14 @@
     
     export let proxy: ProxyDBRow<DatabaseTableName>
     export let attr: DatabaseColumnName<DatabaseTableName>
-
     export let inputType: 'string'|'number' = 'string'
 
-    let fieldValue: string|number
+    let fieldValue: string | number | null
     let editing = false
 
     $: if (!editing) {
-        fieldValue = proxy.getColumn(attr) ?? ''
+        fieldValue = proxy.getColumn(attr) as string | number | null
+        fieldValue = fieldValue ?? ''
     }
     
     let elId = `${attr}-input-${proxy.id}`
