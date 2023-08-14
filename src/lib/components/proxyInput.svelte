@@ -1,16 +1,16 @@
 <script lang="ts">
-	import type { LayoutNodeProxy } from "$lib/classes/layoutNodes";
-	import type { StateVariableProxy } from "$lib/classes/stateVariables";
+	import type { DatabaseColumnName, DatabaseTableName, ProxyDBRow } from "$lib/classes/dbProxy";
     
-    export let attr: string
-    export let proxy: StateVariableProxy | LayoutNodeProxy
-    export let proxyValue: string|number|null
-    export let inputType: 'string'|'number'
+    export let proxy: ProxyDBRow<'layout_nodes' | 'state_variables'>
+    export let attr: DatabaseColumnName<'layout_nodes'> | DatabaseColumnName<'state_variables'>
+
+    export let inputType: 'string'|'number' = 'string'
 
     let fieldValue: string|number
     let editing = false
+
     $: if (!editing) {
-        fieldValue = proxyValue ?? ''
+        fieldValue = proxy.getColumn(attr) ?? ''
     }
     
     let elId = `${attr}-input-${proxy.id}`
@@ -35,12 +35,14 @@
 
 <label for={elId} class="label flex items-center w-[100%]">
     <span class="mr-4">{attr}:</span>
+
     {#if inputType === 'string'}
         <input name={elId} class={inputCls} 
             on:focus={startEditing}
             on:blur={endEditing}
             on:keyup={onkey}
             bind:value={fieldValue} />
+
     {:else if inputType === 'number'}
         <input name={elId} class={inputCls} type='number' 
             on:focus={startEditing}
