@@ -1,7 +1,9 @@
 <script lang='ts'>
     import type { LayoutNodeProxy } from "$lib/classes/layoutNodes"
-	import type { StateVariableProxy } from "$lib/classes/stateVariables";
-    import { activeNodeID } from "$lib/stores/editor"
+	import type { StateVariableProxy } from "$lib/classes/stateVariables"
+    // import { activeNodeID } from "$lib/stores/editor"
+    import { createEventDispatcher } from "svelte"
+    const dispatch = createEventDispatcher()
 
     export let proxies: LayoutNodeProxy[] | StateVariableProxy[]
 
@@ -25,11 +27,11 @@
         class="variant-glass-primary rounded px-4 pb-2 text-white flex flex-col">
 
         <h1 class="h3 mb-2">Unsaved Changes:</h1>
-        {#each proxies as node}
+        {#each proxies as proxy}
             <button 
                 class="btn btn-sm mb-1 variant-ghost-primary" 
-                on:click={() => activeNodeID.set(node.id)}>
-                {node.key}
+                on:click={() => dispatch('clickProxy', proxy)}>
+                {proxy.key}
             </button>
         {/each}
 

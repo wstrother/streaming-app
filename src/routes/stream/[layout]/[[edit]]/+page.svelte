@@ -69,7 +69,9 @@
         
     <ScalePanel />
 
-    <UnsavedPanel proxies={$layoutNodes.filter(n => n.unsaved)}/>
+    <UnsavedPanel 
+        on:clickProxy={({detail}) => activeNodeID.set(detail.id)}
+        proxies={$layoutNodes.filter(n => n.unsaved)}/>
 {/if}
 
 <style lang="postcss">
