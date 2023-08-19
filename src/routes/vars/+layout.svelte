@@ -1,6 +1,7 @@
 <script lang="ts">
     import { stateVariables, type StateVariableUpdate } from '$lib/classes/stateVariables.js'
     import { supabase } from '$lib/supabaseClient.js'
+
     export let data
 
     stateVariables.set(stateVariables.getVars(data.stateVariables))

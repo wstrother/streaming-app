@@ -1,11 +1,11 @@
 <script lang='ts'>
     import type { LayoutNodeProxy } from "$lib/classes/layoutNodes"
 	import type { StateVariableProxy } from "$lib/classes/stateVariables"
-    // import { activeNodeID } from "$lib/stores/editor"
     import { createEventDispatcher } from "svelte"
     const dispatch = createEventDispatcher()
 
     export let proxies: LayoutNodeProxy[] | StateVariableProxy[]
+    export let header: string = "Unsaved:"
 
     const reset = (proxy: LayoutNodeProxy|StateVariableProxy|null) => {
         if (!proxy) return
@@ -26,7 +26,7 @@
     <div id="unsaved-panel" 
         class="variant-glass-primary rounded px-4 pb-2 text-white flex flex-col">
 
-        <h1 class="h3 mb-2">Unsaved Changes:</h1>
+        <h1 class="h3 mb-2">{header}</h1>
         {#each proxies as proxy}
             <button 
                 class="btn btn-sm mb-1 variant-ghost-primary" 

@@ -39,18 +39,16 @@
             {/each}
         </span>
 
-        {#if unsaved}
-            <div class="px-2 p-1 h4 mt-4 w-[100%] flex justify-around">
-                <button on:click={save}
-                    class="btn variant-filled-primary">
-                    Save
-                </button>
-                
-                <button on:click={reset} 
-                    class="btn variant-filled-primary">
-                    Reset
-                </button>
-            </div>
-        {/if}
+        <div class="px-2 p-1 h4 my-2 w-[100%] flex justify-around">
+            <button on:click={save} disabled={!unsaved}
+                class="btn variant-filled-primary">
+                Save
+            </button>
+            
+            <button on:click={reset} disabled={!unsaved}
+                class="btn variant-filled-primary">
+                Reset
+            </button>
+        </div>
     </div>
 {/if}

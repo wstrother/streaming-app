@@ -69,7 +69,7 @@
         
     <ScalePanel />
 
-    <UnsavedPanel 
+    <UnsavedPanel header="Unsaved Layout Nodes:"
         on:clickProxy={({detail}) => activeNodeID.set(detail.id)}
         proxies={$layoutNodes.filter(n => n.unsaved)}/>
 {/if}
