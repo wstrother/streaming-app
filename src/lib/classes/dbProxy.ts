@@ -117,9 +117,3 @@ export function getProxies<T extends DatabaseTableName, R extends DatabaseRow<T>
 
     return proxies
 }
-
-function gcFor<T extends DatabaseTableName>(proxy: ProxyDBRow<T>, attr: DatabaseColumnName<T>) {
-    return () => {
-        proxy.getColumn(attr); // okay
-    }
-}
