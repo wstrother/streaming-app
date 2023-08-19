@@ -1,11 +1,23 @@
 <script lang='ts'>
     import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes"
     import { activeNodeID } from "$lib/stores/editor"
-    import { createEventDispatcher } from "svelte"
-    const dispatch = createEventDispatcher()
 
     let nodes: LayoutNodeProxy[]
     $: nodes = $layoutNodes.filter(n => n.unsaved)
+
+    const reset = (node: LayoutNodeProxy|null) => {
+        if (!node) return
+
+        node.resetChanges()
+    }
+
+    const save = async (node: LayoutNodeProxy|null) => {
+        if (!node) return
+
+        await node.saveChangesToDB()
+    }
+    const saveAll = () => {nodes.forEach(n=>save(n))}
+    const resetAll = () => {nodes.forEach(n=>reset(n))}
 </script>
 
 {#if nodes.length}
@@ -22,11 +34,11 @@
         {/each}
 
         <div class="flex justify-around mt-2">
-            <button on:click={() => dispatch('save_all')}
+            <button on:click={saveAll}
                 class="btn btn-sm variant-filled-primary">
                 Save All
             </button>
-            <button on:click={() => dispatch('reset_all')}
+            <button on:click={resetAll}
                 class="btn btn-sm variant-filled-primary">
                 Reset All
             </button>

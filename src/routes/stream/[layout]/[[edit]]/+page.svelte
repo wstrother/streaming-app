@@ -22,26 +22,11 @@
         if (edit) activeNodeID.set(null)
     }
     
-    const reset = (node: LayoutNodeProxy|null) => {
-        debugger
-        if (!node) return
-
-        node.resetChanges()
-    }
-
-    const save = async (node: LayoutNodeProxy|null) => {
-        if (!node) return
-
-        await node.saveChangesToDB()
-    }
-
     let unsavedNodes: LayoutNodeProxy[]
     $: unsavedNodes = $layoutNodes.filter(n=>n.unsaved)
-    const saveAll = () => {unsavedNodes.forEach(n=>save(n))}
-    const resetAll = () => {unsavedNodes.forEach(n=>reset(n))}
-
-    
 </script>
+
+
 <!-- 'Edit Layout' panel for switching to edit mode -->
 {#if !edit}
     <div id="open-editor-panel">
@@ -71,26 +56,23 @@
 
 <!-- Beginning of actual edit UI elements -->
 {#if edit}
-    <EditProxyPanel proxy={activeNode}
-        attrs={[
-            'top',
-            'left',
-            'content',
-            'width',
-            'height'
-        ]}
-        on:reset_changes={() => reset(activeNode)}
-        on:save_changes={() => save(activeNode)}/>
+    <div id="active-node-panel">
+        <EditProxyPanel proxy={activeNode}
+            attrs={[
+                'top',
+                'left',
+                'content',
+                'width',
+                'height'
+            ]}/>
+    </div>
         
     <ScalePanel />
 
-    <UnsavedPanel 
-        on:reset_all={resetAll}
-        on:save_all={saveAll}
-    />
+    <UnsavedPanel />
 {/if}
 
-<style>
+<style lang="postcss">
     #open-editor-panel {
         z-index: 2;
         opacity: 0;
@@ -109,5 +91,9 @@
         min-height: 1080px;
         user-select: none;
         z-index: -5;
+    }
+
+    #active-node-panel {
+        @apply absolute top-0 right-0
     }
 </style>
