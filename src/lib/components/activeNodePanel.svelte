@@ -1,12 +1,8 @@
 <script lang='ts'>
 	import type { LayoutNodeProxy } from "$lib/classes/layoutNodes";
     import { createEventDispatcher } from "svelte"
-    // import { activeNodeID } from "$lib/stores/editor"
-	// import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
-    const dispatch = createEventDispatcher()
 
-    // let activeNode: LayoutNodeProxy | null
-    // $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeNodeID)
+    const dispatch = createEventDispatcher()
     export let activeNode: LayoutNodeProxy | null
     
     let editing: boolean = false
