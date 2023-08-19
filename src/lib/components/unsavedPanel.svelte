@@ -1,32 +1,46 @@
 <script lang='ts'>
-    import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes"
-    import { activeNodeID } from "$lib/stores/editor"
+    import type { LayoutNodeProxy } from "$lib/classes/layoutNodes"
+	import type { StateVariableProxy } from "$lib/classes/stateVariables"
     import { createEventDispatcher } from "svelte"
     const dispatch = createEventDispatcher()
 
-    let nodes: LayoutNodeProxy[]
-    $: nodes = $layoutNodes.filter(n => n.unsaved)
+    export let proxies: LayoutNodeProxy[] | StateVariableProxy[]
+    export let header: string = "Unsaved:"
+
+    const reset = (proxy: LayoutNodeProxy|StateVariableProxy|null) => {
+        if (!proxy) return
+
+        proxy.resetChanges()
+    }
+
+    const save = async (proxy: LayoutNodeProxy|StateVariableProxy|null) => {
+        if (!proxy) return
+
+        await proxy.saveChangesToDB()
+    }
+    const saveAll = () => {proxies.forEach(n=>save(n))}
+    const resetAll = () => {proxies.forEach(n=>reset(n))}
 </script>
 
-{#if nodes.length}
+{#if proxies.length}
     <div id="unsaved-panel" 
         class="variant-glass-primary rounded px-4 pb-2 text-white flex flex-col">
 
-        <h1 class="h3 mb-2">Unsaved Changes:</h1>
-        {#each nodes as node}
+        <h1 class="h3 mb-2">{header}</h1>
+        {#each proxies as proxy}
             <button 
                 class="btn btn-sm mb-1 variant-ghost-primary" 
-                on:click={() => activeNodeID.set(node.id)}>
-                {node.key}
+                on:click={() => dispatch('clickProxy', proxy)}>
+                {proxy.key}
             </button>
         {/each}
 
         <div class="flex justify-around mt-2">
-            <button on:click={() => dispatch('save_all')}
+            <button on:click={saveAll}
                 class="btn btn-sm variant-filled-primary">
                 Save All
             </button>
-            <button on:click={() => dispatch('reset_all')}
+            <button on:click={resetAll}
                 class="btn btn-sm variant-filled-primary">
                 Reset All
             </button>

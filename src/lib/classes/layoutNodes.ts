@@ -1,21 +1,11 @@
 import { writable } from 'svelte/store'
 import { ProxyDBRow, getProxies, updateProxy } from './dbProxy'
-import type { DatabaseRow, DatabaseUpdate } from './dbProxy'
+import type { DatabaseColumnValue, DatabaseRow, DatabaseUpdate } from './dbProxy'
 
 export type LayoutNodeRow = DatabaseRow<'layout_nodes'>
 export type LayoutNodeUpdate = DatabaseUpdate<'layout_nodes'>
 
-
 export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
-    constructor(node: LayoutNodeRow, broadcast: Function | null) {
-        super(node, broadcast)
-    }
-
-    update(changes: LayoutNodeUpdate): LayoutNodeProxy {
-        super.update(changes)
-        return this
-    }
-
     get top(): number { return this.getColumn('top') }
     get left(): number { return this.getColumn('left') }
     get width(): number { return this.getColumn('width') }
@@ -55,10 +45,6 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
 
     setCSS(classes: string) {
         this.update({classes})
-    }
-    
-    resetChanges() {
-        super.resetChanges()
     }
 
     async saveChangesToDB() {

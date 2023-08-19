@@ -6,10 +6,6 @@ export type StateVariableRow = DatabaseRow<'state_variables'>
 export type StateVariableUpdate = DatabaseUpdate<'state_variables'>
 
 export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
-    constructor(stateVar: StateVariableRow, broadcast: Function | null) {
-        super(stateVar, broadcast)
-    }
-
     get value(): string | null {
         return this.getColumn('value')
     }
@@ -17,13 +13,17 @@ export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
     get key(): string {
         return this.getColumn('key')
     }
+
+    async saveChangesToDB() {
+        await super.saveChangesToDB('state_variables')
+    }
 }
     
 const varStore = writable<StateVariableProxy[]>([])
 
 
-function getVarById(vars: StateVariableProxy[], id: number | null): string | null {
-    const value = vars.filter(v => v.id===id)[0].value
+function getVarById(vars: StateVariableProxy[], id: number | null): StateVariableProxy | null {
+    const value = vars.filter(v => v.id===id)[0]
     if (value === undefined) return null
     return value
 }
@@ -39,7 +39,7 @@ export type VarStore = Readable<VarValue>
 
 function getVarStore(id: number|null): Readable<VarValue> {
     if (id) { return derived(varStore, (vars) => {
-        return getVarById(vars, id)
+        return getVarById(vars, id)?.value
     })
     } else return writable('')
 }

@@ -5,7 +5,7 @@
 
     import streamBG from "$lib/images/stream-bg.png"
     import LayoutNode from "$lib/components/layoutNode.svelte"
-    import ActiveNodePanel from "$lib/components/activeNodePanel.svelte"
+    import EditProxyPanel from "$lib/components/editProxyPanel.svelte"
     import ScalePanel from "$lib/components/scalePanel.svelte"
     import UnsavedPanel from "$lib/components/unsavedPanel.svelte"
     import { wheel } from "$lib/stores/editor.js"
@@ -22,26 +22,9 @@
         if (edit) activeNodeID.set(null)
     }
     
-    const reset = (node: LayoutNodeProxy|null) => {
-        debugger
-        if (!node) return
-
-        node.resetChanges()
-    }
-
-    const save = async (node: LayoutNodeProxy|null) => {
-        if (!node) return
-
-        await node.saveChangesToDB()
-    }
-
-    let unsavedNodes: LayoutNodeProxy[]
-    $: unsavedNodes = $layoutNodes.filter(n=>n.unsaved)
-    const saveAll = () => {unsavedNodes.forEach(n=>save(n))}
-    const resetAll = () => {unsavedNodes.forEach(n=>reset(n))}
-
-    
 </script>
+
+
 <!-- 'Edit Layout' panel for switching to edit mode -->
 {#if !edit}
     <div id="open-editor-panel">
@@ -71,19 +54,25 @@
 
 <!-- Beginning of actual edit UI elements -->
 {#if edit}
-    <ActiveNodePanel 
-        on:reset_active={() => reset(activeNode)}
-        on:save_active={() => save(activeNode)}/>
+    <div id="active-node-panel">
+        <EditProxyPanel proxy={activeNode}
+            attrs={[
+                'top',
+                'left',
+                'content',
+                'width',
+                'height'
+            ]}/>
+    </div>
         
     <ScalePanel />
 
-    <UnsavedPanel 
-        on:reset_all={resetAll}
-        on:save_all={saveAll}
-    />
+    <UnsavedPanel header="Unsaved Layout Nodes:"
+        on:clickProxy={({detail}) => activeNodeID.set(detail.id)}
+        proxies={$layoutNodes.filter(n => n.unsaved)}/>
 {/if}
 
-<style>
+<style lang="postcss">
     #open-editor-panel {
         z-index: 2;
         opacity: 0;
@@ -102,5 +91,9 @@
         min-height: 1080px;
         user-select: none;
         z-index: -5;
+    }
+
+    #active-node-panel {
+        @apply absolute top-0 right-0
     }
 </style>

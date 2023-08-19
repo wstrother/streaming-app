@@ -5,7 +5,7 @@ export type DatabaseTableName = keyof Database['public']['Tables']
 export type DatabaseTable = Database['public']['Tables']
 export type DatabaseRow<T extends DatabaseTableName> = DatabaseTable[T]['Row']
 export type DatabaseUpdate<T extends DatabaseTableName> = DatabaseTable[T]['Update']
-export type DatabaseColumnName<T extends DatabaseTableName> = keyof DatabaseRow<T> & keyof DatabaseUpdate<T>
+export type DatabaseColumnName<T extends DatabaseTableName> = T extends DatabaseTableName ? keyof DatabaseRow<T> & keyof DatabaseUpdate<T> : never
 export type DatabaseColumnValue<T extends DatabaseTableName, C extends DatabaseColumnName<T>> = DatabaseRow<T>[C]
 
 
