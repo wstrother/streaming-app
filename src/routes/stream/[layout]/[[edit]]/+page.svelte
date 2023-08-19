@@ -71,7 +71,7 @@
 
 <!-- Beginning of actual edit UI elements -->
 {#if edit}
-    <ActiveNodePanel 
+    <ActiveNodePanel {activeNode}
         on:reset_active={() => reset(activeNode)}
         on:save_active={() => save(activeNode)}/>
         
