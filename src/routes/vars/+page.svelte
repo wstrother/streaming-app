@@ -2,7 +2,6 @@
     import { stateVariables } from "$lib/classes/stateVariables"
     import ProxyInput from "$lib/components/proxyInput.svelte"
 
-    const valueType = (v: string|number|null) => isNaN(Number(String(v))) ? 'string' : 'number'
 </script>
 
 <div id="vars-container">
@@ -14,7 +13,7 @@
             <!-- Type '"key"' is not assignable to type '"created_at" | "id" | "user_id"'.ts(2322) -->
             <ProxyInput proxy={sv} attr='key' />
 
-            <ProxyInput proxy={sv} attr='value' inputType={valueType(sv.value)} />
+            <ProxyInput proxy={sv} attr='value' />
 
             {sv.unsaved}
         </div>

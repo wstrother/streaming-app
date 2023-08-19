@@ -1,10 +1,13 @@
 <script lang="ts">
-	import type { DatabaseColumnName, DatabaseTableName, ProxyDBRow } from "$lib/classes/dbProxy";
+	import type { LayoutNodeProxy } from "$lib/classes/layoutNodes";
+	import type { StateVariableProxy } from "$lib/classes/stateVariables";
     
-    export let proxy: ProxyDBRow<DatabaseTableName>
-    export let attr: DatabaseColumnName<DatabaseTableName>
-    export let inputType: 'string'|'number' = 'string'
+    export let proxy: LayoutNodeProxy | StateVariableProxy 
+    // export let attr: DatabaseColumnName<DatabaseTableName>
+    export let attr: string
 
+    const valueType = (v: any) => isNaN(Number(String(v))) ? 'string' : 'number'
+    let inputType: 'string'|'number' = valueType(proxy.getColumn(attr))
     let fieldValue: string | number | null
     let editing = false
 
@@ -14,7 +17,7 @@
     }
     
     let elId = `${attr}-input-${proxy.id}`
-    let inputCls = "input variant-form-material"
+    let inputCls = "input variant-form-material text-sm pl-1"
 
     const startEditing = () => {
         editing = true
@@ -34,7 +37,7 @@
 </script>
 
 <label for={elId} class="label flex items-center w-[100%]">
-    <span class="mr-4">{attr}:</span>
+    <span class="mr-4 text-lg">{attr}:</span>
 
     {#if inputType === 'string'}
         <input name={elId} class={inputCls} 
