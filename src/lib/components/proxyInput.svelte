@@ -38,7 +38,7 @@
     <span class="mr-4 text-lg">{attr}:</span>
 
     {#if inputType === 'string'}
-        <input name={elId} class={inputCls} 
+        <input id={elId} name={elId} class={inputCls} 
             on:focus={startEditing}
             on:blur={endEditing}
             on:keyup={onkey}
