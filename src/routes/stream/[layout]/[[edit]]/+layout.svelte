@@ -30,7 +30,7 @@
 {#if data.edit}
     <div id='faux-bg'/>
     <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div id='scale-bg' on:wheel={wheel} on:mousedown={() => activeNodeID.set(null)}/>
+    <div id='scale-bg' on:wheel|preventDefault={wheel} on:mousedown={() => activeNodeID.set(null)}/>
 {/if}
 
 <slot />

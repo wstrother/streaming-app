@@ -22,8 +22,6 @@
         if (edit) activeNodeID.set(null)
     }
     
-    let unsavedNodes: LayoutNodeProxy[]
-    $: unsavedNodes = $layoutNodes.filter(n=>n.unsaved)
 </script>
 
 

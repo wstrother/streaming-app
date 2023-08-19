@@ -1,5 +1,6 @@
 <script lang="ts">
     import { stateVariables, type StateVariableUpdate } from '$lib/classes/stateVariables.js'
+	import { activeVarId } from '$lib/stores/editor.js';
     import { supabase } from '$lib/supabaseClient.js'
 
     export let data
@@ -13,12 +14,12 @@
                 stateVariables.updateVar($stateVariables, payload.new as StateVariableUpdate)
             }
         }).subscribe()
-    
-
 </script>
 
-<div id='faux-bg'/>
-
+<div id='faux-bg' />
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div id='scale-bg' on:mousedown={() => activeVarId.set(null)}/>
 <slot />
 
 <style>
@@ -28,5 +29,11 @@
         width: 100vw;
         height: 100vh;
         z-index: -100;
+    }
+
+    #scale-bg {
+        position: absolute;
+        width: 100vw;
+        height: 100vw;
     }
 </style>

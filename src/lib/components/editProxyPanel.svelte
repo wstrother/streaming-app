@@ -39,7 +39,7 @@
             {/each}
         </span>
 
-        <div class="px-2 p-1 h4 my-2 w-[100%] flex justify-around">
+        <div id="save-panel" class={!unsaved ? "opacity-[50%]" : ''}>
             <button on:click={save} disabled={!unsaved}
                 class="btn variant-filled-primary">
                 Save
@@ -52,3 +52,9 @@
         </div>
     </div>
 {/if}
+
+<style lang="postcss">
+    #save-panel {
+        @apply px-2 p-1 h4 my-2 w-[100%] flex justify-around
+    }
+</style>
