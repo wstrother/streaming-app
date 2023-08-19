@@ -69,7 +69,7 @@
         
     <ScalePanel />
 
-    <UnsavedPanel />
+    <UnsavedPanel proxies={$layoutNodes.filter(n => n.unsaved)}/>
 {/if}
 
 <style lang="postcss">

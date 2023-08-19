@@ -1,31 +1,31 @@
 <script lang='ts'>
-    import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes"
+    import type { LayoutNodeProxy } from "$lib/classes/layoutNodes"
+	import type { StateVariableProxy } from "$lib/classes/stateVariables";
     import { activeNodeID } from "$lib/stores/editor"
 
-    let nodes: LayoutNodeProxy[]
-    $: nodes = $layoutNodes.filter(n => n.unsaved)
+    export let proxies: LayoutNodeProxy[] | StateVariableProxy[]
 
-    const reset = (node: LayoutNodeProxy|null) => {
-        if (!node) return
+    const reset = (proxy: LayoutNodeProxy|StateVariableProxy|null) => {
+        if (!proxy) return
 
-        node.resetChanges()
+        proxy.resetChanges()
     }
 
-    const save = async (node: LayoutNodeProxy|null) => {
-        if (!node) return
+    const save = async (proxy: LayoutNodeProxy|StateVariableProxy|null) => {
+        if (!proxy) return
 
-        await node.saveChangesToDB()
+        await proxy.saveChangesToDB()
     }
-    const saveAll = () => {nodes.forEach(n=>save(n))}
-    const resetAll = () => {nodes.forEach(n=>reset(n))}
+    const saveAll = () => {proxies.forEach(n=>save(n))}
+    const resetAll = () => {proxies.forEach(n=>reset(n))}
 </script>
 
-{#if nodes.length}
+{#if proxies.length}
     <div id="unsaved-panel" 
         class="variant-glass-primary rounded px-4 pb-2 text-white flex flex-col">
 
         <h1 class="h3 mb-2">Unsaved Changes:</h1>
-        {#each nodes as node}
+        {#each proxies as node}
             <button 
                 class="btn btn-sm mb-1 variant-ghost-primary" 
                 on:click={() => activeNodeID.set(node.id)}>
