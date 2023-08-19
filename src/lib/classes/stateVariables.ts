@@ -13,6 +13,10 @@ export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
     get key(): string {
         return this.getColumn('key')
     }
+
+    async saveChangesToDB() {
+        await super.saveChangesToDB('state_variables')
+    }
 }
     
 const varStore = writable<StateVariableProxy[]>([])

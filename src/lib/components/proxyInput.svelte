@@ -1,11 +1,9 @@
 <script lang="ts">
-	import type { LayoutNodeProxy } from "$lib/classes/layoutNodes";
-	import type { StateVariableProxy } from "$lib/classes/stateVariables";
+	import type { DatabaseColumnName, DatabaseTableName, ProxyDBRow } from "$lib/classes/dbProxy";
     
-    export let proxy: LayoutNodeProxy | StateVariableProxy 
-    // export let attr: DatabaseColumnName<DatabaseTableName>
-    export let attr: string
-
+    export let proxy: ProxyDBRow<DatabaseTableName>
+    export let attr: DatabaseColumnName<DatabaseTableName>
+        
     const valueType = (v: any) => isNaN(Number(String(v))) ? 'string' : 'number'
     let inputType: 'string'|'number' = valueType(proxy.getColumn(attr))
     let fieldValue: string | number | null
