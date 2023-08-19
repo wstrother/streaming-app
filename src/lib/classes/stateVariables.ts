@@ -6,10 +6,6 @@ export type StateVariableRow = DatabaseRow<'state_variables'>
 export type StateVariableUpdate = DatabaseUpdate<'state_variables'>
 
 export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
-    constructor(stateVar: StateVariableRow, broadcast: Function | null) {
-        super(stateVar, broadcast)
-    }
-
     get value(): string | null {
         return this.getColumn('value')
     }

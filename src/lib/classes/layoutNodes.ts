@@ -7,15 +7,6 @@ export type LayoutNodeUpdate = DatabaseUpdate<'layout_nodes'>
 type LayoutNodeColNames = 'classes' | 'content' | 'created_at' | 'height' | 'id' | 'key' | 'layout_id' | 'left' | 'top' | 'user_id' | 'variable_id' | 'width'
 
 export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
-    constructor(node: LayoutNodeRow, broadcast: Function | null) {
-        super(node, broadcast)
-    }
-
-    update(changes: LayoutNodeUpdate): LayoutNodeProxy {
-        super.update(changes)
-        return this
-    }
-
     getColumn<C extends LayoutNodeColNames>(name: C): DatabaseColumnValue<'layout_nodes', C> {
         return super.getColumn(name)
     }
