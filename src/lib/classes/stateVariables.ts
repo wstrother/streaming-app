@@ -14,6 +14,10 @@ export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
         return this.getColumn('key')
     }
 
+    get type(): string {
+        return this.getColumn('type')
+    }
+
     async saveChangesToDB() {
         await super.saveChangesToDB('state_variables')
     }
