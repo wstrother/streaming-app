@@ -1,20 +1,28 @@
 <script lang="ts">
-	import type { DatabaseColumnName, DatabaseTableName, ProxyDBRow } from "$lib/classes/dbProxy";
+	import type { DatabaseColumnName, DatabaseTableName, ProxyAttr, ProxyDBRow, stateVarTypes } from "$lib/classes/dbProxy";
     
     export let proxy: ProxyDBRow<DatabaseTableName>
-    export let attr: DatabaseColumnName<DatabaseTableName>
-        
-    const valueType = (v: any) => isNaN(Number(String(v))) ? 'string' : 'number'
-    let inputType: 'string'|'number' = valueType(proxy.getColumn(attr))
+    export let attr: ProxyAttr
+
+    let attrName: DatabaseColumnName<DatabaseTableName>
+    let inputType: stateVarTypes = 'string'
     let fieldValue: string | number | null
+
+    if (typeof(attr) === 'object') {
+        attrName = attr[0]
+        inputType = attr[1] as stateVarTypes
+    } else {
+        attrName = attr
+    }
+        
     let editing = false
 
     $: if (!editing) {
-        fieldValue = proxy.getColumn(attr) as string | number | null
+        fieldValue = proxy.getColumn(attrName) as string | number | null
         fieldValue = fieldValue ?? ''
     }
     
-    let elId = `${attr}-input-${proxy.id}`
+    let elId = `${attrName}-input-${proxy.id}`
     let inputCls = "input variant-form-material text-sm pl-1"
 
     const startEditing = () => {
@@ -23,7 +31,7 @@
 
     const endEditing = () => {
         editing = false
-        proxy.setColumn(attr, fieldValue)
+        proxy.setColumn(attrName, fieldValue)
     }
 
     const onkey = (e: KeyboardEvent) => {

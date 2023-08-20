@@ -1,6 +1,6 @@
 import { writable, derived, type Readable } from 'svelte/store'
 import { ProxyDBRow, getProxies, updateProxy } from './dbProxy'
-import type { DatabaseRow, DatabaseUpdate } from './dbProxy'
+import type { DatabaseRow, DatabaseUpdate, stateVarTypes } from './dbProxy'
 
 export type StateVariableRow = DatabaseRow<'state_variables'>
 export type StateVariableUpdate = DatabaseUpdate<'state_variables'>
@@ -14,8 +14,8 @@ export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
         return this.getColumn('key')
     }
 
-    get type(): string {
-        return this.getColumn('type')
+    get type(): stateVarTypes {
+        return this.getColumn('type') as stateVarTypes
     }
 
     async saveChangesToDB() {
