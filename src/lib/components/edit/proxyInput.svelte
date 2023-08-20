@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { DatabaseColumnName, DatabaseTableName, ProxyAttr, ProxyDBRow, stateVarTypes } from "$lib/classes/dbProxy";
+	import type { DatabaseColumnName, DatabaseTableName, ProxyAttr, ProxyDBRow, stateVarTypes } from "$lib/classes/dbProxy"
     
     export let proxy: ProxyDBRow<DatabaseTableName>
     export let attr: ProxyAttr

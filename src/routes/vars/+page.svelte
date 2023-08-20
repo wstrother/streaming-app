@@ -1,6 +1,6 @@
 <script lang="ts">
     import { StateVariableProxy, stateVariables } from "$lib/classes/stateVariables"
-	import EditVarPanel from "$lib/components/editVarPanel.svelte";
+	import EditVarPanel from "$lib/components/edit/editVarPanel.svelte"
 	import UnsavedPanel from "$lib/components/unsavedPanel.svelte"
     import { activeVarId } from "$lib/stores/editor"
 
