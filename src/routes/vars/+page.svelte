@@ -1,6 +1,6 @@
 <script lang="ts">
     import { StateVariableProxy, stateVariables } from "$lib/classes/stateVariables"
-	import EditProxyPanel from "$lib/components/editProxyPanel.svelte"
+	import EditVarPanel from "$lib/components/edit/editVarPanel.svelte"
 	import UnsavedPanel from "$lib/components/unsavedPanel.svelte"
     import { activeVarId } from "$lib/stores/editor"
 
@@ -27,9 +27,9 @@
     {/each}
 </div>
 
-{#if activeVarId}  
+{#if activeVar}  
     <div id="active-var-panel">
-        <EditProxyPanel proxy={activeVar} attrs={['key', 'value']} />
+        <EditVarPanel proxy={activeVar} />
     </div>
 {/if}
 

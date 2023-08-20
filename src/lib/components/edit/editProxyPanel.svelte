@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import type { LayoutNodeProxy } from "$lib/classes/layoutNodes";
-	import ProxyInput from "./proxyInput.svelte";
-	import type { StateVariableProxy } from "$lib/classes/stateVariables";
-	import type { DatabaseColumnName, DatabaseTableName } from "$lib/classes/dbProxy";
+	import type { LayoutNodeProxy } from "$lib/classes/layoutNodes"
+	import ProxyInput from "./proxyInput.svelte"
+	import type { StateVariableProxy } from "$lib/classes/stateVariables"
+	import type { ProxyAttrs } from "$lib/classes/dbProxy"
 
     export let proxy: LayoutNodeProxy | StateVariableProxy | null
-    export let attrs: DatabaseColumnName<DatabaseTableName>[] = []
+    export let attrs: ProxyAttrs = []
     
     let unsaved: boolean
     $: unsaved = proxy?.unsaved || false

@@ -5,7 +5,7 @@
 
     import streamBG from "$lib/images/stream-bg.png"
     import LayoutNode from "$lib/components/layoutNode.svelte"
-    import EditProxyPanel from "$lib/components/editProxyPanel.svelte"
+    import EditNodePanel from "$lib/components/edit/editNodePanel.svelte"
     import ScalePanel from "$lib/components/scalePanel.svelte"
     import UnsavedPanel from "$lib/components/unsavedPanel.svelte"
     import { wheel } from "$lib/stores/editor.js"
@@ -54,15 +54,11 @@
 
 <!-- Beginning of actual edit UI elements -->
 {#if edit}
+
     <div id="active-node-panel">
-        <EditProxyPanel proxy={activeNode}
-            attrs={[
-                'top',
-                'left',
-                'content',
-                'width',
-                'height'
-            ]}/>
+        {#if activeNode}
+            <EditNodePanel proxy={activeNode} />
+        {/if}
     </div>
         
     <ScalePanel />

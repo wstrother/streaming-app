@@ -8,6 +8,12 @@ export type DatabaseUpdate<T extends DatabaseTableName> = DatabaseTable[T]['Upda
 export type DatabaseColumnName<T extends DatabaseTableName> = T extends DatabaseTableName ? keyof DatabaseRow<T> & keyof DatabaseUpdate<T> : never
 export type DatabaseColumnValue<T extends DatabaseTableName, C extends DatabaseColumnName<T>> = DatabaseRow<T>[C]
 
+export type stateVarTypes = "string"|"number"|"boolean"
+type colName = DatabaseColumnName<DatabaseTableName>
+type colNameType = [colName, stateVarTypes]
+export type ProxyAttr = colName|colNameType
+export type ProxyAttrs = ProxyAttr[]
+
 
 export class ProxyDBRow<T extends DatabaseTableName> {
     data: DatabaseRow<T>

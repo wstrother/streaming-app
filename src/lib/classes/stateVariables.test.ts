@@ -11,13 +11,15 @@ describe('StateVariableProxy', () => {
             user_id: "1",
             created_at: "",
             value: "cool",
-            key: "test"
+            key: "test",
+            type: "string"
         }, broadcast)
     })
 
-    test("that it exposes its value and key as properties", () => {
+    test("that it exposes its value, type and key as properties", () => {
         expect(varProxy.key).toBe("test")
         expect(varProxy.value).toBe("cool")
+        expect(varProxy.type).toBe("string")
     })
 })
 
