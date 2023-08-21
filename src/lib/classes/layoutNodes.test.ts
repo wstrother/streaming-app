@@ -71,6 +71,8 @@ describe('LayoutNodeProxy', () => {
         expect(nodeProxy.interpolate(interp)).toBe("varkey:")
         nodeProxy.setContent("{var}")
         expect(nodeProxy.interpolate(interp)).toBe("interpolated!")
+        nodeProxy.setContent("{var2}")
+        expect(nodeProxy.interpolate(interp)).toBe("{var2}")
     })
 
     // test("That it saves its changes to the DB by updating the 'layout_nodes' table", () => {
