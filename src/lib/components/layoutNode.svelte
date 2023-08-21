@@ -63,7 +63,7 @@
         layout-node"
 >
     <span class="layout-node-content">
-        {node.interpolate(interpVars) ?? ''}
+        {content ?? ''}
     </span>
 
     {#if node.variable_id}
