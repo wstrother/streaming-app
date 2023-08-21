@@ -32,8 +32,8 @@ function getVarById(vars: StateVariableProxy[], id: number | null): StateVariabl
     return value
 }
 
-function getVarByKey(vars: StateVariableProxy[], key: string) {
-    const value = vars.filter(v => v.key===key)[0].value
+function getVarByKey(vars: StateVariableProxy[], key: string): string|null {
+    const value = vars.filter(v => v.key===key)[0]?.value
     if (value === undefined) return null
     return value
 }

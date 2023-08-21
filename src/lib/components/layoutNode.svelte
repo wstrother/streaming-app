@@ -5,14 +5,21 @@
     
     export let node: LayoutNodeProxy
     export let edit: boolean
-    const varValue = stateVariables.getVarStore(node.variable_id)
 
+    // handle var values / interpolation
+    const varValue = stateVariables.getVarStore(node.variable_id)
+    const interpVars = (key: string) => stateVariables.getVarByKey($stateVariables, key)
+    let content: string
+    $: content = node.interpolate(interpVars)
+
+    // set up positional CSS
     let posCSS: string, wCSS: string, hCSS: string, inlineCSS: string
     $: posCSS = `top: ${node.top}px; left: ${node.left}px;`
     $: wCSS = node.width ? `width: ${node.width}px;` : ''
     $: hCSS = node.height ? `height: ${node.height}px;` : ''
     $: inlineCSS = `${posCSS}${wCSS}${hCSS}`
     
+    // handle movement / positioning
     let moving: boolean = false
     let moveFactor: number = 1
     $: moveFactor = 1 / ($scalePercent / 100)
@@ -56,7 +63,7 @@
         layout-node"
 >
     <span class="layout-node-content">
-        {node.content ?? ''}
+        {node.interpolate(interpVars) ?? ''}
     </span>
 
     {#if node.variable_id}

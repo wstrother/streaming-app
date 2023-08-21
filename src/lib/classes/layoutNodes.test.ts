@@ -64,11 +64,19 @@ describe('LayoutNodeProxy', () => {
         expect(nodeProxy.classes).toBe('bg-primary-800')
     })
 
+    test("That it can interpolate its content with a getVarByKey function", () => {
+        const interp = (key: string): string|undefined => {
+            if (key === "var") return "interpolated!"
+        }
+        expect(nodeProxy.interpolate(interp)).toBe("varkey:")
+        nodeProxy.setContent("{var}")
+        expect(nodeProxy.interpolate(interp)).toBe("interpolated!")
+        nodeProxy.setContent("{var2}")
+        expect(nodeProxy.interpolate(interp)).toBe("{var2}")
+    })
+
     // test("That it saves its changes to the DB by updating the 'layout_nodes' table", () => {
         
     // })
 
-    // TODO: refactor so self returns not necessary?
 })
-
-// TODO test writeable support functions
