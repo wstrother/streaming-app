@@ -31,7 +31,7 @@
             moving = true
             activeNodeID.set(node.id)
         }
-        
+
         // stupid dom hack
         if (edit && child) {
             setTimeout(() => activeNodeID.set(node.id), depth-1)
@@ -59,7 +59,7 @@
     on:mousedown|preventDefault={start} 
     id="layoutNode-{node.key}"
     style={inlineCSS}
-    class="{node.classes} {child ? '' : 'absolute'}
+    class="{node.classes} {child ? 'relative' : 'absolute'}
         min-w-content
         min-h-content
         select-none
@@ -68,9 +68,11 @@
         {$activeNodeID === node.id ? 'layout-node-active' : ''}
         layout-node"
 >
-    <span class="layout-node-content">
-        {content ?? ''}
-    </span>
+    {#if content}
+        <span class="layout-node-content">
+            {content ?? ''}
+        </span>
+    {/if}
 
     {#if node.variable_id}
         <span class="layout-node-var">
