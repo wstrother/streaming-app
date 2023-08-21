@@ -67,8 +67,8 @@
     </span>
 
     {#if node.variable_id}
-    <span class="layout-node-var">
-        {$varValue}
-    </span>
+        <span class="layout-node-var">
+            {$varValue}
+        </span>
     {/if}
 </div>
