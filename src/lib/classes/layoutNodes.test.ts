@@ -19,6 +19,8 @@ describe('LayoutNodeProxy', () => {
             user_id: "1",
             variable_id: 1,
             width: 100,
+            sibling_order: null,
+            parent_node_id: null
         }, broadcast)
     })
 
@@ -75,8 +77,11 @@ describe('LayoutNodeProxy', () => {
         expect(nodeProxy.interpolate(interp)).toBe("{var2}")
     })
 
-    // test("That it saves its changes to the DB by updating the 'layout_nodes' table", () => {
+
+    // TODO: test("That it saves its changes to the DB by updating the 'layout_nodes' table", () => {
         
     // })
+
+    // TODO: tests for parent / child nodes, sibling order
 
 })

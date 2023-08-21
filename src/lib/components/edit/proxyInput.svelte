@@ -43,7 +43,7 @@
 </script>
 
 <label for={elId} class="label flex items-center w-[100%]">
-    <span class="mr-4 text-lg">{attr}:</span>
+    <span class="mr-4 text-lg">{attrName}:</span>
 
     {#if inputType === 'string'}
         <input id={elId} name={elId} class={inputCls} 
