@@ -52,7 +52,7 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
         await super.saveChangesToDB('layout_nodes')
     }
 
-    interpolate(getVarByKey: (key: string) => string|null): string {
+    interpolate(getVarByKey: (key: string) => string|undefined|null): string {
         return this.content.replace(/{([^}]+)}/g, (match: string, key: string) => {
             const replacement = getVarByKey(key)
         
