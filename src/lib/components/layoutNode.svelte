@@ -5,6 +5,8 @@
     
     export let node: LayoutNodeProxy
     export let edit: boolean
+    export let child: boolean = false
+    export let depth: number = 0
 
     // handle var values / interpolation
     const varValue = stateVariables.getVarStore(node.variable_id)
@@ -25,14 +27,19 @@
     $: moveFactor = 1 / ($scalePercent / 100)
 
     function start() {
-        if (edit) {
-            moving = true;
+        if (edit && !child) {
+            moving = true
             activeNodeID.set(node.id)
+        }
+        
+        // stupid dom hack
+        if (edit && child) {
+            setTimeout(() => activeNodeID.set(node.id), depth-1)
         }
 	}
 	
 	function stop() {
-		moving = false;
+		moving = false
 	}
 	
 	function move(e: MouseEvent) {
@@ -52,10 +59,9 @@
     on:mousedown|preventDefault={start} 
     id="layoutNode-{node.key}"
     style={inlineCSS}
-    class="{node.classes}
+    class="{node.classes} {child ? '' : 'absolute'}
         min-w-content
         min-h-content
-        absolute
         select-none
         cursor-pointer
         {edit ? 'layout-node-edit' : ''}
@@ -71,4 +77,8 @@
             {$varValue}
         </span>
     {/if}
+
+    {#each node.children as child}
+        <svelte:self node={child} {edit} child={true} depth={depth + 1}/>
+    {/each}
 </div>

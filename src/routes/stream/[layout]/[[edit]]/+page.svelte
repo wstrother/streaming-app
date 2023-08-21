@@ -17,7 +17,6 @@
     let activeNode: LayoutNodeProxy | null 
     $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeNodeID)
 
-
     const unselectNode = () => {
         if (edit) activeNodeID.set(null)
     }
@@ -47,7 +46,7 @@
         <img src={streamBG} alt="stream bg" on:mousedown|preventDefault={() => unselectNode()}/>
     {/if}
 
-    {#each $layoutNodes as node}
+    {#each $layoutNodes.filter(n => !n.parent_node_id) as node}
         <LayoutNode {node} {edit}/>
     {/each}
 </div>

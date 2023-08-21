@@ -4,13 +4,22 @@
 	import EditProxyPanel from "./editProxyPanel.svelte"
 
     export let proxy: LayoutNodeProxy
-    let attrs: ProxyAttrs = [
-        ['top', 'number'],
-        ['left', 'number'],
-        'content',
-        ['width', 'number'],
-        ['height', 'number']
-    ]
+    let attrs: ProxyAttrs
+    if (proxy.parent_node_id) {
+        attrs = [
+            ['top', 'number'],
+            ['left', 'number'],
+            'content',
+            ['width', 'number'],
+            ['height', 'number']
+        ]
+    } else {
+        attrs = [
+            'content',
+            ['width', 'number'],
+            ['height', 'number']
+        ]
+    }        
 
 </script>
 

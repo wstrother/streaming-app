@@ -6,6 +6,8 @@ export type LayoutNodeRow = DatabaseRow<'layout_nodes'>
 export type LayoutNodeUpdate = DatabaseUpdate<'layout_nodes'>
 
 export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
+    children: LayoutNodeProxy[] = []
+
     get top(): number { return this.getColumn('top') }
     get left(): number { return this.getColumn('left') }
     get width(): number { return this.getColumn('width') }
@@ -63,6 +65,10 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
             }
         })
     }
+
+    addChild(node: LayoutNodeProxy) {
+        this.children.push(node)
+    }
 }
 
 
@@ -79,9 +85,18 @@ export const layoutNodes = {
     },
 
     getNodes: (nodes: LayoutNodeRow[]): LayoutNodeProxy[] => {
-        return getProxies<'layout_nodes', LayoutNodeRow, LayoutNodeProxy>(
+        const proxies = getProxies<'layout_nodes', LayoutNodeRow, LayoutNodeProxy>(
             nodes, set, LayoutNodeProxy
         )
+
+        proxies.forEach(n => {
+            if (!n.parent_node_id) return
+
+            const parent = proxies.filter(p=>p.id===n.parent_node_id)[0] ?? null
+            if (parent) parent.addChild(n)
+        })
+
+        return proxies
     },
 
     getNodeByID: (nodes: LayoutNodeProxy[], id: number|null): LayoutNodeProxy|null => {
