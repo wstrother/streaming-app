@@ -26,15 +26,10 @@
     let moveFactor: number = 1
     $: moveFactor = 1 / ($scalePercent / 100)
 
-    function start() {
-        if (edit && !child) {
-            moving = true
+    function start(e: MouseEvent) {
+        if (edit) {
             activeNodeID.set(node.id)
-        }
-
-        // stupid dom hack
-        if (edit && child) {
-            setTimeout(() => activeNodeID.set(node.id), depth-1)
+            if (!child) moving = true
         }
 	}
 	
@@ -56,10 +51,10 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <!-- svelte-ignore a11y-interactive-supports-focus -->
 <div
-    on:mousedown|preventDefault={start} 
+    on:mousedown|preventDefault|stopPropagation={start} 
     id="layoutNode-{node.key}"
     style={inlineCSS}
-    class="{node.classes} {child ? 'relative' : 'absolute'}
+    class="{node.classes}
         min-w-content
         min-h-content
         select-none
