@@ -59,7 +59,7 @@
     on:mousedown|preventDefault={start} 
     id="layoutNode-{node.key}"
     style={inlineCSS}
-    class="{node.classes} {child ? 'relative' : 'absolute'}
+    class="{node.classes}
         min-w-content
         min-h-content
         select-none
