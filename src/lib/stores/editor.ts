@@ -15,3 +15,11 @@ export const wheel = (e: WheelEvent) => {
         scalePercent.set(Math.min(value + 5, 100))
     }
 }
+
+export type ctxOptions = {
+    hidden?: boolean
+    top?: number
+    left?: number
+}
+
+export const ctxMenu = writable<ctxOptions>({})

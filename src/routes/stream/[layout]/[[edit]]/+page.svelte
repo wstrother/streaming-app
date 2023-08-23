@@ -9,6 +9,7 @@
     import ScalePanel from "$lib/components/scalePanel.svelte"
     import UnsavedPanel from "$lib/components/unsavedPanel.svelte"
     import { wheel } from "$lib/stores/editor.js"
+	import ContextMenu from "$lib/components/contextMenu.svelte";
 
     export let data
     let edit: boolean
@@ -22,6 +23,8 @@
     }
 
 </script>
+
+<ContextMenu />
 
 
 <!-- 'Edit Layout' panel for switching to edit mode -->

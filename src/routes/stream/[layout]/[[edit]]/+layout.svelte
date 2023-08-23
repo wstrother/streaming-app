@@ -1,7 +1,7 @@
 <script lang="ts">
     import { layoutNodes, type LayoutNodeUpdate } from '$lib/classes/layoutNodes.js'
     import { stateVariables, type StateVariableUpdate } from '$lib/classes/stateVariables.js'
-    import { activeNodeID } from '$lib/stores/editor'
+    import { activeNodeID, ctxMenu } from '$lib/stores/editor'
     import { supabase } from '$lib/supabaseClient.js'
 	import { wheel } from '$lib/stores/editor'
     export let data
@@ -26,7 +26,22 @@
             }
         }).subscribe()
 
+    const rightClick = (e: MouseEvent) => {
+        ctxMenu.set({
+            hidden: !$ctxMenu.hidden,
+            top: e.clientY,
+            left: e.clientX
+        })
+    }
+
+    const leftClick = (e: MouseEvent) => {
+        if (e.button === 0) {
+            ctxMenu.set({hidden: !$ctxMenu.hidden}) 
+        }
+    }
 </script>
+
+<svelte:window on:contextmenu={rightClick} on:mousedown={leftClick}/>
 
 {#if data.edit}
     {#if !data.inOBS}
