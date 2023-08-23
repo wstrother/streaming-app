@@ -2,6 +2,8 @@
     import type { LayoutNodeProxy } from '$lib/classes/layoutNodes'
     import { stateVariables } from '$lib/classes/stateVariables'
     import { activeNodeID, scalePercent } from '$lib/stores/editor'
+    import { createEventDispatcher } from 'svelte'
+    const dispatch = createEventDispatcher()
     
     export let node: LayoutNodeProxy
     export let edit: boolean
@@ -26,14 +28,21 @@
     let moveFactor: number = 1
     $: moveFactor = 1 / ($scalePercent / 100)
 
-    function start(e: MouseEvent) {
+    function isClicked(e: MouseEvent) {
         if (edit) {
             activeNodeID.set(node.id)
-            if (!child) moving = true
+            startMovement()
         }
 	}
 	
-	function stop() {
+    function startMovement() {
+        if (edit) {
+            if (!child) moving = true
+            else dispatch('dragParent')
+        }
+    }
+
+	function stopMovement() {
 		moving = false
 	}
 	
@@ -41,17 +50,17 @@
         if (moving) {
             node.move(e.movementX * moveFactor, e.movementY * moveFactor)
         }
-	}	
+	}
 
 </script>
 
-<svelte:window on:mouseup={stop} on:mousemove={move}  />
+<svelte:window on:mouseup={stopMovement} on:mousemove={move}  />
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <!-- svelte-ignore a11y-interactive-supports-focus -->
 <div
-    on:mousedown|preventDefault|stopPropagation={start} 
+    on:mousedown|preventDefault|stopPropagation={isClicked} 
     id="layoutNode-{node.key}"
     style={inlineCSS}
     class="{node.classes}
@@ -76,6 +85,12 @@
     {/if}
 
     {#each node.children as child}
-        <svelte:self node={child} {edit} child={true} depth={depth + 1}/>
+        <svelte:self 
+            node={child} 
+            {edit} 
+            child={true} 
+            depth={depth + 1}
+            on:dragParent={startMovement}
+        />
     {/each}
 </div>
