@@ -20,7 +20,7 @@
     const unselectNode = () => {
         if (edit) activeNodeID.set(null)
     }
-    
+
 </script>
 
 
@@ -40,7 +40,7 @@
 <div id="stream-layout-container" 
     on:wheel={wheel}
     style={edit ? `transform: scale(${$scalePercent}%)` : ''}>
-    {#if streamBG && edit}
+    {#if streamBG && edit && !$page.data.inOBS}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
         <img src={streamBG} alt="stream bg" on:mousedown|preventDefault={() => unselectNode()}/>

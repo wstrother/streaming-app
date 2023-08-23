@@ -18,17 +18,20 @@
             }
         }).subscribe()
     
-        supabase.channel('layout_nodes_realtime').on('postgres_changes', 
+    supabase.channel('layout_nodes_realtime').on('postgres_changes', 
         {event: '*', schema: 'public', table: 'layout_nodes'},
         payload => {
             if (payload.new) {
                 layoutNodes.updateNode($layoutNodes, payload.new as LayoutNodeUpdate)
             }
         }).subscribe()
+
 </script>
 
 {#if data.edit}
-    <div id='faux-bg'/>
+    {#if !data.inOBS}
+        <div id='faux-bg'/>
+    {/if}
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div id='scale-bg' on:wheel|preventDefault={wheel} on:mousedown={() => activeNodeID.set(null)}/>
 {/if}

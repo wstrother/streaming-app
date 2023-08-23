@@ -14,7 +14,7 @@ const getStateVariables = async (): Promise<DatabaseRow<'state_variables'>[]> =>
     return []
 }
 
-export async function load({ params }) {
+export async function load() {
     try {
         const stateVariables = await getStateVariables()
 
