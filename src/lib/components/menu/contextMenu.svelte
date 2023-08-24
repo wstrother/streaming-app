@@ -1,25 +1,21 @@
 <script lang="ts">
-    import { ctxMenu, activeNodeID } from "$lib/stores/editor"
+    import { ctxMenu, activeNodeID, type CtxMenuItem } from "$lib/stores/editor"
     import { LayoutNodeProxy, layoutNodes } from "$lib/classes/layoutNodes"
     
     let activeNode: LayoutNodeProxy | null 
     $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeNodeID)
-    
-    type CtxItem = {
-        key: String
-        disabled?: boolean
-        action?: () => void
-    }
-    let options: CtxItem[] = []
 
-    $: {
-        options.push({key: 'Save', disabled: true})
-        options.push({key: 'Reset', disabled: true})
-        options.push({key: 'test', action: () => alert('hey!')})
-    }
-
-    const handleClick = (item: CtxItem) => {
+    const handleClick = (e: MouseEvent, item: CtxMenuItem) => {
+        if (item.disabled) {
+            e.stopPropagation()
+            return
+        }
         if (item.action) item.action()
+    }
+
+    let options: [string, CtxMenuItem][]
+    $: {
+        options = Object.entries($ctxMenu.menu ?? [])
     }
 </script>
 
@@ -29,13 +25,14 @@
     style={`top: ${$ctxMenu.top ?? 0}px; left: ${$ctxMenu.left ?? 0}px`}
     >
     
-    {#each options as item}
+    {#each options as [key, item]}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div 
-            class={`hover:bg-primary-600 p-2 rounded-md ${item.disabled}`} 
-            on:click={() => handleClick(item)}>
-                {item.key}
+            class={`hover:bg-primary-600 p-2 cursor-pointer`}
+            class:disabled={item.disabled}
+            on:click={(e) => handleClick(e, item)}>
+                {key}
         </div>
     {/each}
 
@@ -47,10 +44,11 @@
         width: 200px;
         position: absolute;
         z-index: 500;
+        overflow: hidden;
     }
 
     .disabled {
-        @apply hover:bg-primary-400 bg-primary-400;
+        @apply hover:bg-primary-400 bg-primary-400 cursor-default;
     }
 
     .hidden {

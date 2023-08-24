@@ -4,6 +4,8 @@
     import { activeNodeID, ctxMenu } from '$lib/stores/editor'
     import { supabase } from '$lib/supabaseClient.js'
 	import { wheel } from '$lib/stores/editor'
+
+    import ContextMenu from '$lib/components/menu/contextMenu.svelte'
     export let data
 
     layoutNodes.set(layoutNodes.getNodes(data.nodes))
@@ -26,12 +28,19 @@
             }
         }).subscribe()
 
+    const menu = {
+        "Save All": {disabled: true},
+        "Reset All": {disabled: true},
+        "Say hello": {action: () => alert("hello!")}
+    }
+
     const rightClick = (e: MouseEvent) => {
         if ($ctxMenu.hidden) {
             ctxMenu.set({
                 hidden: !$ctxMenu.hidden,
                 top: e.clientY,
-                left: e.clientX
+                left: e.clientX,
+                menu
             })
         }
     }
@@ -43,7 +52,9 @@
     }
 </script>
 
-<svelte:window on:contextmenu|preventDefault={rightClick} on:mousedown={leftClick}/>
+<svelte:window on:click={leftClick}/>
+<ContextMenu />
+
 
 {#if data.edit}
     {#if !data.inOBS}
@@ -52,6 +63,7 @@
 
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div id='scale-bg'
+        on:contextmenu|preventDefault={rightClick}
         on:wheel|preventDefault={wheel} 
         on:mousedown={() => activeNodeID.set(null)}/>
 {/if}

@@ -16,10 +16,30 @@ export const wheel = (e: WheelEvent) => {
     }
 }
 
-export type ctxOptions = {
+type CtxMenuState = {
     hidden?: boolean
     top?: number
     left?: number
+    menu?: CtxMenu
 }
+export type CtxMenuItem = {
+    disabled?: boolean
+    action?: () => void
+}
+export type CtxMenu = Record<string, CtxMenuItem>
 
-export const ctxMenu = writable<ctxOptions>({hidden: true})
+const {set, update, subscribe} = writable<CtxMenuState>({hidden: true})
+export const ctxMenu = {
+    set, update, subscribe,
+    open: (menu: CtxMenu, e: MouseEvent) => {
+        set({
+            hidden: false,
+            top: e.clientY,
+            left: e.clientX,
+            menu
+        })
+    },
+    close: () => {
+        set({hidden: true})
+    }
+}

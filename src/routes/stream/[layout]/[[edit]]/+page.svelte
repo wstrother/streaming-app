@@ -9,7 +9,6 @@
     import ScalePanel from "$lib/components/scalePanel.svelte"
     import UnsavedPanel from "$lib/components/unsavedPanel.svelte"
     import { wheel } from "$lib/stores/editor.js"
-	import ContextMenu from "$lib/components/contextMenu.svelte";
 
     export let data
     let edit: boolean
@@ -24,8 +23,6 @@
 
 </script>
 
-<ContextMenu />
-
 
 <!-- 'Edit Layout' panel for switching to edit mode -->
 {#if !edit}
@@ -38,15 +35,19 @@
     </div>
 {/if}
 
-<!-- Optional stream bg and layout node tree -->
+<!-- layout node tree -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div id="stream-layout-container" 
     on:wheel={wheel}
     style={edit ? `transform: scale(${$scalePercent}%)` : ''}>
+
+    <!-- Optional stream bg  -->
     {#if streamBG && edit && !$page.data.inOBS}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-        <img src={streamBG} alt="stream bg" on:mousedown|preventDefault={() => unselectNode()} />
+        <img src={streamBG} alt="stream bg" 
+            on:mousedown|preventDefault={() => unselectNode()} 
+            />
     {/if}
 
     {#each $layoutNodes.filter(n => !n.parent_node_id) as node}

@@ -60,6 +60,7 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <!-- svelte-ignore a11y-interactive-supports-focus -->
 <div
+    on:contextmenu|stopPropagation|preventDefault
     on:mousedown|preventDefault|stopPropagation={isClicked} 
     id="layoutNode-{node.key}"
     style={inlineCSS}
