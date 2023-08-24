@@ -22,4 +22,4 @@ export type ctxOptions = {
     left?: number
 }
 
-export const ctxMenu = writable<ctxOptions>({})
+export const ctxMenu = writable<ctxOptions>({hidden: true})

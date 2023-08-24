@@ -27,28 +27,33 @@
         }).subscribe()
 
     const rightClick = (e: MouseEvent) => {
-        ctxMenu.set({
-            hidden: !$ctxMenu.hidden,
-            top: e.clientY,
-            left: e.clientX
-        })
+        if ($ctxMenu.hidden) {
+            ctxMenu.set({
+                hidden: !$ctxMenu.hidden,
+                top: e.clientY,
+                left: e.clientX
+            })
+        }
     }
 
     const leftClick = (e: MouseEvent) => {
-        if (e.button === 0) {
-            ctxMenu.set({hidden: !$ctxMenu.hidden}) 
+        if (!$ctxMenu.hidden) {
+            ctxMenu.set({hidden: true}) 
         }
     }
 </script>
 
-<svelte:window on:contextmenu={rightClick} on:mousedown={leftClick}/>
+<svelte:window on:contextmenu|preventDefault={rightClick} on:mousedown={leftClick}/>
 
 {#if data.edit}
     {#if !data.inOBS}
         <div id='faux-bg'/>
     {/if}
+
     <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div id='scale-bg' on:wheel|preventDefault={wheel} on:mousedown={() => activeNodeID.set(null)}/>
+    <div id='scale-bg'
+        on:wheel|preventDefault={wheel} 
+        on:mousedown={() => activeNodeID.set(null)}/>
 {/if}
 
 <slot />
