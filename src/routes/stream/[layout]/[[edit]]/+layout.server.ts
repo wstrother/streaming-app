@@ -1,6 +1,7 @@
 import { error as routeError } from '@sveltejs/kit'
 import { supabase } from "$lib/supabaseClient"
 import type { DatabaseRow } from '$lib/classes/dbProxy'
+import { PUBLIC_SUPABASE_URL } from '$env/static/public'
 
 
 const getLayoutData = async (layoutName: string): Promise<DatabaseRow<'layouts'>> => {
@@ -48,11 +49,14 @@ export async function load({ params }) {
         const nodes = await getLayoutNodes(layoutData.id)
         const stateVariables = await getStateVariables()
 
+        const imageBaseUrl = `${PUBLIC_SUPABASE_URL}/storage/v1/object/public/user_images/`
+
         return {
             edit: params.edit === 'edit',
             layoutData,
             nodes,
-            stateVariables
+            stateVariables,
+            imageBaseUrl
         }
     }
     

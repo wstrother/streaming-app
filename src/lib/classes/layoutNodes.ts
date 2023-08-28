@@ -8,16 +8,19 @@ export type LayoutNodeUpdate = DatabaseUpdate<'layout_nodes'>
 export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
     children: LayoutNodeProxy[] = []
 
+    get key(): string { return this.getColumn("key") }
     get top(): number { return this.getColumn('top') }
     get left(): number { return this.getColumn('left') }
     get width(): number { return this.getColumn('width') }
     get height(): number { return this.getColumn('height') }
     get classes(): string { return this.getColumn('classes') || '' }
     get content(): string { return this.getColumn('content') || '' }
+
+    get user_id(): string | null { return this.getColumn("user_id") }
     get variable_id(): number | null { return this.getColumn("variable_id") }
     get parent_node_id(): number | null { return this.getColumn("parent_node_id") }
     get sibling_order(): number | null { return this.getColumn("sibling_order") }
-    get key(): string { return this.getColumn("key") }
+    get image(): string | null { return this.getColumn("img_src") }
 
     get size(): [number, number] {
         return [this.width, this.height]

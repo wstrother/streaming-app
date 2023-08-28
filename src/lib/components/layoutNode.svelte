@@ -3,12 +3,15 @@
     import { stateVariables } from '$lib/classes/stateVariables'
     import { activeNodeID, scalePercent } from '$lib/stores/editor'
     import { createEventDispatcher } from 'svelte'
+    import { page } from '$app/stores'
     const dispatch = createEventDispatcher()
     
     export let node: LayoutNodeProxy
     export let edit: boolean
     export let child: boolean = false
     export let depth: number = 0
+    let imgURI: string
+    $: imgURI = `${$page.data.imageBaseUrl}/${node.user_id}/${node.image}`
 
     // handle var values / interpolation
     const varValue = stateVariables.getVarStore(node.variable_id)
@@ -17,11 +20,12 @@
     $: content = node.interpolate(interpVars)
 
     // set up positional CSS
-    let posCSS: string, wCSS: string, hCSS: string, inlineCSS: string
+    let posCSS: string, wCSS: string, hCSS: string, inlineCSS: string, imgCSS: string
     $: posCSS = `top: ${node.top}px; left: ${node.left}px;`
     $: wCSS = node.width ? `width: ${node.width}px;` : ''
     $: hCSS = node.height ? `height: ${node.height}px;` : ''
-    $: inlineCSS = `${posCSS}${wCSS}${hCSS}`
+    $: imgCSS = node.image ? `background-image: url(${imgURI})` : '' 
+    $: inlineCSS = `${posCSS}${wCSS}${hCSS}${imgCSS}`
     
     // handle movement / positioning
     let moving: boolean = false
@@ -72,6 +76,7 @@
         {edit ? 'layout-node-edit' : ''}
         {$activeNodeID === node.id ? 'layout-node-active' : ''}
         layout-node"
+    class:absolute={!child}
 >
     {#if content}
         <span class="layout-node-content">
