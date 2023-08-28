@@ -43,25 +43,21 @@ export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
 const varStore = writable<StateVariableProxy[]>([])
 
 
-function getVarByID(vars: StateVariableProxy[], id: number | null): StateVariableProxy | null {
+function getVarByID(vars: StateVariableProxy[], id: number | null): StateVarValue {
     const stateVariable = vars.filter(v => v.id===id)[0]
-    console.log('getVarByID', stateVariable)
     if (stateVariable === undefined) return null
-    return stateVariable
+    return stateVariable.value
 }
 
-function getVarByKey(vars: StateVariableProxy[], key: string): string|null {
+function getVarByKey(vars: StateVariableProxy[], key: string): StateVarValue {
     const stateVariable = vars.filter(v => v.key===key)[0]?.value
     if (stateVariable === undefined) return null
     return stateVariable
 }
 
-export type VarValue = string | null | undefined
-export type VarStore = Readable<VarValue>
-
-function getVarStore(id: number|null): Readable<VarValue> {
+function getVarStore(id: number|null): Readable<StateVarValue> {
     if (id) { return derived(varStore, (vars) => {
-        return getVarByID(vars, id)?.value
+        return getVarByID(vars, id)
     })
     } else return writable('')
 }

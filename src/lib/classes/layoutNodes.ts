@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
 import { ProxyDBRow, getProxies, updateProxy } from './dbProxy'
-import type { DatabaseRow, DatabaseUpdate } from './dbProxy'
+import type { DatabaseRow, DatabaseUpdate, StateVarValue } from './dbProxy'
 
 export type LayoutNodeRow = DatabaseRow<'layout_nodes'>
 export type LayoutNodeUpdate = DatabaseUpdate<'layout_nodes'>
@@ -59,7 +59,7 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
         await super.saveChangesToDB('layout_nodes')
     }
 
-    interpolate(getVarByKey: (key: string) => string|undefined|null): string {
+    interpolate(getVarByKey: (key: string) => StateVarValue): string {
         return this.content.replace(/{([^}]+)}/g, (match: string, key: string) => {
             const replacement = getVarByKey(key)
         

@@ -4,6 +4,7 @@
     import { activeNodeID, scalePercent } from '$lib/stores/editor'
     import { createEventDispatcher } from 'svelte'
     import { page } from '$app/stores'
+	import type { StateVarValue } from '$lib/classes/dbProxy';
     const dispatch = createEventDispatcher()
     
     export let node: LayoutNodeProxy
@@ -12,9 +13,9 @@
     export let depth: number = 0
     let imgURI: string
     $: imgURI = `${$page.data.imageBaseUrl}/${node.user_id}/${node.image}`
-    let display: boolean = true
+    let display: StateVarValue
     $: if (node.boolean_id) {
-        display = Boolean(stateVariables.getVarByID($stateVariables, node.boolean_id)?.value)
+        display = stateVariables.getVarByID($stateVariables, node.boolean_id)
     }
 
     // handle var values / interpolation
