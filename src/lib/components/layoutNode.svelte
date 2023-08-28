@@ -68,15 +68,12 @@
     on:mousedown|preventDefault|stopPropagation={isClicked} 
     id="layoutNode-{node.key}"
     style={inlineCSS}
-    class="{node.classes}
-        min-w-content
-        min-h-content
-        select-none
-        cursor-pointer
-        {edit ? 'layout-node-edit' : ''}
-        {$activeNodeID === node.id ? 'layout-node-active' : ''}
-        layout-node"
+    class="{node.classes} layout-node
+        min-w-content min-h-content
+        select-none cursor-pointer"
     class:absolute={!child}
+    class:layout-node-active={$activeNodeID === node.id}
+    class:layout-node-edit={edit}
 >
     {#if content}
         <span class="layout-node-content">
