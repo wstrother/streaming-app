@@ -1,16 +1,16 @@
 <script lang="ts">
-	import type { DatabaseColumnName, DatabaseTableName, ProxyAttr, ProxyDBRow, stateVarTypes } from "$lib/classes/dbProxy"
+	import type { DatabaseColumnName, DatabaseTableName, ProxyAttr, ProxyDBRow, StateVarTypesLiterals } from "$lib/classes/dbProxy"
     
     export let proxy: ProxyDBRow<DatabaseTableName>
     export let attr: ProxyAttr
 
     let attrName: DatabaseColumnName<DatabaseTableName>
-    let inputType: stateVarTypes = 'string'
+    let inputType: StateVarTypesLiterals = 'string'
     let fieldValue: string | number | null
 
     if (typeof(attr) === 'object') {
         attrName = attr[0]
-        inputType = attr[1] as stateVarTypes
+        inputType = attr[1] as StateVarTypesLiterals
     } else {
         attrName = attr
     }

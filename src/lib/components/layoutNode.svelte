@@ -12,6 +12,10 @@
     export let depth: number = 0
     let imgURI: string
     $: imgURI = `${$page.data.imageBaseUrl}/${node.user_id}/${node.image}`
+    let display: boolean = true
+    $: if (node.boolean_id) {
+        display = Boolean(stateVariables.getVarByID($stateVariables, node.boolean_id)?.value)
+    }
 
     // handle var values / interpolation
     const varValue = stateVariables.getVarStore(node.variable_id)
@@ -20,12 +24,14 @@
     $: content = node.interpolate(interpVars)
 
     // set up positional CSS
-    let posCSS: string, wCSS: string, hCSS: string, inlineCSS: string, imgCSS: string
+    let posCSS: string, wCSS: string, hCSS: string, 
+        inlineCSS: string, imgCSS: string, hiddenCSS: string
     $: posCSS = `top: ${node.top}px; left: ${node.left}px;`
     $: wCSS = node.width ? `width: ${node.width}px;` : ''
     $: hCSS = node.height ? `height: ${node.height}px;` : ''
-    $: imgCSS = node.image ? `background-image: url(${imgURI})` : '' 
-    $: inlineCSS = `${posCSS}${wCSS}${hCSS}${imgCSS}`
+    $: imgCSS = node.image ? `background-image: url(${imgURI});` : '' 
+    $: hiddenCSS = display ? '' : 'display: none;'
+    $: inlineCSS = `${posCSS}${wCSS}${hCSS}${imgCSS}${hiddenCSS}`
     
     // handle movement / positioning
     let moving: boolean = false
