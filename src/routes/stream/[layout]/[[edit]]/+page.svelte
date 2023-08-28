@@ -20,7 +20,7 @@
     const unselectNode = () => {
         if (edit) activeNodeID.set(null)
     }
-    
+
 </script>
 
 
@@ -35,15 +35,19 @@
     </div>
 {/if}
 
-<!-- Optional stream bg and layout node tree -->
+<!-- layout node tree -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div id="stream-layout-container" 
     on:wheel={wheel}
     style={edit ? `transform: scale(${$scalePercent}%)` : ''}>
-    {#if streamBG && edit}
+
+    <!-- Optional stream bg  -->
+    {#if streamBG && edit && !$page.data.inOBS}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-        <img src={streamBG} alt="stream bg" on:mousedown|preventDefault={() => unselectNode()}/>
+        <img src={streamBG} alt="stream bg" 
+            on:mousedown|preventDefault={() => unselectNode()} 
+            />
     {/if}
 
     {#each $layoutNodes.filter(n => !n.parent_node_id) as node}

@@ -1,9 +1,11 @@
 <script lang="ts">
     import { layoutNodes, type LayoutNodeUpdate } from '$lib/classes/layoutNodes.js'
     import { stateVariables, type StateVariableUpdate } from '$lib/classes/stateVariables.js'
-    import { activeNodeID } from '$lib/stores/editor'
+    import { activeNodeID, ctxMenu } from '$lib/stores/editor'
     import { supabase } from '$lib/supabaseClient.js'
 	import { wheel } from '$lib/stores/editor'
+
+    import ContextMenu from '$lib/components/menu/contextMenu.svelte'
     export let data
 
     layoutNodes.set(layoutNodes.getNodes(data.nodes))
@@ -18,19 +20,35 @@
             }
         }).subscribe()
     
-        supabase.channel('layout_nodes_realtime').on('postgres_changes', 
+    supabase.channel('layout_nodes_realtime').on('postgres_changes', 
         {event: '*', schema: 'public', table: 'layout_nodes'},
         payload => {
             if (payload.new) {
                 layoutNodes.updateNode($layoutNodes, payload.new as LayoutNodeUpdate)
             }
         }).subscribe()
+
+    const menu = {
+        "Save All": {disabled: true},
+        "Reset All": {disabled: true},
+        "Say hello": {action: () => alert("hello!")}
+    }
 </script>
 
+<svelte:window on:click={ctxMenu.close}/>
+<ContextMenu />
+
+
 {#if data.edit}
-    <div id='faux-bg'/>
+    {#if !data.inOBS}
+        <div id='faux-bg'/>
+    {/if}
+
     <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div id='scale-bg' on:wheel|preventDefault={wheel} on:mousedown={() => activeNodeID.set(null)}/>
+    <div id='scale-bg'
+        on:contextmenu|preventDefault={(e) => ctxMenu.open(e, menu)}
+        on:wheel|preventDefault={wheel} 
+        on:mousedown={() => activeNodeID.set(null)}/>
 {/if}
 
 <slot />

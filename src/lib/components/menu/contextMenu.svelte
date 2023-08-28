@@ -1,0 +1,57 @@
+<script lang="ts">
+    import { ctxMenu, activeNodeID, type CtxMenuItem } from "$lib/stores/editor"
+    import { LayoutNodeProxy, layoutNodes } from "$lib/classes/layoutNodes"
+    
+    let activeNode: LayoutNodeProxy | null 
+    $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeNodeID)
+
+    const handleClick = (e: MouseEvent, item: CtxMenuItem) => {
+        if (item.disabled) {
+            e.stopPropagation()
+            return
+        }
+        if (item.action) item.action()
+    }
+
+    let options: [string, CtxMenuItem][]
+    $: {
+        options = Object.entries($ctxMenu.menu ?? [])
+    }
+</script>
+
+
+<div id="context-menu" 
+    class={$ctxMenu.hidden ? 'hidden' : ''}
+    style={`top: ${$ctxMenu.top ?? 0}px; left: ${$ctxMenu.left ?? 0}px`}
+    >
+    
+    {#each options as [key, item]}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <div 
+            class={`hover:bg-primary-600 p-2 cursor-pointer`}
+            class:disabled={item.disabled}
+            on:click={(e) => handleClick(e, item)}>
+                {key}
+        </div>
+    {/each}
+
+</div>
+
+<style lang="postcss">
+    #context-menu {
+        @apply flex-col bg-primary-500 rounded-md;
+        width: 200px;
+        position: absolute;
+        z-index: 500;
+        overflow: hidden;
+    }
+
+    .disabled {
+        @apply hover:bg-primary-400 bg-primary-400 cursor-default;
+    }
+
+    .hidden {
+        display: none
+    }
+</style>

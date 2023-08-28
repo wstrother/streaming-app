@@ -15,3 +15,31 @@ export const wheel = (e: WheelEvent) => {
         scalePercent.set(Math.min(value + 5, 100))
     }
 }
+
+type CtxMenuState = {
+    hidden?: boolean
+    top?: number
+    left?: number
+    menu?: CtxMenu
+}
+export type CtxMenuItem = {
+    disabled?: boolean
+    action?: () => void
+}
+export type CtxMenu = Record<string, CtxMenuItem>
+
+const {set, update, subscribe} = writable<CtxMenuState>({hidden: true})
+export const ctxMenu = {
+    set, update, subscribe,
+    open: (e: MouseEvent, menu: CtxMenu) => {
+        set({
+            hidden: false,
+            top: e.clientY,
+            left: e.clientX,
+            menu
+        })
+    },
+    close: () => {
+        set({hidden: true})
+    }
+}
