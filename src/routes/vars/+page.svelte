@@ -5,7 +5,7 @@
     import { activeVarId } from "$lib/stores/editor"
 
     let activeVar: StateVariableProxy | null 
-    $: activeVar = stateVariables.getVarById($stateVariables, $activeVarId)
+    $: activeVar = stateVariables.getVarByID($stateVariables, $activeVarId)
 
 </script>
 

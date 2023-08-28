@@ -50,6 +50,7 @@
             />
     {/if}
 
+    <!-- Beginning of layout node elements -->
     {#each $layoutNodes.filter(n => !n.parent_node_id) as node}
         <LayoutNode {node} {edit}/>
     {/each}
