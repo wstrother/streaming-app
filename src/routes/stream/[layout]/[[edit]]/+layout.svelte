@@ -33,26 +33,9 @@
         "Reset All": {disabled: true},
         "Say hello": {action: () => alert("hello!")}
     }
-
-    const rightClick = (e: MouseEvent) => {
-        if ($ctxMenu.hidden) {
-            ctxMenu.set({
-                hidden: !$ctxMenu.hidden,
-                top: e.clientY,
-                left: e.clientX,
-                menu
-            })
-        }
-    }
-
-    const leftClick = (e: MouseEvent) => {
-        if (!$ctxMenu.hidden) {
-            ctxMenu.set({hidden: true}) 
-        }
-    }
 </script>
 
-<svelte:window on:click={leftClick}/>
+<svelte:window on:click={ctxMenu.close}/>
 <ContextMenu />
 
 
@@ -63,7 +46,7 @@
 
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div id='scale-bg'
-        on:contextmenu|preventDefault={rightClick}
+        on:contextmenu|preventDefault={(e) => ctxMenu.open(e, menu)}
         on:wheel|preventDefault={wheel} 
         on:mousedown={() => activeNodeID.set(null)}/>
 {/if}

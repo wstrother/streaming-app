@@ -31,7 +31,7 @@ export type CtxMenu = Record<string, CtxMenuItem>
 const {set, update, subscribe} = writable<CtxMenuState>({hidden: true})
 export const ctxMenu = {
     set, update, subscribe,
-    open: (menu: CtxMenu, e: MouseEvent) => {
+    open: (e: MouseEvent, menu: CtxMenu) => {
         set({
             hidden: false,
             top: e.clientY,
