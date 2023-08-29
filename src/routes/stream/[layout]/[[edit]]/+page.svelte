@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { page } from "$app/stores"
-    import { activeNodeID, scalePercent } from "$lib/stores/editor.js"
+    import { activeNodeID, ctxMenu, scalePercent } from "$lib/stores/editor.js"
     import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
 
     import streamBG from "$lib/images/stream-bg.png"
@@ -8,6 +8,8 @@
     import EditNodePanel from "$lib/components/edit/editNodePanel.svelte"
     import ScalePanel from "$lib/components/scalePanel.svelte"
     import UnsavedPanel from "$lib/components/unsavedPanel.svelte"
+    import ContextMenu from '$lib/components/menu/contextMenu.svelte'
+
     import { wheel } from "$lib/stores/editor.js"
 
     export let data
@@ -21,15 +23,24 @@
         if (edit) activeNodeID.set(null)
     }
 
+    const menu = {
+        "Save All": {disabled: true},
+        "Reset All": {disabled: true},
+        "Say hello": {action: () => alert("hello!")}
+    }
 </script>
 
+<svelte:window 
+    on:click={ctxMenu.close} 
+    on:contextmenu|preventDefault={(e) => ctxMenu.open(e, menu)}/>
+<ContextMenu />
 
 <!-- 'Edit Layout' panel for switching to edit mode -->
 {#if !edit}
     <div id="open-editor-panel">
         <a 
             href={`${$page.url.pathname}/edit`} 
-            class="bg-primary-500 p-4 h5 text-white m-4">
+            class="bg-primary-500 p-4 h5 text-white m-4 rounded">
             Edit Layout
         </a>
     </div>
