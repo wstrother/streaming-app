@@ -1,5 +1,7 @@
 <script lang='ts'>
-    import { getModalStore } from '@skeletonlabs/skeleton'
+    import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton'
+    const modalStore = getModalStore()
+
     import { page } from "$app/stores"
     import { activeNodeID, ctxMenu, scalePercent, type CtxMenu } from "$lib/stores/editor.js"
     import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
@@ -35,7 +37,19 @@
             disabled: !unsavedNodes.length, 
             action: () => unsavedNodes.forEach(n => n.resetChanges())
         },
+        {key: "Create New Node",
+            action: () => modalStore.trigger(modal)
+        }
     ])
+
+    const modal: ModalSettings = {
+        type: 'confirm',
+        // Data
+        title: 'Please Confirm',
+        body: 'Are you sure you wish to proceed?',
+        // TRUE if confirm pressed, FALSE if cancel pressed
+        response: (r: boolean) => console.log('response:', r),
+    };
 </script>
 
 <svelte:window 
