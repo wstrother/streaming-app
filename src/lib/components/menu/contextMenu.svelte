@@ -29,7 +29,7 @@
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div 
-            class={`hover:bg-primary-600 p-2 cursor-pointer`}
+            class="hover:bg-primary-600 p-2 cursor-pointer"
             class:disabled={option.disabled || !option.action}
             on:click={(e) => handleClick(e, option)}>
                 {option.key}
@@ -47,8 +47,13 @@
         overflow: hidden;
     }
 
+    #context-menu div:not(:last-child) {
+        border-bottom-width: 1px;
+        @apply border-b-primary-600
+    }
+
     .disabled {
-        @apply hover:bg-primary-400 bg-primary-400 cursor-default;
+        @apply hover:bg-primary-400 bg-primary-400 cursor-default text-gray-500;
     }
 
     .hidden {
