@@ -35,9 +35,6 @@
             disabled: !unsavedNodes.length, 
             action: () => unsavedNodes.forEach(n => n.resetChanges())
         },
-        {key: "Create New Node",
-            action: () => 
-        }
     ])
 </script>
 
