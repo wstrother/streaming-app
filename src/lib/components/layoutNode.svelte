@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { LayoutNodeProxy } from '$lib/classes/layoutNodes'
     import { stateVariables } from '$lib/classes/stateVariables'
-    import { activeNodeID, scalePercent } from '$lib/stores/editor'
+    import { activeNodeID, ctxMenu, scalePercent, type CtxMenu } from '$lib/stores/editor'
     import { createEventDispatcher } from 'svelte'
     import { page } from '$app/stores'
 	import type { StateVarValue } from '$lib/classes/dbProxy';
@@ -11,28 +11,21 @@
     export let edit: boolean
     export let child: boolean = false
     export let depth: number = 0
-    let imgURI: string
-    $: imgURI = `${$page.data.imageBaseUrl}/${node.user_id}/${node.image}`
-    let display: StateVarValue
+
+    let imgURL: string 
+    $: imgURL = `${$page.data.imageBaseUrl}/${node.user_id}/${node.image}`
+
+    let display: StateVarValue = true
     $: if (node.boolean_id) {
         display = stateVariables.getVarByID($stateVariables, node.boolean_id)
     }
 
     // handle var values / interpolation
     const varValue = stateVariables.getVarStore(node.variable_id)
-    const interpVars = (key: string) => stateVariables.getVarByKey($stateVariables, key)
     let content: string
-    $: content = node.interpolate(interpVars)
-
-    // set up positional CSS
-    let posCSS: string, wCSS: string, hCSS: string, 
-        inlineCSS: string, imgCSS: string, hiddenCSS: string
-    $: posCSS = `top: ${node.top}px; left: ${node.left}px;`
-    $: wCSS = node.width ? `width: ${node.width}px;` : ''
-    $: hCSS = node.height ? `height: ${node.height}px;` : ''
-    $: imgCSS = node.image ? `background-image: url(${imgURI});` : '' 
-    $: hiddenCSS = display ? '' : 'display: none;'
-    $: inlineCSS = `${posCSS}${wCSS}${hCSS}${imgCSS}${hiddenCSS}`
+    $: content = node.interpolate(
+        (key: string) => stateVariables.getVarByKey($stateVariables, key)
+    )
     
     // handle movement / positioning
     let moving: boolean = false
@@ -63,6 +56,14 @@
         }
 	}
 
+    const getMenu = (n: LayoutNodeProxy): CtxMenu => ([
+        {key: `Save ${n.key}`, 
+            disabled: !n.unsaved, 
+            action: () => n.saveChangesToDB()},
+        {key: `Reset ${n.key}`, 
+            disabled: !n.unsaved, 
+            action: () => n.resetChanges()},
+    ])
 </script>
 
 <svelte:window on:mouseup={stopMovement} on:mousemove={move}  />
@@ -71,12 +72,17 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <!-- svelte-ignore a11y-interactive-supports-focus -->
 <div
-    on:contextmenu|stopPropagation|preventDefault
+    on:contextmenu|stopPropagation|preventDefault={e => ctxMenu.open(e, getMenu(node))}
     on:mousedown|preventDefault|stopPropagation={isClicked} 
     id="layoutNode-{node.key}"
-    style={inlineCSS}
+
+    style:top={`${node.top}px`}
+    style:left={`${node.left}px`}
+    style:width={node.width ? `${node.width}px` : null}
+    style:height={node.height ? `${node.height}px` : null}
+    style:background-image={node.image ? `url(${imgURL})` : null}
+
     class="{node.classes} layout-node
-        min-w-content min-h-content
         select-none cursor-pointer"
     class:absolute={!child}
     class:layout-node-active={$activeNodeID === node.id}

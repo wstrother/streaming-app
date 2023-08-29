@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { ctxMenu, activeNodeID, type CtxMenuItem } from "$lib/stores/editor"
+    import { ctxMenu, activeNodeID, type CtxMenuItem, type CtxMenu } from "$lib/stores/editor"
     import { LayoutNodeProxy, layoutNodes } from "$lib/classes/layoutNodes"
     
     let activeNode: LayoutNodeProxy | null 
@@ -13,9 +13,9 @@
         if (item.action) item.action()
     }
 
-    let options: [string, CtxMenuItem][]
+    let options: CtxMenu
     $: {
-        options = Object.entries($ctxMenu.menu ?? [])
+        options = $ctxMenu.menu ?? []
     }
 </script>
 
@@ -25,14 +25,14 @@
     style={`top: ${$ctxMenu.top ?? 0}px; left: ${$ctxMenu.left ?? 0}px`}
     >
     
-    {#each options as [key, item]}
+    {#each options as option}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div 
             class={`hover:bg-primary-600 p-2 cursor-pointer`}
-            class:disabled={item.disabled}
-            on:click={(e) => handleClick(e, item)}>
-                {key}
+            class:disabled={option.disabled || !option.action}
+            on:click={(e) => handleClick(e, option)}>
+                {option.key}
         </div>
     {/each}
 

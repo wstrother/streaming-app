@@ -1,42 +1,31 @@
 <script lang="ts">
     import { layoutNodes, type LayoutNodeUpdate } from '$lib/classes/layoutNodes.js'
     import { stateVariables, type StateVariableUpdate } from '$lib/classes/stateVariables.js'
-    import { activeNodeID, ctxMenu } from '$lib/stores/editor'
+    import { activeNodeID } from '$lib/stores/editor'
     import { supabase } from '$lib/supabaseClient.js'
 	import { wheel } from '$lib/stores/editor'
 
-    import ContextMenu from '$lib/components/menu/contextMenu.svelte'
     export let data
 
     layoutNodes.set(layoutNodes.getNodes(data.nodes))
 
     stateVariables.set(stateVariables.getVars(data.stateVariables))
 
-    supabase.channel('state_vars_realtime').on('postgres_changes', 
-        {event: '*', schema: 'public', table: 'state_variables'},
+    supabase.channel('changes').on('postgres_changes',
+        {event: '*', schema: 'public'},
         payload => {
             if (payload.new) {
-                stateVariables.updateVar($stateVariables, payload.new as StateVariableUpdate)
+                if (payload.table === 'layout_nodes') {
+                    layoutNodes.updateNode($layoutNodes, payload.new as LayoutNodeUpdate)
+                }
+                if (payload.table === 'state_variables') {
+                    stateVariables.updateVar($stateVariables, payload.new as StateVariableUpdate)
+                }
             }
-        }).subscribe()
-    
-    supabase.channel('layout_nodes_realtime').on('postgres_changes', 
-        {event: '*', schema: 'public', table: 'layout_nodes'},
-        payload => {
-            if (payload.new) {
-                layoutNodes.updateNode($layoutNodes, payload.new as LayoutNodeUpdate)
-            }
-        }).subscribe()
+        }
+    ).subscribe()
 
-    const menu = {
-        "Save All": {disabled: true},
-        "Reset All": {disabled: true},
-        "Say hello": {action: () => alert("hello!")}
-    }
 </script>
-
-<svelte:window on:click={ctxMenu.close}/>
-<ContextMenu />
 
 
 {#if data.edit}
@@ -46,7 +35,7 @@
 
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div id='scale-bg'
-        on:contextmenu|preventDefault={(e) => ctxMenu.open(e, menu)}
+        on:contextmenu|preventDefault
         on:wheel|preventDefault={wheel} 
         on:mousedown={() => activeNodeID.set(null)}/>
 {/if}
