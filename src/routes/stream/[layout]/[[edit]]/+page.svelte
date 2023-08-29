@@ -26,12 +26,16 @@
         if (edit) activeNodeID.set(null)
     }
 
-    const getMenu = (): CtxMenu => ({
-        "Save All":     {disabled: !unsavedNodes.length, 
-                        action: () => unsavedNodes.forEach(n => n.saveChangesToDB())},
-        "Reset All":    {disabled: !unsavedNodes.length, 
-                        action: () => unsavedNodes.forEach(n => n.resetChanges())},
-    })
+    const getMenu = (): CtxMenu => ([
+        {key: "Save All",     
+            disabled: !unsavedNodes.length, 
+            action: () => unsavedNodes.forEach(n => n.saveChangesToDB())
+        },
+        {key: "Reset All",    
+            disabled: !unsavedNodes.length, 
+            action: () => unsavedNodes.forEach(n => n.resetChanges())
+        },
+    ])
 </script>
 
 <svelte:window 

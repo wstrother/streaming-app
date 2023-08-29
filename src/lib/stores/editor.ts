@@ -23,10 +23,11 @@ type CtxMenuState = {
     menu?: CtxMenu
 }
 export type CtxMenuItem = {
+    key: string
     disabled?: boolean
     action?: () => void
 }
-export type CtxMenu = Record<string, CtxMenuItem>
+export type CtxMenu = CtxMenuItem[]
 
 const {set, update, subscribe} = writable<CtxMenuState>({hidden: true})
 export const ctxMenu = {
