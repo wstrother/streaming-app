@@ -11,8 +11,10 @@
     export let edit: boolean
     export let child: boolean = false
     export let depth: number = 0
-    let imgURI: string
-    $: imgURI = `${$page.data.imageBaseUrl}/${node.user_id}/${node.image}`
+
+    let imgURL: string 
+    $: imgURL = `${$page.data.imageBaseUrl}/${node.user_id}/${node.image}`
+
     let display: StateVarValue = true
     $: if (node.boolean_id) {
         display = stateVariables.getVarByID($stateVariables, node.boolean_id)
@@ -24,16 +26,6 @@
     $: content = node.interpolate(
         (key: string) => stateVariables.getVarByKey($stateVariables, key)
     )
-
-    // set up positional CSS
-    let posCSS: string, wCSS: string, hCSS: string, 
-        inlineCSS: string, imgCSS: string, hiddenCSS: string
-    $: posCSS = `top: ${node.top}px; left: ${node.left}px;`
-    $: wCSS = node.width ? `width: ${node.width}px;` : ''
-    $: hCSS = node.height ? `height: ${node.height}px;` : ''
-    $: imgCSS = node.image ? `background-image: url(${imgURI});` : '' 
-    $: hiddenCSS = display ? '' : 'display: none;'
-    $: inlineCSS = `${posCSS}${wCSS}${hCSS}${imgCSS}${hiddenCSS}`
     
     // handle movement / positioning
     let moving: boolean = false
@@ -75,9 +67,14 @@
     on:contextmenu|stopPropagation|preventDefault
     on:mousedown|preventDefault|stopPropagation={isClicked} 
     id="layoutNode-{node.key}"
-    style={inlineCSS}
+
+    style:top={`${node.top}px`}
+    style:left={`${node.left}px`}
+    style:width={node.width ? `${node.width}px` : null}
+    style:height={node.height ? `${node.height}px` : null}
+    style:background-image={node.image ? `url(${imgURL})` : null}
+
     class="{node.classes} layout-node
-        min-w-content min-h-content
         select-none cursor-pointer"
     class:absolute={!child}
     class:layout-node-active={$activeNodeID === node.id}
