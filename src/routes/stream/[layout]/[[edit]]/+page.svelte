@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { page } from "$app/stores"
-    import { activeNodeID, ctxMenu, scalePercent } from "$lib/stores/editor.js"
+    import { activeNodeID, ctxMenu, scalePercent, type CtxMenu } from "$lib/stores/editor.js"
     import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
 
     import streamBG from "$lib/images/stream-bg.png"
@@ -18,21 +18,25 @@
 
     let activeNode: LayoutNodeProxy | null 
     $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeNodeID)
+    let rootNodes: LayoutNodeProxy[], unsavedNodes: LayoutNodeProxy[]
+    $: rootNodes = $layoutNodes.filter(n => !n.parent_node_id)
+    $: unsavedNodes = $layoutNodes.filter(n => n.unsaved)
 
     const unselectNode = () => {
         if (edit) activeNodeID.set(null)
     }
 
-    const menu = {
-        "Save All": {disabled: true},
-        "Reset All": {disabled: true},
-        "Say hello": {action: () => alert("hello!")}
-    }
+    const getMenu = (): CtxMenu => ({
+        "Save All":     {disabled: !unsavedNodes.length, 
+                        action: () => unsavedNodes.forEach(n => n.saveChangesToDB())},
+        "Reset All":    {disabled: !unsavedNodes.length, 
+                        action: () => unsavedNodes.forEach(n => n.resetChanges())},
+    })
 </script>
 
 <svelte:window 
     on:click={ctxMenu.close} 
-    on:contextmenu|preventDefault={(e) => ctxMenu.open(e, menu)}/>
+    on:contextmenu|preventDefault={(e) => ctxMenu.open(e, getMenu())}/>
 <ContextMenu />
 
 <!-- 'Edit Layout' panel for switching to edit mode -->
@@ -59,11 +63,11 @@
         <img src={streamBG} alt="stream bg" 
             on:mousedown|preventDefault={() => unselectNode()}
             on:contextmenu|preventDefault
-            />
+        />
     {/if}
 
     <!-- Beginning of layout node elements -->
-    {#each $layoutNodes.filter(n => !n.parent_node_id) as node}
+    {#each rootNodes as node}
         <LayoutNode {node} {edit}/>
     {/each}
 </div>
@@ -81,7 +85,7 @@
 
     <UnsavedPanel header="Unsaved Layout Nodes:"
         on:clickProxy={({detail}) => activeNodeID.set(detail.id)}
-        proxies={$layoutNodes.filter(n => n.unsaved)}/>
+        proxies={unsavedNodes}/>
 {/if}
 
 <style lang="postcss">
