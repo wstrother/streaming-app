@@ -20,9 +20,10 @@
 
     // handle var values / interpolation
     const varValue = stateVariables.getVarStore(node.variable_id)
-    const interpVars = (key: string) => stateVariables.getVarByKey($stateVariables, key)
     let content: string
-    $: content = node.interpolate(interpVars)
+    $: content = node.interpolate(
+        (key: string) => stateVariables.getVarByKey($stateVariables, key)
+    )
 
     // set up positional CSS
     let posCSS: string, wCSS: string, hCSS: string, 
