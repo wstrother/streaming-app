@@ -13,7 +13,7 @@
     export let depth: number = 0
     let imgURI: string
     $: imgURI = `${$page.data.imageBaseUrl}/${node.user_id}/${node.image}`
-    let display: StateVarValue
+    let display: StateVarValue = true
     $: if (node.boolean_id) {
         display = stateVariables.getVarByID($stateVariables, node.boolean_id)
     }
