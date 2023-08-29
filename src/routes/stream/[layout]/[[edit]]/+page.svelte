@@ -1,7 +1,9 @@
 <script lang='ts'>
+    import { getModalStore } from '@skeletonlabs/skeleton'
     import { page } from "$app/stores"
     import { activeNodeID, ctxMenu, scalePercent, type CtxMenu } from "$lib/stores/editor.js"
     import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
+    import { wheel } from "$lib/stores/editor.js"
 
     import streamBG from "$lib/images/stream-bg.png"
     import LayoutNode from "$lib/components/layoutNode.svelte"
@@ -9,8 +11,6 @@
     import ScalePanel from "$lib/components/scalePanel.svelte"
     import UnsavedPanel from "$lib/components/unsavedPanel.svelte"
     import ContextMenu from '$lib/components/menu/contextMenu.svelte'
-
-    import { wheel } from "$lib/stores/editor.js"
 
     export let data
     let edit: boolean
@@ -35,6 +35,9 @@
             disabled: !unsavedNodes.length, 
             action: () => unsavedNodes.forEach(n => n.resetChanges())
         },
+        {key: "Create New Node",
+            action: () => 
+        }
     ])
 </script>
 
