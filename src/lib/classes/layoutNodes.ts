@@ -9,26 +9,26 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
     children: LayoutNodeProxy[] = []
 
     get key(): string { return this.getColumn("key") }
-    get top(): number { return this.getColumn('top') }
-    get left(): number { return this.getColumn('left') }
-    get width(): number { return this.getColumn('width') }
-    get height(): number { return this.getColumn('height') }
+    get top(): number|null { return this.getColumn('top') }
+    get left(): number|null { return this.getColumn('left') }
+    get width(): number|null { return this.getColumn('width') }
+    get height(): number|null { return this.getColumn('height') }
     get classes(): string { return this.getColumn('classes') || '' }
     get content(): string { return this.getColumn('content') || '' }
 
-    get user_id(): string | null { return this.getColumn("user_id") }
-    get variable_id(): number | null { return this.getColumn("variable_id") }
-    get boolean_id(): number | null { return this.getColumn("boolean_key")}
-    get parent_node_id(): number | null { return this.getColumn("parent_node_id") }
-    get sibling_order(): number | null { return this.getColumn("sibling_order") }
-    get image(): string | null { return this.getColumn("img_src") }
+    get user_id(): string|null { return this.getColumn("user_id") }
+    get variable_id(): number|null { return this.getColumn("variable_id") }
+    get boolean_id(): number|null { return this.getColumn("boolean_key")}
+    get parent_node_id(): number|null { return this.getColumn("parent_node_id") }
+    get sibling_order(): number|null { return this.getColumn("sibling_order") }
+    get image(): string|null { return this.getColumn("img_src") }
 
     get size(): [number, number] {
-        return [this.width, this.height]
+        return [this.width ?? 0, this.height ?? 0]
     }
 
     get position(): [number, number] {
-        return [this.left, this.top]
+        return [this.left ?? 0, this.top ?? 0]
     }
 
     setSize(width: number, height: number) {
