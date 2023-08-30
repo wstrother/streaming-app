@@ -152,7 +152,8 @@ export const layoutNodes = {
     },
 
     delete: (nodes: LayoutNodeProxy[], node: LayoutNodeProxy) => {
-        set(nodes.filter(n => n.id !== node.id))
+        nodes.splice(nodes.indexOf(node), 1)
+        set(nodes)
         node.deleteFromDB()
         if (node.parent_node_id) {
             const parent = nodes.filter(n => n.id === node.parent_node_id)[0]

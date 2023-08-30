@@ -1,7 +1,7 @@
 <script lang="ts">
     import { layoutNodes, type LayoutNodeUpdate } from '$lib/classes/layoutNodes.js'
     import { stateVariables, type StateVariableUpdate } from '$lib/classes/stateVariables.js'
-    import { activeNodeID } from '$lib/stores/editor'
+    import { activeProxyID } from '$lib/stores/editor'
     import { supabase } from '$lib/supabaseClient.js'
 	import { wheel } from '$lib/stores/editor'
 
@@ -38,7 +38,7 @@
     <div id='scale-bg'
         on:contextmenu|preventDefault
         on:wheel|preventDefault={wheel} 
-        on:mousedown={() => activeNodeID.set(null)}/>
+        on:mousedown={() => activeProxyID.set(null)}/>
 {/if}
 
 <slot />

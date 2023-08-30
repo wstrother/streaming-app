@@ -3,7 +3,7 @@ import { localStorageStore } from '@skeletonlabs/skeleton'
 import { get } from "svelte/store"
 
 
-export const activeNodeID = writable<number|null>(null)
+export const activeProxyID = writable<number|null>(null)
 export const activeVarId = writable<number|null>(null)
 export const scalePercent: Writable<number> = localStorageStore('scalePercent', 100)
 

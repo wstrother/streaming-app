@@ -91,7 +91,8 @@ export const stateVariables = {
         varStore.set(vars)
     },
 
-    delete: (vars: StateVariableProxy[], id: number) => {
-        varStore.set(vars.filter(n => n.id !== id))
+    delete: (vars: StateVariableProxy[], stateVariable: StateVariableProxy) => {
+        vars.splice(vars.indexOf(stateVariable), 1)
+        varStore.set(vars)
     }
 }
