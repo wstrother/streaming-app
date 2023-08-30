@@ -14,6 +14,6 @@
 
 </script>
 
-<Modal {components}/>
+<Modal {components} background="bg-primary-600" regionBody="text-white" regionHeader="text-white text-2xl font-bold"/>
 
 <slot />
