@@ -85,6 +85,10 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
         })
     }
 
+    removeChild(node: LayoutNodeProxy) {
+        this.children = this.children.filter(n => n.id !== node.id)
+    }
+
     static getAsInsert(key: string, user_id: string, layout_id: number, broadcast: Function): LayoutNodeProxy {
         const data: DatabaseRow<'layout_nodes'> = {
             boolean_key: null,
@@ -150,5 +154,9 @@ export const layoutNodes = {
     delete: (nodes: LayoutNodeProxy[], node: LayoutNodeProxy) => {
         set(nodes.filter(n => n.id !== node.id))
         node.deleteFromDB()
+        if (node.parent_node_id) {
+            const parent = nodes.filter(n => n.id === node.parent_node_id)[0]
+            parent.removeChild(node)
+        }
     }
 }

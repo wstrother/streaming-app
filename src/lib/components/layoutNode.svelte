@@ -124,6 +124,7 @@
             child={true} 
             depth={depth + 1}
             on:dragParent={startMovement}
+            on:deleteNode
         />
     {/each}
 </div>
