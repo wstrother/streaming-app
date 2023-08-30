@@ -2,6 +2,8 @@
     import { userMeta } from '$lib/supabaseClient.js'
     import { getModalStore } from '@skeletonlabs/skeleton'
     const modalStore = getModalStore()
+    let modalOpen: boolean
+    $: modalOpen = Boolean($modalStore.length)
 
     import { page } from "$app/stores"
     import { activeNodeID, ctxMenu, scalePercent, type CtxMenu } from "$lib/stores/editor.js"
@@ -21,9 +23,14 @@
 
     let activeNode: LayoutNodeProxy|null
     $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeNodeID)
+    
     let rootNodes: LayoutNodeProxy[], unsavedNodes: LayoutNodeProxy[]
     $: rootNodes = $layoutNodes.filter(n => !n.parent_node_id)
     $: unsavedNodes = $layoutNodes.filter(n => n.unsaved)
+
+    const openNodeList = () => {
+        modalStore.trigger({type: 'component', component: 'fullNodeList'})
+    }
 
     const unselectNode = () => {
         if (edit) activeNodeID.set(null)
@@ -37,8 +44,8 @@
             value: 'new_node',
             valueAttr: { type: 'text', minlength: 1, required: true },
 
-            response: (r: string|false) => {
-                if (r === false) return
+            response: (r: string) => {
+                if (!r) return
                 if (!$userMeta.uid) throw Error("No User ID found in current userMeta")
 
                 layoutNodes.add($layoutNodes, r, $userMeta.uid, $page.data.layoutData.id)
@@ -68,16 +75,15 @@
             disabled: !unsavedNodes.length, 
             action: () => unsavedNodes.forEach(n => n.resetChanges())
         },
-        {key: "Add New Node",
-            action: () => addNode()
-        }
+        {key: "Add New Node", action: addNode},
+        {key: "Open Node List", action: openNodeList}
     ])
 
 </script>
-
 <svelte:window 
     on:click={ctxMenu.close} 
-    on:contextmenu|preventDefault={(e) => ctxMenu.open(e, getMenu())}/>
+    on:contextmenu|preventDefault={(e) => {if (!modalOpen) ctxMenu.open(e, getMenu())}}
+/>
 <ContextMenu />
 
 <!-- 'Edit Layout' panel for switching to edit mode -->
@@ -127,6 +133,15 @@
     <UnsavedPanel header="Unsaved Layout Nodes:"
         on:clickProxy={({detail}) => activeNodeID.set(detail.id)}
         proxies={unsavedNodes}/>
+    
+    <div id="open-node-list-panel" 
+        class="variant-glass-primary rounded p-4 text-white m-4">
+        
+        <button on:click={openNodeList}
+            class="btn btn-sm mb-1 variant-ghost-primary">
+            Open Node List
+        </button>
+    </div>
 {/if}
 
 <style lang="postcss">
@@ -134,6 +149,7 @@
         z-index: 2;
         opacity: 0;
         position: absolute;
+        @apply mt-2;
     }
     #open-editor-panel:hover {
         opacity: 1;
@@ -152,5 +168,16 @@
 
     #active-node-panel {
         @apply absolute top-0 right-0 md:mr-20 sm:mr-2
+    }
+
+    #open-node-list-panel {
+        position: absolute;
+        z-index: 2;
+        right: 100px;
+        bottom: 0;
+        opacity: 0;
+    }
+    #open-node-list-panel:hover {
+        opacity: 1
     }
 </style>
