@@ -2,10 +2,10 @@
 	import type { LayoutNodeProxy } from "$lib/classes/layoutNodes"
 	import EditProxyPanel from "./editProxyPanel.svelte"
 
-    export let proxy: LayoutNodeProxy
+    export let node: LayoutNodeProxy
 </script>
 
-<EditProxyPanel {proxy} attrs={[
+<EditProxyPanel proxy={node} attrs={[
     ['top', 'number'],
     ['left', 'number'],
     'content',

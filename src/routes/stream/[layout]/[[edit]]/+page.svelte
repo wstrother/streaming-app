@@ -1,7 +1,12 @@
 <script lang='ts'>
+    import { userMeta } from '$lib/supabaseClient.js'
+    import { getModalStore } from '@skeletonlabs/skeleton'
+    const modalStore = getModalStore()
+
     import { page } from "$app/stores"
     import { activeNodeID, ctxMenu, scalePercent, type CtxMenu } from "$lib/stores/editor.js"
-    import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
+    import { layoutNodes, LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
+    import { wheel } from "$lib/stores/editor.js"
 
     import streamBG from "$lib/images/stream-bg.png"
     import LayoutNode from "$lib/components/layoutNode.svelte"
@@ -9,8 +14,6 @@
     import ScalePanel from "$lib/components/scalePanel.svelte"
     import UnsavedPanel from "$lib/components/unsavedPanel.svelte"
     import ContextMenu from '$lib/components/menu/contextMenu.svelte'
-
-    import { wheel } from "$lib/stores/editor.js"
 
     export let data
     let edit: boolean
@@ -26,6 +29,13 @@
         if (edit) activeNodeID.set(null)
     }
 
+    const addNode = (key: string|false) => {
+        if (!key) return
+        if (!$userMeta.uid) throw Error("No User ID found in current userMeta")
+        layoutNodes.addNode(
+            $layoutNodes, key, $userMeta.uid, $page.data.layoutData.id)
+    }
+
     const getMenu = (): CtxMenu => ([
         {key: "Save All",     
             disabled: !unsavedNodes.length, 
@@ -35,7 +45,18 @@
             disabled: !unsavedNodes.length, 
             action: () => unsavedNodes.forEach(n => n.resetChanges())
         },
+        {key: "Add New Node",
+            action: () => modalStore.trigger({
+                type: 'prompt',
+                title: 'Enter Name',
+                body: 'Provide a unique key to identify this node by',
+                value: 'new_node',
+                valueAttr: { type: 'text', minlength: 1, required: true },
+                response: (r: string|false) => addNode(r),
+            })
+        }
     ])
+
 </script>
 
 <svelte:window 
@@ -81,7 +102,7 @@
 
     <div id="active-node-panel">
         {#if activeNode}
-            <EditNodePanel proxy={activeNode} />
+            <EditNodePanel node={activeNode} />
         {/if}
     </div>
         

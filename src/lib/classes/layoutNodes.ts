@@ -9,26 +9,26 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
     children: LayoutNodeProxy[] = []
 
     get key(): string { return this.getColumn("key") }
-    get top(): number { return this.getColumn('top') }
-    get left(): number { return this.getColumn('left') }
-    get width(): number { return this.getColumn('width') }
-    get height(): number { return this.getColumn('height') }
+    get top(): number|null { return this.getColumn('top') }
+    get left(): number|null { return this.getColumn('left') }
+    get width(): number|null { return this.getColumn('width') }
+    get height(): number|null { return this.getColumn('height') }
     get classes(): string { return this.getColumn('classes') || '' }
     get content(): string { return this.getColumn('content') || '' }
 
-    get user_id(): string | null { return this.getColumn("user_id") }
-    get variable_id(): number | null { return this.getColumn("variable_id") }
-    get boolean_id(): number | null { return this.getColumn("boolean_key")}
-    get parent_node_id(): number | null { return this.getColumn("parent_node_id") }
-    get sibling_order(): number | null { return this.getColumn("sibling_order") }
-    get image(): string | null { return this.getColumn("img_src") }
+    get user_id(): string|null { return this.getColumn("user_id") }
+    get variable_id(): number|null { return this.getColumn("variable_id") }
+    get boolean_id(): number|null { return this.getColumn("boolean_key")}
+    get parent_node_id(): number|null { return this.getColumn("parent_node_id") }
+    get sibling_order(): number|null { return this.getColumn("sibling_order") }
+    get image(): string|null { return this.getColumn("img_src") }
 
     get size(): [number, number] {
-        return [this.width, this.height]
+        return [this.width ?? 0, this.height ?? 0]
     }
 
     get position(): [number, number] {
-        return [this.left, this.top]
+        return [this.left ?? 0, this.top ?? 0]
     }
 
     setSize(width: number, height: number) {
@@ -80,6 +80,29 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
             return 0
         })
     }
+
+    static getAsInsert(key: string, user_id: string, layout_id: number, broadcast: Function): LayoutNodeProxy {
+        const data: DatabaseRow<'layout_nodes'> = {
+            boolean_key: null,
+            classes: "absolute",
+            content: null,
+            created_at: "",
+            id: 0,
+            img_src: null,
+            key,
+            layout_id,
+            parent_node_id: null,
+            sibling_order: null,
+            user_id,
+            variable_id: null,
+            left: 0,
+            top: 0,
+            height: null,
+            width: null
+        }
+
+        return new LayoutNodeProxy(data, broadcast, true)
+    }
 }
 
 
@@ -112,5 +135,12 @@ export const layoutNodes = {
 
     getNodeByID: (nodes: LayoutNodeProxy[], id: number|null): LayoutNodeProxy|null => {
         return nodes.filter(n=>n.id===id)[0] ?? null
+    },
+
+    addNode: (nodes: LayoutNodeProxy[], key: string, user_id: string, layout_id: number) => {
+        const node = LayoutNodeProxy.getAsInsert(key, user_id, layout_id, () => set(nodes))
+        node.broadcast
+        nodes.push(node)
+        set(nodes)
     }
 }
