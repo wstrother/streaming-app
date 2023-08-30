@@ -6,7 +6,7 @@
     $: modalOpen = Boolean($modalStore.length)
 
     import { page } from "$app/stores"
-    import { activeNodeID, ctxMenu, scalePercent, type CtxMenu } from "$lib/stores/editor.js"
+    import { activeProxyID, ctxMenu, scalePercent, type CtxMenu } from "$lib/stores/editor.js"
     import { layoutNodes, LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
     import { wheel } from "$lib/stores/editor.js"
 
@@ -22,7 +22,7 @@
     $: edit = data.edit
 
     let activeNode: LayoutNodeProxy|null
-    $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeNodeID)
+    $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeProxyID)
     
     let rootNodes: LayoutNodeProxy[], unsavedNodes: LayoutNodeProxy[]
     $: rootNodes = $layoutNodes.filter(n => !n.parent_node_id)
@@ -33,7 +33,7 @@
     }
 
     const unselectNode = () => {
-        if (edit) activeNodeID.set(null)
+        if (edit) activeProxyID.set(null)
     }
 
     const addNode = () => {
@@ -131,7 +131,7 @@
     <ScalePanel />
 
     <UnsavedPanel header="Unsaved Layout Nodes:"
-        on:clickProxy={({detail}) => activeNodeID.set(detail.id)}
+        on:clickProxy={({detail}) => activeProxyID.set(detail.id)}
         proxies={unsavedNodes}/>
     
     <div id="open-node-list-panel" 

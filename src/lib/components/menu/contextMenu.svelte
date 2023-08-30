@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { ctxMenu, activeNodeID, type CtxMenuItem, type CtxMenu } from "$lib/stores/editor"
+    import { ctxMenu, activeProxyID, type CtxMenuItem, type CtxMenu } from "$lib/stores/editor"
     import { LayoutNodeProxy, layoutNodes } from "$lib/classes/layoutNodes"
     
     let activeNode: LayoutNodeProxy | null 
-    $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeNodeID)
+    $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeProxyID)
 
     const handleClick = (e: MouseEvent, item: CtxMenuItem) => {
         if (item.disabled) {

@@ -2,7 +2,7 @@
     import type { StateVarValue } from '$lib/classes/dbProxy';
     import type { LayoutNodeProxy } from '$lib/classes/layoutNodes'
     import { stateVariables } from '$lib/classes/stateVariables'
-    import { activeNodeID, ctxMenu, scalePercent, type CtxMenu, type CtxMenuItem } from '$lib/stores/editor'
+    import { activeProxyID, ctxMenu, scalePercent, type CtxMenu, type CtxMenuItem } from '$lib/stores/editor'
     import { page } from '$app/stores'
     
     import { createEventDispatcher } from 'svelte'
@@ -35,7 +35,7 @@
 
     function isClicked(e: MouseEvent) {
         if (edit) {
-            activeNodeID.set(node.id)
+            activeProxyID.set(node.id)
             startMovement()
         }
 	}
@@ -70,7 +70,7 @@
         if (node.parent_node_id) {
             menu.push(
                 {key: 'Select Parent',
-                    action: () => activeNodeID.set(node.parent_node_id)
+                    action: () => activeProxyID.set(node.parent_node_id)
                 })
         }
 
@@ -103,7 +103,7 @@
     class="{node.classes} layout-node
         select-none cursor-pointer"
     class:absolute={!child}
-    class:layout-node-active={$activeNodeID === node.id}
+    class:layout-node-active={$activeProxyID === node.id}
     class:layout-node-edit={edit}
 >
     {#if content}
