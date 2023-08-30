@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { LayoutNodeProxy } from '$lib/classes/layoutNodes'
     import { stateVariables } from '$lib/classes/stateVariables'
-    import { activeNodeID, ctxMenu, scalePercent, type CtxMenu } from '$lib/stores/editor'
+    import { activeNodeID, ctxMenu, scalePercent, type CtxMenu, type CtxMenuItem } from '$lib/stores/editor'
     import { createEventDispatcher } from 'svelte'
     import { page } from '$app/stores'
 	import type { StateVarValue } from '$lib/classes/dbProxy';
@@ -56,14 +56,25 @@
         }
 	}
 
-    const getMenu = (n: LayoutNodeProxy): CtxMenu => ([
-        {key: `Save ${n.key}`, 
-            disabled: !n.unsaved, 
-            action: () => n.saveChangesToDB()},
-        {key: `Reset ${n.key}`, 
-            disabled: !n.unsaved, 
-            action: () => n.resetChanges()},
-    ])
+    const getMenu = (n: LayoutNodeProxy): CtxMenu => {
+        const menu: CtxMenuItem[] = [
+            {key: `Save ${n.key}`, 
+                disabled: !n.unsaved, 
+                action: () => n.saveChangesToDB()},
+            {key: `Reset ${n.key}`, 
+                disabled: !n.unsaved, 
+                action: () => n.resetChanges()}
+        ]
+
+        if (node.parent_node_id) {
+            menu.push(
+                {key: 'Select Parent',
+                    action: () => activeNodeID.set(node.parent_node_id)
+                })
+        }
+
+        return menu
+    }
 </script>
 
 <svelte:window on:mouseup={stopMovement} on:mousemove={move}  />
