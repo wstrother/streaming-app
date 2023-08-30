@@ -43,12 +43,8 @@
     ])
 
     const modal: ModalSettings = {
-        type: 'confirm',
-        // Data
-        title: 'Please Confirm',
-        body: 'Are you sure you wish to proceed?',
-        // TRUE if confirm pressed, FALSE if cancel pressed
-        response: (r: boolean) => console.log('response:', r),
+        type: 'component',
+        component: 'NewNodePanel'
     };
 </script>
 
