@@ -1,4 +1,5 @@
 <script lang='ts'>
+    import { userMeta } from '$lib/supabaseClient.js'
     import { getModalStore } from '@skeletonlabs/skeleton'
     const modalStore = getModalStore()
 
@@ -30,8 +31,9 @@
 
     const addNode = (key: string|false) => {
         if (!key) return
+        if (!$userMeta.uid) throw Error("No User ID found in current userMeta")
         layoutNodes.addNode(
-            $layoutNodes, key, "34782611-a281-4d0b-a4b9-ade93202d984", $page.data.layoutData.id)
+            $layoutNodes, key, $userMeta.uid, $page.data.layoutData.id)
     }
 
     const getMenu = (): CtxMenu => ([

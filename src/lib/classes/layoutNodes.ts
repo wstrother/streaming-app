@@ -95,10 +95,10 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
             sibling_order: null,
             user_id,
             variable_id: null,
-            left: 500,
-            top: 500,
-            height: 200,
-            width: 200
+            left: 0,
+            top: 0,
+            height: null,
+            width: null
         }
 
         return new LayoutNodeProxy(data, broadcast, true)
