@@ -11,7 +11,7 @@
         {event: '*', schema: 'public', table: 'state_variables'},
         payload => {
             if (payload.new) {
-                stateVariables.updateVar($stateVariables, payload.new as StateVariableUpdate)
+                stateVariables.updateData($stateVariables, payload.new as StateVariableUpdate)
             }
         }).subscribe()
 </script>

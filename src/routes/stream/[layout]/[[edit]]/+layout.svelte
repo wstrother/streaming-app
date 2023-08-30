@@ -14,12 +14,13 @@
     supabase.channel('changes').on('postgres_changes',
         {event: '*', schema: 'public'},
         payload => {
+            if (payload.eventType === 'DELETE') return
             if (payload.new) {
                 if (payload.table === 'layout_nodes') {
-                    layoutNodes.updateNode($layoutNodes, payload.new as LayoutNodeUpdate)
+                    layoutNodes.updateData($layoutNodes, payload.new as LayoutNodeUpdate)
                 }
                 if (payload.table === 'state_variables') {
-                    stateVariables.updateVar($stateVariables, payload.new as StateVariableUpdate)
+                    stateVariables.updateData($stateVariables, payload.new as StateVariableUpdate)
                 }
             }
         }

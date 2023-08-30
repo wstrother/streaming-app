@@ -6,10 +6,6 @@ export type StateVariableRow = DatabaseRow<'state_variables'>
 export type StateVariableUpdate = DatabaseUpdate<'state_variables'>
 
 export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
-    constructor(data: StateVariableRow, broadcast: Function | null = null) {
-        super(data, broadcast)
-    }
-
     get value(): StateVarValue {
         const stringValue = this.getColumn('value')
 
@@ -37,6 +33,14 @@ export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
 
     async saveChangesToDB() {
         await super.saveChangesToDB('state_variables')
+    }
+
+    async deleteFromDB() {
+        await super.deleteFromDB('state_variables')
+    }
+
+    static getAsInsert(key: string, user_id: string, value: string, broadcast: Function) {
+        return new StateVariableProxy()
     }
 }
     
@@ -67,7 +71,7 @@ export const stateVariables = {
     set: varStore.set, 
     update: varStore.update,
 
-    updateVar: (vars: StateVariableProxy[], update: StateVariableUpdate) => {
+    updateData: (vars: StateVariableProxy[], update: StateVariableUpdate) => {
         updateProxy<'state_variables', StateVariableProxy>(
             vars, update, 'state_variables'
         )
@@ -79,5 +83,15 @@ export const stateVariables = {
         )
     },
 
-    getVarByID, getVarByKey, getVarStore
+    getVarByID, getVarByKey, getVarStore,
+
+    add: (vars: StateVariableProxy[], key: string, user_id: string, value: string) => {
+        const stateVar = StateVariableProxy.getAsInsert(key, user_id, value, () => varStore.set(vars))
+        vars.push(stateVar)
+        varStore.set(vars)
+    },
+
+    delete: (vars: StateVariableProxy[], id: number) => {
+        varStore.set(vars.filter(n => n.id !== id))
+    }
 }

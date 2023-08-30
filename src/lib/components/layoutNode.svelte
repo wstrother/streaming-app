@@ -1,10 +1,11 @@
 <script lang="ts">
+    import type { StateVarValue } from '$lib/classes/dbProxy';
     import type { LayoutNodeProxy } from '$lib/classes/layoutNodes'
     import { stateVariables } from '$lib/classes/stateVariables'
     import { activeNodeID, ctxMenu, scalePercent, type CtxMenu, type CtxMenuItem } from '$lib/stores/editor'
-    import { createEventDispatcher } from 'svelte'
     import { page } from '$app/stores'
-	import type { StateVarValue } from '$lib/classes/dbProxy';
+    
+    import { createEventDispatcher } from 'svelte'
     const dispatch = createEventDispatcher()
     
     export let node: LayoutNodeProxy
@@ -72,6 +73,11 @@
                     action: () => activeNodeID.set(node.parent_node_id)
                 })
         }
+
+        menu.push(
+            {key: ""},
+            {key: `Delete ${n.key}`, action: () => dispatch('deleteNode', node)}
+        )
 
         return menu
     }
