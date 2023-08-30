@@ -98,6 +98,7 @@
     style:width={node.width ? `${node.width}px` : null}
     style:height={node.height ? `${node.height}px` : null}
     style:background-image={node.image ? `url(${imgURL})` : null}
+    style:display={!display ? 'none' : null}
 
     class="{node.classes} layout-node
         select-none cursor-pointer"
