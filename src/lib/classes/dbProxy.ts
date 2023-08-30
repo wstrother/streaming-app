@@ -5,6 +5,7 @@ export type DatabaseTableName = keyof Database['public']['Tables']
 export type DatabaseTable = Database['public']['Tables']
 export type DatabaseRow<T extends DatabaseTableName> = DatabaseTable[T]['Row']
 export type DatabaseUpdate<T extends DatabaseTableName> = DatabaseTable[T]['Update']
+export type DatabaseInsert<T extends DatabaseTableName> = DatabaseTable[T]['Insert']
 export type DatabaseColumnName<T extends DatabaseTableName> = T extends DatabaseTableName ? keyof DatabaseRow<T> & keyof DatabaseUpdate<T> : never
 export type DatabaseColumnValue<T extends DatabaseTableName, C extends DatabaseColumnName<T>> = DatabaseRow<T>[C]
 
@@ -21,18 +22,21 @@ export class ProxyDBRow<T extends DatabaseTableName> {
     data: DatabaseRow<T>
     changes: DatabaseUpdate<T>
     _broadcast: Function | null
+    client: boolean
 
-    constructor(data: DatabaseRow<T>, broadcast: Function | null = null) {
+    constructor(data: DatabaseRow<T>, broadcast: Function, client: boolean=false) {
         this.data = data
         this.changes = {}
         this._broadcast = broadcast
+        this.client = client
     }
 
-    get id(): number {
-        return this.data.id
+    get id(): number|null {
+        return this.data.id ?? null
     }
 
     get unsaved(): boolean {
+        if (this.client) return true
         return Boolean(Object.keys(this.changes).length)
     }
 
@@ -77,12 +81,26 @@ export class ProxyDBRow<T extends DatabaseTableName> {
     }
 
     async saveChangesToDB(table: DatabaseTableName) {
-        const { error } = await supabase.from(table)
-            .update(this.changes).eq('id', this.data.id)
-        
-        if (error) throw Error(error.message)
+        if (!this.client) {
+            const { error } = await supabase.from(table)
+                .update(this.changes).eq('id', this.data.id)
+            
+            if (error) throw Error(error.message)
+    
+            this.saveChangesToProxy()
+        } else {
+            this.saveChangesToProxy()
+            const insert = this.data as DatabaseInsert<T>
+            delete insert.created_at
+            delete insert.id
 
-        this.saveChangesToProxy()
+            const { data, error } = await supabase.from(table)
+                .insert(this.data).select().single()
+            
+            if (error) throw Error(error.message)
+            if (data && data.id) this.data.id = data.id
+            this.client = false
+        }
     }
 
     saveChangesToProxy() {
@@ -110,18 +128,17 @@ export function updateProxy<T extends DatabaseTableName, P extends ProxyDBRow<T>
     proxy.saveChangesToProxy()
 }
 
-export function getProxies<T extends DatabaseTableName, R extends DatabaseRow<T>, P extends ProxyDBRow<T>>(
-    rows: R[], set: Function, constructor: { new(row: R, bc: Function): P}): P[] {
+export function getProxies<T extends DatabaseTableName, R extends DatabaseRow<T>, P extends ProxyDBRow<T>>
+    (rows: R[], set: Function, constructor: { new(row: R, bc: Function): P}): P[] {
 
-    const proxies: P[] = []
-    const broadcast = () => set(proxies)
+        const proxies: P[] = []
+        const broadcast = () => set(proxies)
 
-    rows.forEach(row => {
-        proxies.push(
-            // new LayoutNodeCls(n, broadcast)
-            new constructor(row, broadcast)
-        )
-    })
+        rows.forEach(row => {
+            proxies.push(
+                new constructor(row, broadcast)
+            )
+        })
 
-    return proxies
+        return proxies
 }

@@ -80,6 +80,29 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
             return 0
         })
     }
+
+    static getAsInsert(key: string, user_id: string, layout_id: number, broadcast: Function): LayoutNodeProxy {
+        const data: DatabaseRow<'layout_nodes'> = {
+            boolean_key: null,
+            classes: "absolute",
+            content: null,
+            created_at: "",
+            id: 0,
+            img_src: null,
+            key,
+            layout_id,
+            parent_node_id: null,
+            sibling_order: null,
+            user_id,
+            variable_id: null,
+            left: 500,
+            top: 500,
+            height: 200,
+            width: 200
+        }
+
+        return new LayoutNodeProxy(data, broadcast, true)
+    }
 }
 
 
@@ -112,5 +135,12 @@ export const layoutNodes = {
 
     getNodeByID: (nodes: LayoutNodeProxy[], id: number|null): LayoutNodeProxy|null => {
         return nodes.filter(n=>n.id===id)[0] ?? null
+    },
+
+    addNode: (nodes: LayoutNodeProxy[], key: string, user_id: string, layout_id: number) => {
+        const node = LayoutNodeProxy.getAsInsert(key, user_id, layout_id, () => set(nodes))
+        node.broadcast
+        nodes.push(node)
+        set(nodes)
     }
 }

@@ -31,7 +31,10 @@
             <button 
                 class="btn btn-sm mb-1 variant-ghost-primary" 
                 on:click={() => dispatch('clickProxy', proxy)}>
-                {proxy.key}
+                {proxy.key} 
+                {#if proxy.client}
+                    <span class="pl-2 italic">(new)</span>
+                {/if}
             </button>
         {/each}
 

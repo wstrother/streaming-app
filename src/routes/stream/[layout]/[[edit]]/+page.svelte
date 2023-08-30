@@ -1,10 +1,10 @@
 <script lang='ts'>
-    import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton'
+    import { getModalStore } from '@skeletonlabs/skeleton'
     const modalStore = getModalStore()
 
     import { page } from "$app/stores"
     import { activeNodeID, ctxMenu, scalePercent, type CtxMenu } from "$lib/stores/editor.js"
-    import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
+    import { layoutNodes, LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
     import { wheel } from "$lib/stores/editor.js"
 
     import streamBG from "$lib/images/stream-bg.png"
@@ -28,6 +28,12 @@
         if (edit) activeNodeID.set(null)
     }
 
+    const addNode = (key: string|false) => {
+        if (!key) return
+        layoutNodes.addNode(
+            $layoutNodes, key, "34782611-a281-4d0b-a4b9-ade93202d984", $page.data.layoutData.id)
+    }
+
     const getMenu = (): CtxMenu => ([
         {key: "Save All",     
             disabled: !unsavedNodes.length, 
@@ -37,15 +43,18 @@
             disabled: !unsavedNodes.length, 
             action: () => unsavedNodes.forEach(n => n.resetChanges())
         },
-        {key: "Create New Node",
-            action: () => modalStore.trigger(modal)
+        {key: "Add New Node",
+            action: () => modalStore.trigger({
+                type: 'prompt',
+                title: 'Enter Name',
+                body: 'Provide a unique key to identify this node by',
+                value: 'new_node',
+                valueAttr: { type: 'text', minlength: 1, required: true },
+                response: (r: string|false) => addNode(r),
+            })
         }
     ])
 
-    const modal: ModalSettings = {
-        type: 'component',
-        component: 'NewNodePanel'
-    };
 </script>
 
 <svelte:window 
@@ -91,7 +100,7 @@
 
     <div id="active-node-panel">
         {#if activeNode}
-            <EditNodePanel proxy={activeNode} />
+            <EditNodePanel node={activeNode} />
         {/if}
     </div>
         
