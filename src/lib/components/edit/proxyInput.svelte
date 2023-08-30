@@ -3,6 +3,7 @@
     
     export let proxy: ProxyDBRow<DatabaseTableName>
     export let attr: ProxyAttr
+    export let nullable: boolean = true
 
     let attrName: DatabaseColumnName<DatabaseTableName>
     let inputType: StateVarTypesLiterals = 'string'
@@ -33,7 +34,12 @@
         editing = false
 
         let proxyValue = fieldValue
-        if (inputType === 'number' && proxyValue === '') proxyValue = null
+
+        if (inputType === 'number' && fieldValue === '') proxyValue = nullable ? null : 0
+        if (inputType === 'boolean') {
+            if (fieldValue === '' && nullable) proxyValue = null
+            else proxyValue = Boolean(fieldValue)
+        }
 
         proxy.setColumn(attrName, proxyValue)   // TODO: ensure string "" not passed to numbers
     }
