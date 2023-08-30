@@ -31,7 +31,7 @@
 
     const endEditing = () => {
         editing = false
-        proxy.setColumn(attrName, fieldValue)
+        proxy.setColumn(attrName, fieldValue)   // TODO: ensure string "" not passed to numbers
     }
 
     const onkey = (e: KeyboardEvent) => {
