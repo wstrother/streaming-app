@@ -6,7 +6,7 @@
 
     let attrName: DatabaseColumnName<DatabaseTableName>
     let inputType: StateVarTypesLiterals = 'string'
-    let fieldValue: string | number | null
+    let fieldValue: string | number | boolean | null
 
     if (typeof(attr) === 'object') {
         attrName = attr[0]
@@ -31,7 +31,11 @@
 
     const endEditing = () => {
         editing = false
-        proxy.setColumn(attrName, fieldValue)   // TODO: ensure string "" not passed to numbers
+
+        let proxyValue = fieldValue
+        if (inputType === 'number' && proxyValue === '') proxyValue = null
+
+        proxy.setColumn(attrName, proxyValue)   // TODO: ensure string "" not passed to numbers
     }
 
     const onkey = (e: KeyboardEvent) => {
