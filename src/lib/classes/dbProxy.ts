@@ -103,6 +103,15 @@ export class ProxyDBRow<T extends DatabaseTableName> {
         }
     }
 
+    async deleteFromDB(table: DatabaseTableName) {
+        if (!this.client) {
+            const { error } = await supabase.from(table)
+                .delete().eq("id", this.data.id).select().single()
+            
+            if (error) throw Error(error.message)
+        }
+    }
+
     saveChangesToProxy() {
         Object.assign(this.data, this.changes)
         this.changes = {}

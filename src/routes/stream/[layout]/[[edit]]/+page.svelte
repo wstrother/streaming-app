@@ -19,7 +19,7 @@
     let edit: boolean
     $: edit = data.edit
 
-    let activeNode: LayoutNodeProxy | null 
+    let activeNode: LayoutNodeProxy|null
     $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeNodeID)
     let rootNodes: LayoutNodeProxy[], unsavedNodes: LayoutNodeProxy[]
     $: rootNodes = $layoutNodes.filter(n => !n.parent_node_id)
@@ -29,11 +29,34 @@
         if (edit) activeNodeID.set(null)
     }
 
-    const addNode = (key: string|false) => {
-        if (!key) return
-        if (!$userMeta.uid) throw Error("No User ID found in current userMeta")
-        layoutNodes.addNode(
-            $layoutNodes, key, $userMeta.uid, $page.data.layoutData.id)
+    const addNode = () => {
+        modalStore.trigger({
+            type: 'prompt',
+            title: 'Enter Name',
+            body: 'Provide a unique key to identify this node by',
+            value: 'new_node',
+            valueAttr: { type: 'text', minlength: 1, required: true },
+
+            response: (r: string|false) => {
+                if (r === false) return
+                if (!$userMeta.uid) throw Error("No User ID found in current userMeta")
+
+                layoutNodes.add($layoutNodes, r, $userMeta.uid, $page.data.layoutData.id)
+            }
+        })
+    }
+
+    const deleteNode = (e: CustomEvent) => {
+        const nodeToDelete = e.detail as LayoutNodeProxy
+        modalStore.trigger({
+            type: 'confirm',
+            title: `Delete ${nodeToDelete.key}?`,
+            body: 'Confirm you want to delete this node. This is not reversible!',
+            response: (r: boolean) => {
+                if (!r) return
+                else layoutNodes.delete($layoutNodes, nodeToDelete)
+            }
+        })
     }
 
     const getMenu = (): CtxMenu => ([
@@ -46,14 +69,7 @@
             action: () => unsavedNodes.forEach(n => n.resetChanges())
         },
         {key: "Add New Node",
-            action: () => modalStore.trigger({
-                type: 'prompt',
-                title: 'Enter Name',
-                body: 'Provide a unique key to identify this node by',
-                value: 'new_node',
-                valueAttr: { type: 'text', minlength: 1, required: true },
-                response: (r: string|false) => addNode(r),
-            })
+            action: () => addNode()
         }
     ])
 
@@ -93,7 +109,7 @@
 
     <!-- Beginning of layout node elements -->
     {#each rootNodes as node}
-        <LayoutNode {node} {edit}/>
+        <LayoutNode {node} {edit} on:deleteNode={(e) => deleteNode(e)}/>
     {/each}
 </div>
 
@@ -135,6 +151,6 @@
     }
 
     #active-node-panel {
-        @apply absolute top-0 right-0
+        @apply absolute top-0 right-0 md:mr-20 sm:mr-2
     }
 </style>

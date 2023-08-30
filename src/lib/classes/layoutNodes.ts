@@ -59,6 +59,10 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
         await super.saveChangesToDB('layout_nodes')
     }
 
+    async deleteFromDB() {
+        await super.deleteFromDB('layout_nodes')
+    }
+
     interpolate(getVarByKey: (key: string) => StateVarValue): string {
         return this.content.replace(/{([^}]+)}/g, (match: string, key: string) => {
             const replacement = getVarByKey(key)
@@ -79,6 +83,10 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
             if (sb > sa) return -1
             return 0
         })
+    }
+
+    removeChild(node: LayoutNodeProxy) {
+        this.children = this.children.filter(n => n.id !== node.id)
     }
 
     static getAsInsert(key: string, user_id: string, layout_id: number, broadcast: Function): LayoutNodeProxy {
@@ -112,7 +120,7 @@ const {subscribe, set, update} = writable<LayoutNodeProxy[]>([])
 export const layoutNodes = {
     subscribe, set, update,
 
-    updateNode: (nodes: LayoutNodeProxy[], update: LayoutNodeUpdate) => {
+    updateData: (nodes: LayoutNodeProxy[], update: LayoutNodeUpdate) => {
         updateProxy<'layout_nodes', LayoutNodeProxy>(
             nodes, update, 'layout_nodes'
         )
@@ -137,10 +145,18 @@ export const layoutNodes = {
         return nodes.filter(n=>n.id===id)[0] ?? null
     },
 
-    addNode: (nodes: LayoutNodeProxy[], key: string, user_id: string, layout_id: number) => {
+    add: (nodes: LayoutNodeProxy[], key: string, user_id: string, layout_id: number) => {
         const node = LayoutNodeProxy.getAsInsert(key, user_id, layout_id, () => set(nodes))
-        node.broadcast
         nodes.push(node)
         set(nodes)
+    },
+
+    delete: (nodes: LayoutNodeProxy[], node: LayoutNodeProxy) => {
+        set(nodes.filter(n => n.id !== node.id))
+        node.deleteFromDB()
+        if (node.parent_node_id) {
+            const parent = nodes.filter(n => n.id === node.parent_node_id)[0]
+            parent.removeChild(node)
+        }
     }
 }

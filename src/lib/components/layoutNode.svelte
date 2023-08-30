@@ -1,10 +1,11 @@
 <script lang="ts">
+    import type { StateVarValue } from '$lib/classes/dbProxy';
     import type { LayoutNodeProxy } from '$lib/classes/layoutNodes'
     import { stateVariables } from '$lib/classes/stateVariables'
-    import { activeNodeID, ctxMenu, scalePercent, type CtxMenu } from '$lib/stores/editor'
-    import { createEventDispatcher } from 'svelte'
+    import { activeNodeID, ctxMenu, scalePercent, type CtxMenu, type CtxMenuItem } from '$lib/stores/editor'
     import { page } from '$app/stores'
-	import type { StateVarValue } from '$lib/classes/dbProxy';
+    
+    import { createEventDispatcher } from 'svelte'
     const dispatch = createEventDispatcher()
     
     export let node: LayoutNodeProxy
@@ -56,14 +57,30 @@
         }
 	}
 
-    const getMenu = (n: LayoutNodeProxy): CtxMenu => ([
-        {key: `Save ${n.key}`, 
-            disabled: !n.unsaved, 
-            action: () => n.saveChangesToDB()},
-        {key: `Reset ${n.key}`, 
-            disabled: !n.unsaved, 
-            action: () => n.resetChanges()},
-    ])
+    const getMenu = (n: LayoutNodeProxy): CtxMenu => {
+        const menu: CtxMenuItem[] = [
+            {key: `Save ${n.key}`, 
+                disabled: !n.unsaved, 
+                action: () => n.saveChangesToDB()},
+            {key: `Reset ${n.key}`, 
+                disabled: !n.unsaved, 
+                action: () => n.resetChanges()}
+        ]
+
+        if (node.parent_node_id) {
+            menu.push(
+                {key: 'Select Parent',
+                    action: () => activeNodeID.set(node.parent_node_id)
+                })
+        }
+
+        menu.push(
+            {key: ""},
+            {key: `Delete ${n.key}`, action: () => dispatch('deleteNode', node)}
+        )
+
+        return menu
+    }
 </script>
 
 <svelte:window on:mouseup={stopMovement} on:mousemove={move}  />
@@ -107,6 +124,7 @@
             child={true} 
             depth={depth + 1}
             on:dragParent={startMovement}
+            on:deleteNode
         />
     {/each}
 </div>
