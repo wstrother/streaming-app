@@ -4,7 +4,7 @@
 	import type { StateVariableProxy } from "$lib/classes/stateVariables"
 	import type { ProxyAttrs } from "$lib/classes/dbProxy"
 
-    export let proxy: LayoutNodeProxy | StateVariableProxy | null
+    export let proxy: LayoutNodeProxy | StateVariableProxy
     export let attrs: ProxyAttrs = []
     
     let unsaved: boolean
@@ -24,7 +24,6 @@
     
 </script>
 
-{#if proxy}
     <div id="node-info-panel" 
         class="variant-glass-primary 
             rounded px-4 pt-1 m-4 
@@ -51,7 +50,6 @@
             </button>
         </div>
     </div>
-{/if}
 
 <style lang="postcss">
     #save-panel {
