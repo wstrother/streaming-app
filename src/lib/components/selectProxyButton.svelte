@@ -13,7 +13,7 @@
 </script>
 
 
-<button class="btn-style" 
+<button class="btn btn-sm variant-filled-primary mb-1" 
     on:dblclick={() => dispatch("dblclickProxy", proxy)}  
     on:click={() => dispatch("clickProxy", proxy)}>
 
@@ -32,10 +32,6 @@
 {/if}
 
 <style lang="postcss">
-    :global(.btn-style) {
-        @apply btn btn-sm mb-1 variant-ghost-primary
-    }
-
     .container {
         @apply border-2 rounded p-1 mb-4 mt-0 
             border-primary-500 bg-primary-600 flex flex-col ml-4

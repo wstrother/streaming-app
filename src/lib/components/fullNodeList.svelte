@@ -8,7 +8,7 @@
 </script>
 
 <div id="full-nodes-panel" 
-    class="bg-primary-600 rounded px-4 pb-2 text-white flex flex-col">
+    class="variant-glass-primary rounded px-4 pb-2 text-white flex flex-col">
 
     <h1 class="h3 mb-2">Layout Nodes</h1>
 
