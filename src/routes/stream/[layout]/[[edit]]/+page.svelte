@@ -174,7 +174,7 @@
     }
 
     #active-node-panel {
-        @apply absolute top-0 right-0 md:mr-20 sm:mr-2
+        @apply absolute top-0 right-0 md:mr-20 sm:mr-2 w-[400px]
     }
 
     #open-node-list-panel {
