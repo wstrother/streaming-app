@@ -1,10 +1,9 @@
 <script lang="ts">
     import { LayoutNodeProxy } from "$lib/classes/layoutNodes"
 	import type { StateVariableProxy } from "$lib/classes/stateVariables";
-    import { activeProxyID } from "$lib/stores/editor"
 
-    import { getModalStore } from '@skeletonlabs/skeleton'
-    const modalStore = getModalStore()
+    import { createEventDispatcher } from "svelte"
+    const dispatch = createEventDispatcher()
 
     export let proxy: LayoutNodeProxy | StateVariableProxy
     export let tree: boolean = false
@@ -15,8 +14,8 @@
 
 
 <button class="btn-style" 
-    on:dblclick={() => modalStore.close()}  
-    on:click={() => activeProxyID.set(proxy.id)}>
+    on:dblclick={() => dispatch("dblclickProxy", proxy)}  
+    on:click={() => dispatch("clickProxy", proxy)}>
 
     {proxy.key}
     {#if proxy.client}
