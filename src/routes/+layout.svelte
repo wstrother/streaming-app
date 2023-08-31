@@ -3,7 +3,6 @@
 	import { Modal } from '@skeletonlabs/skeleton'
 	import type { ModalComponent } from '@skeletonlabs/skeleton'
 	import { initializeStores } from '@skeletonlabs/skeleton'
-	import { fade } from 'svelte/transition'
 	initializeStores()
 
 	import FullNodeList from '$lib/components/fullNodeList.svelte'
@@ -14,7 +13,7 @@
 
 </script>
 
-<Modal {components} transitionIn={fade} transitionOut={fade}
+<Modal {components} transitions={false}
 	background="bg-primary-600" 
 	regionBackdrop="variant-soft-secondary"
 	regionBody="text-white" 
