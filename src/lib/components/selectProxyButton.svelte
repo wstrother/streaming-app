@@ -26,7 +26,8 @@
 {#if children && children.length && tree}
     <div class="container">
         {#each children as child}
-            <svelte:self proxy={child} tree={true}/>
+            <svelte:self proxy={child} tree={true} 
+                on:clickProxy on:dblclickProxy/>
         {/each}
     </div>
 {/if}
@@ -34,7 +35,7 @@
 <style lang="postcss">
     .container {
         @apply border-2 rounded p-1 mb-4 mt-0 
-            border-primary-500 bg-primary-600 flex flex-col ml-4
+            border-primary-500 variant-glass-primary flex flex-col ml-4
             border-t-0 border-r-0
     }
 </style>
