@@ -92,7 +92,7 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
     static getAsInsert(data: DatabaseInsert<'layout_nodes'>, broadcast: Function): LayoutNodeProxy {
         const defaults: DatabaseRow<'layout_nodes'> = {
             boolean_key:null,
-            classes:"absolute",
+            classes:"",
             content:"",
             created_at:"",
             id:0,

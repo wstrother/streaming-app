@@ -52,7 +52,8 @@
                     key, 
                     user_id: $userMeta.uid, 
                     layout_id: $page.data.layoutData.id,
-                    parent_node_id
+                    parent_node_id,
+                    classes: parent_node_id ? "" : "absolute"
                 })
             }
         })
