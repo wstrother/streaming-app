@@ -75,7 +75,8 @@
         }
 
         menu.push(
-            {key: ""},
+            {key: 'Add New Child Node', action: () => dispatch('addChildNode', node)},
+            {key: ''},
             {key: `Delete ${n.key}`, action: () => dispatch('deleteNode', node)}
         )
 

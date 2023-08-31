@@ -120,7 +120,9 @@
 
     <!-- Beginning of layout node elements -->
     {#each rootNodes as node}
-        <LayoutNode {node} {edit} on:deleteNode={(e) => deleteNode(e)}/>
+        <LayoutNode {node} {edit} 
+            on:addChildNode={(e) => addNode(e.detail.id)}
+            on:deleteNode={(e) => deleteNode(e)}/>
     {/each}
 </div>
 

@@ -149,6 +149,10 @@ export const layoutNodes = {
         const node = LayoutNodeProxy.getAsInsert(data, () => set(nodes))
         nodes.push(node)
         set(nodes)
+        if (node.parent_node_id) {
+            const parent = nodes.filter(n => n.id === node.parent_node_id)[0]
+            parent.addChild(node)
+        }
     },
 
     delete: (nodes: LayoutNodeProxy[], node: LayoutNodeProxy) => {
