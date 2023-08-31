@@ -24,7 +24,6 @@
     }
     
     let elId = `${attrName}-input-${proxy.id}`
-    let inputCls = "input variant-form-material text-sm pl-1"
 
     const startEditing = () => {
         editing = true
@@ -53,20 +52,28 @@
 </script>
 
 <label for={elId} class="label flex items-center w-[100%]">
-    <span class="mr-4 text-lg">{attrName}:</span>
+    <span class="mr-4 h-5 w-20 flex justify-end">{attrName}:</span>
 
     {#if inputType === 'string'}
-        <input id={elId} name={elId} class={inputCls} 
+        <input id={elId} name={elId}
             on:focus={startEditing}
             on:blur={endEditing}
             on:keyup={onkey}
             bind:value={fieldValue} />
 
     {:else if inputType === 'number'}
-        <input name={elId} class={inputCls} type='number' 
+        <input id={elId} name={elId} type='number'
+            placeholder={nullable ? "null" : "0"}
             on:focus={startEditing}
             on:blur={endEditing}
             on:keyup={onkey}
             bind:value={fieldValue} />
     {/if}
 </label>
+
+<!-- svelte-ignore css-unused-selector -->
+<style lang="postcss">
+    input {
+        @apply input variant-form-material text-sm pl-1
+    }
+</style>
