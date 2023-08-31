@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { StateVarValue } from '$lib/classes/dbProxy';
-    import type { LayoutNodeProxy } from '$lib/classes/layoutNodes'
+    import { layoutNodes, type LayoutNodeProxy } from '$lib/classes/layoutNodes'
     import { stateVariables } from '$lib/classes/stateVariables'
     import { activeProxyID, ctxMenu, scalePercent, type CtxMenu, type CtxMenuItem } from '$lib/stores/editor'
     import { page } from '$app/stores'
@@ -82,6 +82,9 @@
 
         return menu
     }
+
+    let childNodes: LayoutNodeProxy[]
+    $: childNodes = $layoutNodes.filter((n) => n.parent_node_id === node.id)
 </script>
 
 <svelte:window on:mouseup={stopMovement} on:mousemove={move}  />
@@ -119,7 +122,7 @@
         </span>
     {/if}
 
-    {#each node.children as child}
+    {#each childNodes as child}
         <svelte:self 
             node={child} 
             {edit} 
@@ -127,6 +130,7 @@
             depth={depth + 1}
             on:dragParent={startMovement}
             on:deleteNode
+            on:addChildNode
         />
     {/each}
 </div>

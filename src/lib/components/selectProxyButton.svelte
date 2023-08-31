@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { LayoutNodeProxy } from "$lib/classes/layoutNodes"
+    import { LayoutNodeProxy, layoutNodes } from "$lib/classes/layoutNodes"
 	import type { StateVariableProxy } from "$lib/classes/stateVariables";
 
     import { createEventDispatcher } from "svelte"
@@ -9,7 +9,7 @@
     export let tree: boolean = false
 
     let children: LayoutNodeProxy[] = []
-    if (proxy instanceof LayoutNodeProxy) children = proxy.children
+    if (proxy instanceof LayoutNodeProxy) children = $layoutNodes.filter((n) => n.parent_node_id === proxy.id)
 </script>
 
 

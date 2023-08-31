@@ -6,7 +6,7 @@ export type LayoutNodeRow = DatabaseRow<'layout_nodes'>
 export type LayoutNodeUpdate = DatabaseUpdate<'layout_nodes'>
 
 export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
-    children: LayoutNodeProxy[] = []
+    parentNode: LayoutNodeProxy|null = null
 
     get key(): string { return this.getColumn("key") }
     get top(): number|null { return this.getColumn('top') }
@@ -75,20 +75,6 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
         })
     }
 
-    addChild(node: LayoutNodeProxy) {
-        this.children.push(node)
-        this.children.sort((a, b) => {
-            const {sa, sb} = {sa: a.sibling_order ?? 0, sb: b.sibling_order ?? 0}
-            if (sa > sb) return 1
-            if (sb > sa) return -1
-            return 0
-        })
-    }
-
-    removeChild(node: LayoutNodeProxy) {
-        this.children = this.children.filter(n => n.id !== node.id)
-    }
-
     static getAsInsert(data: DatabaseInsert<'layout_nodes'>, broadcast: Function): LayoutNodeProxy {
         const defaults: DatabaseRow<'layout_nodes'> = {
             boolean_key:null,
@@ -131,13 +117,6 @@ export const layoutNodes = {
             nodes, set, LayoutNodeProxy
         )
 
-        proxies.forEach(n => {
-            if (!n.parent_node_id) return
-
-            const parent = proxies.filter(p=>p.id===n.parent_node_id)[0] ?? null
-            if (parent) parent.addChild(n)
-        })
-
         return proxies
     },
 
@@ -149,19 +128,11 @@ export const layoutNodes = {
         const node = LayoutNodeProxy.getAsInsert(data, () => set(nodes))
         nodes.push(node)
         set(nodes)
-        if (node.parent_node_id) {
-            const parent = nodes.filter(n => n.id === node.parent_node_id)[0]
-            parent.addChild(node)
-        }
     },
 
     delete: (nodes: LayoutNodeProxy[], node: LayoutNodeProxy) => {
         nodes.splice(nodes.indexOf(node), 1)
         set(nodes)
         node.deleteFromDB()
-        if (node.parent_node_id) {
-            const parent = nodes.filter(n => n.id === node.parent_node_id)[0]
-            parent.removeChild(node)
-        }
     }
 }
