@@ -13,6 +13,7 @@ const getLayoutData = async (layoutName: string): Promise<DatabaseRow<'layouts'>
     } else if (!data) {
         throw new Error(`DB error: No layout found with name ${layoutName}`)
     }
+
     return data
 }
 

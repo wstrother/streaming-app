@@ -2,7 +2,6 @@
 	import { layoutNodes, type LayoutNodeProxy } from "$lib/classes/layoutNodes"
     import { getModalStore } from '@skeletonlabs/skeleton'
 	import { onMount } from "svelte";
-	import { fade, slide } from "svelte/transition";
     const modalStore = getModalStore()
 
     let parentNode: LayoutNodeProxy|null
