@@ -3,7 +3,7 @@
     import { layoutNodes, type LayoutNodeProxy } from '$lib/classes/layoutNodes'
     import { stateVariables } from '$lib/classes/stateVariables'
     import { activeProxyID, ctxMenu, scalePercent, type CtxMenu, type CtxMenuItem } from '$lib/stores/editor'
-	import { setParentID } from '$lib/menuActions'
+	import { setParentID, unsetParentID } from '$lib/menuActions'
     import { page } from '$app/stores'
     
     import { createEventDispatcher } from 'svelte'
@@ -72,7 +72,7 @@
 
         if (node.parent_node_id) {
             menu.push(
-                {key: 'Unset Parent ID'},
+                {key: 'Unset Parent ID', action: () => unsetParentID(node)},
                 {key: 'Select Parent',
                     action: () => activeProxyID.set(node.parent_node_id)
                 })

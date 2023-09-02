@@ -15,3 +15,7 @@ export const setParentID = (node: LayoutNodeProxy) => {
         }
     })
 }
+
+export const unsetParentID = (node: LayoutNodeProxy) => {
+    node.setColumn("parent_node_id", null)
+}
