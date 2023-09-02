@@ -140,7 +140,6 @@ export const layoutNodes = {
     },
 
     getChildren: (nodes: LayoutNodeProxy[], node:LayoutNodeProxy): LayoutNodeProxy[] => {
-        debugger
         return nodes.filter(n => n.parent_node_id === node.id).sort((a, b) => {
             const {sa, sb} = {sa: a.sibling_order ?? 0, sb: b.sibling_order ?? 0}
             if (sa > sb) return 1
