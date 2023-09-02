@@ -2,10 +2,13 @@
     import { StateVariableProxy, stateVariables } from "$lib/classes/stateVariables"
 	import EditVarPanel from "$lib/components/edit/editVarPanel.svelte"
 	import UnsavedPanel from "$lib/components/unsavedPanel.svelte"
-    import { activeVarId } from "$lib/stores/editor"
+    import { activeProxyID } from "$lib/stores/editor"
 
-    let activeVar: StateVariableProxy | null 
-    $: activeVar = stateVariables.getVarByID($stateVariables, $activeVarId)
+    let activeVar: StateVariableProxy | null
+    $: {
+        if ($activeProxyID) activeVar = stateVariables.getProxyByID($stateVariables, $activeProxyID)
+        else activeVar = null
+    }
 
 </script>
 
@@ -20,7 +23,7 @@
             <span>{sv.key}: {sv.value}</span>
             
             <button class="btn btn-sm variant-filled-primary" 
-                on:click={() => activeVarId.set(sv.id)}>
+                on:click={() => activeProxyID.set(sv.id)}>
                 Edit
             </button>
         </div>
@@ -34,7 +37,7 @@
 {/if}
 
 <UnsavedPanel header="Unsaved State Variables:" 
-    on:clickProxy={({detail}) => activeVarId.set(detail.id)}
+    on:clickProxy={({detail}) => activeProxyID.set(detail.id)}
     proxies={$stateVariables.filter(sv => sv.unsaved)} />
 
 

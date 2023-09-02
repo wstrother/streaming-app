@@ -7,10 +7,12 @@
 
 	import FullNodeList from '$lib/components/modals/fullNodeList.svelte'
 	import OrderNodesPanel from '$lib/components/modals/orderNodesPanel.svelte'
+	import FullVarsList from '$lib/components/modals/fullVarsList.svelte'
 
 	const components: Record<string, ModalComponent> = {
 		fullNodeList: {ref: FullNodeList},
-		orderChildNodes: {ref: OrderNodesPanel}
+		orderChildNodes: {ref: OrderNodesPanel},
+		fullVarsList: {ref: FullVarsList}
 	}
 
 </script>
