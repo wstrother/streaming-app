@@ -6,9 +6,11 @@
 	initializeStores()
 
 	import FullNodeList from '$lib/components/fullNodeList.svelte'
+	import OrderNodesPanel from '$lib/components/orderNodesPanel.svelte'
 
 	const components: Record<string, ModalComponent> = {
 		fullNodeList: {ref: FullNodeList},
+		orderChildNodes: {ref: OrderNodesPanel}
 	}
 
 </script>

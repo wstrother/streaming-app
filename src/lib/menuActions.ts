@@ -20,3 +20,13 @@ export const setParentID = (node: LayoutNodeProxy, modalStore: ModalStore) => {
 export const unsetParentID = (node: LayoutNodeProxy) => {
     node.setColumn("parent_node_id", null)
 }
+
+export const orderChildNodes = (childNodes: LayoutNodeProxy[], modalStore: ModalStore) => {
+    modalStore.trigger({
+        type: 'component',
+        component: 'orderChildNodes',
+        meta: {
+            childNodes
+        }
+    })
+}

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { ProxyAttrs } from "$lib/classes/dbProxy"
-	import type { LayoutNodeProxy } from "$lib/classes/layoutNodes"
+	import { type LayoutNodeProxy, layoutNodes } from "$lib/classes/layoutNodes"
 	import EditProxyPanel from "./editProxyPanel.svelte"
-    import { setParentID, unsetParentID } from "$lib/menuActions"
+    import { orderChildNodes, setParentID, unsetParentID } from "$lib/menuActions"
     import { getModalStore } from "@skeletonlabs/skeleton"
     const modalStore = getModalStore()
 
@@ -16,6 +16,9 @@
         ['width', 'number'],
         ['height', 'number'],
     ]
+
+    let childNodes: LayoutNodeProxy[]
+    $: childNodes = $layoutNodes.filter((n) => n.parent_node_id === node.id)
 </script>
 
 <EditProxyPanel proxy={node} {attrs}/>
@@ -27,6 +30,11 @@
             <button on:click={() => unsetParentID(node)}>Unset Parent ID</button>
         {/if}
     </div>
+    {#if childNodes.length}
+    <div>
+        <button on:click={() => orderChildNodes(childNodes, modalStore)}>Order Child Nodes</button>
+    </div>
+    {/if}
     <div>
         <button>Set Variable ID</button>
         {#if node.variable_id}
