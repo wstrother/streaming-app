@@ -34,7 +34,7 @@
     {#if childNodes.length}
     <div>
         <button on:click={() => orderChildNodes(node, modalStore)}>Order Child Nodes</button>
-    </div>
+    </div>boolean_id
     {/if}
     <div>
         <button on:click={() => setVariableID(node, modalStore)}>Set Variable ID</button>
@@ -45,7 +45,7 @@
     <div>
         <button on:click={() => setBooleanID(node, modalStore)}>Set Boolean ID</button>
     </div>
-    {#if node.boolean_key}
+    {#if node.boolean_id}
     <div>
         <button 
             on:click={() => toggleBoolean(node, stateVariables)}>

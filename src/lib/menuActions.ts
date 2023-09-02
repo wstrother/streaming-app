@@ -52,7 +52,7 @@ export const setBooleanID = (node: LayoutNodeProxy, modalStore: ModalStore) => {
         component: 'fullVarsList',
         meta: {
             onClick: (sv: StateVariableProxy) => {
-                node.setColumn("boolean_key", sv.id)
+                node.setColumn("boolean_id", sv.id)
                 modalStore.close()
             },
             typeFilter: "boolean"
@@ -62,15 +62,15 @@ export const setBooleanID = (node: LayoutNodeProxy, modalStore: ModalStore) => {
 
 export const toggleBoolean = (node: LayoutNodeProxy, svObj: StateVarStore) => {
     const stateVariables = get(svObj)
-    if (node.boolean_key) {
-        const bool = svObj.getProxyByID(stateVariables, node.boolean_key)
+    if (node.boolean_id) {
+        const bool = svObj.getProxyByID(stateVariables, node.boolean_id)
         bool.setColumn("value", String(!bool.value))
         bool.saveChangesToDB()
     }
 }
 
 export const unsetBooleanID = (node: LayoutNodeProxy) => {
-    node.setColumn("boolean_key", null)
+    node.setColumn("boolean_id", null)
 }
 
 export const setImageSrc = (node: LayoutNodeProxy, modalStore: ModalStore) => {

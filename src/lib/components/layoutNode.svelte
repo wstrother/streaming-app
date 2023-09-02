@@ -20,8 +20,8 @@
     $: imgURL = `${$page.data.imageBaseUrl}/${node.user_id}/${node.image}`
 
     let display: StateVarValue = true
-    $: if (node.boolean_key) {
-        display = stateVariables.getValueByID($stateVariables, node.boolean_key)
+    $: if (node.boolean_id) {
+        display = stateVariables.getValueByID($stateVariables, node.boolean_id)
     }
 
     // handle var values / interpolation
