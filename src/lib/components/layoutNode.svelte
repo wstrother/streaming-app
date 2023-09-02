@@ -25,7 +25,8 @@
     }
 
     // handle var values / interpolation
-    const varValue = stateVariables.getVarStore(node.variable_id)
+    let varText: string
+    $: varText = String(stateVariables.getVarByID($stateVariables, node.variable_id))
     let content: string
     $: content = node.interpolate(
         (key: string) => stateVariables.getVarByKey($stateVariables, key)
@@ -90,7 +91,7 @@
     }
 
     let childNodes: LayoutNodeProxy[]
-    $: childNodes = $layoutNodes.filter((n) => n.parent_node_id === node.id)
+    $: childNodes = layoutNodes.getChildren($layoutNodes, node)
 </script>
 
 <svelte:window on:mouseup={stopMovement} on:mousemove={move}  />
@@ -124,7 +125,7 @@
 
     {#if node.variable_id}
         <span class="layout-node-var">
-            {$varValue}
+            {varText}
         </span>
     {/if}
 

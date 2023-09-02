@@ -137,5 +137,14 @@ export const layoutNodes = {
         nodes.splice(nodes.indexOf(node), 1)
         set(nodes)
         node.deleteFromDB()
+    },
+
+    getChildren: (nodes: LayoutNodeProxy[], node:LayoutNodeProxy): LayoutNodeProxy[] => {
+        return nodes.filter(n => n.parent_node_id === node.id).sort((a, b) => {
+            const {sa, sb} = {sa: a.sibling_order ?? 0, sb: b.sibling_order ?? 0}
+            if (sa > sb) return 1
+            if (sb > sa) return -1
+            return 0
+        })
     }
 }

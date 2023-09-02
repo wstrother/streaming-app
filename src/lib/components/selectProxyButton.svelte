@@ -10,7 +10,7 @@
     export let disabled: Number[] = []
 
     let children: LayoutNodeProxy[] = []
-    if (proxy instanceof LayoutNodeProxy) children = $layoutNodes.filter((n) => n.parent_node_id === proxy.id)
+    if (proxy instanceof LayoutNodeProxy) children = layoutNodes.getChildren($layoutNodes, proxy)
 </script>
 
 
