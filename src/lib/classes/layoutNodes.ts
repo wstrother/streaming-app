@@ -20,7 +20,7 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
 
     get user_id(): string|null { return this.getColumn("user_id") }
     get variable_id(): number|null { return this.getColumn("variable_id") }
-    get boolean_id(): number|null { return this.getColumn("boolean_key")}
+    get boolean_id(): number|null { return this.getColumn("boolean_id")}
     get parent_node_id(): number|null { return this.getColumn("parent_node_id") }
     get sibling_order(): number|null { return this.getColumn("sibling_order") }
     get image(): string|null { return this.getColumn("img_src") }
@@ -79,7 +79,7 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
 
     static getAsInsert(data: DatabaseInsert<'layout_nodes'>, broadcast: Function): LayoutNodeProxy {
         const defaults: DatabaseRow<'layout_nodes'> = {
-            boolean_key:null,
+            boolean_id:null,
             classes:"",
             content:"",
             created_at:"",

@@ -1,4 +1,4 @@
-import { writable, derived, type Readable } from 'svelte/store'
+import { writable } from 'svelte/store'
 import { ProxyDBRow, getProxies, updateProxy } from './dbProxy'
 import type { DatabaseInsert, DatabaseRow, DatabaseUpdate, StateVarTypesLiterals, StateVarValue } from './dbProxy'
 
@@ -56,13 +56,13 @@ export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
 const varStore = writable<StateVariableProxy[]>([])
 
 
-function getVarByID(vars: StateVariableProxy[], id: number | null): StateVarValue {
+function getValueByID(vars: StateVariableProxy[], id: number | null): StateVarValue {
     const stateVariable = vars.filter(v => v.id===id)[0]
     if (stateVariable === undefined) return null
     return stateVariable.value
 }
 
-function getVarByKey(vars: StateVariableProxy[], key: string): StateVarValue {
+function getValueByKey(vars: StateVariableProxy[], key: string): StateVarValue {
     const stateVariable = vars.filter(v => v.key===key)[0]?.value
     if (stateVariable === undefined) return null
     return stateVariable
@@ -85,7 +85,7 @@ export const stateVariables = {
         )
     },
 
-    getVarByID, getVarByKey,
+    getValueByID, getValueByKey,
 
     add: (vars: StateVariableProxy[], key: string, user_id: string, value: string) => {
         const stateVar = StateVariableProxy.getAsInsert({key, user_id, value}, () => varStore.set(vars))
@@ -96,5 +96,15 @@ export const stateVariables = {
     delete: (vars: StateVariableProxy[], stateVariable: StateVariableProxy) => {
         vars.splice(vars.indexOf(stateVariable), 1)
         varStore.set(vars)
+    },
+
+    getProxyByID: (vars: StateVariableProxy[], varID: Number): StateVariableProxy => {
+        return vars.filter(v => v.id === varID)[0]
+    },
+
+    getProxyByKey: (vars: StateVariableProxy[], key: String): StateVariableProxy => {
+        return vars.filter(v => v.key === key)[0]
     }
 }
+
+export type StateVarStore = typeof stateVariables

@@ -2,8 +2,9 @@
 	import type { ProxyAttrs } from "$lib/classes/dbProxy"
 	import { type LayoutNodeProxy, layoutNodes } from "$lib/classes/layoutNodes"
 	import EditProxyPanel from "./editProxyPanel.svelte"
-    import { orderChildNodes, setParentID, unsetParentID } from "$lib/menuActions"
+    import { orderChildNodes, setBooleanID, setParentID, setVariableID, toggleBoolean, unsetBooleanID, unsetParentID, unsetVariableID } from "$lib/menuActions"
     import { getModalStore } from "@skeletonlabs/skeleton"
+	import { stateVariables } from "$lib/classes/stateVariables";
     const modalStore = getModalStore()
 
     export let node: LayoutNodeProxy
@@ -33,20 +34,26 @@
     {#if childNodes.length}
     <div>
         <button on:click={() => orderChildNodes(node, modalStore)}>Order Child Nodes</button>
-    </div>
+    </div>boolean_id
     {/if}
     <div>
-        <button>Set Variable ID</button>
+        <button on:click={() => setVariableID(node, modalStore)}>Set Variable ID</button>
         {#if node.variable_id}
-            <button >Unset Variable ID</button>
+            <button on:click={() => unsetVariableID(node)}>Unset Variable ID</button>
         {/if}
     </div>
     <div>
-        <button>Set Boolean ID</button>
-        {#if node.boolean_id}
-            <button >Unset Boolean ID</button>
-        {/if}
+        <button on:click={() => setBooleanID(node, modalStore)}>Set Boolean ID</button>
     </div>
+    {#if node.boolean_id}
+    <div>
+        <button 
+            on:click={() => toggleBoolean(node, stateVariables)}>
+            Toggle Boolean
+        </button>
+        <button on:click={() => unsetBooleanID(node)}>Unset Boolean ID</button>
+    </div>
+    {/if}
     <div>
         <button>Set Image</button>
         {#if node.image}

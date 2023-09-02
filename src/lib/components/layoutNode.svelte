@@ -21,15 +21,15 @@
 
     let display: StateVarValue = true
     $: if (node.boolean_id) {
-        display = stateVariables.getVarByID($stateVariables, node.boolean_id)
+        display = stateVariables.getValueByID($stateVariables, node.boolean_id)
     }
 
     // handle var values / interpolation
     let varText: string
-    $: varText = String(stateVariables.getVarByID($stateVariables, node.variable_id))
+    $: varText = String(stateVariables.getValueByID($stateVariables, node.variable_id))
     let content: string
     $: content = node.interpolate(
-        (key: string) => stateVariables.getVarByKey($stateVariables, key)
+        (key: string) => stateVariables.getValueByKey($stateVariables, key)
     )
     
     // handle movement / positioning
