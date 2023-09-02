@@ -5,6 +5,8 @@ import type { DatabaseInsert, DatabaseRow, DatabaseUpdate, StateVarValue } from 
 export type LayoutNodeRow = DatabaseRow<'layout_nodes'>
 export type LayoutNodeUpdate = DatabaseUpdate<'layout_nodes'>
 
+let CLIENT_ID = -1
+
 export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
     parentNode: LayoutNodeProxy|null = null
 
@@ -81,7 +83,7 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
             classes:"",
             content:"",
             created_at:"",
-            id:0,
+            id:CLIENT_ID,
             key:"",
             layout_id:null,
             user_id:"",
@@ -94,6 +96,7 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
             height:null,
             width:null
         }
+        CLIENT_ID -= 1
 
         return new LayoutNodeProxy({...defaults, ...data}, broadcast, true)
     }
