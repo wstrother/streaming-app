@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { LayoutNodeProxy, layoutNodes } from "$lib/classes/layoutNodes"
+    import { layoutNodes } from "$lib/classes/layoutNodes"
 	import SelectProxyButton from "./selectProxyButton.svelte"
 
     import { activeProxyID } from "$lib/stores/editor"
@@ -20,14 +20,8 @@
         else modalStore.close()
     }
 
-    let exclude: LayoutNodeProxy[] = []
-    $: exclude = $modalStore[0]?.meta?.exclude ?? []
-
-    let nodeList: LayoutNodeProxy[]
-    $: {
-        nodeList = $layoutNodes.filter(n => !n.parent_node_id)
-        if (exclude.length) nodeList = nodeList.filter(n => !exclude.includes(n))
-    }
+    let disabled: Number[] = []
+    $: disabled = $modalStore[0]?.meta?.exclude ?? []
 </script>
 
 <div id="full-nodes-panel" 
@@ -35,8 +29,8 @@
 
     <h1 class="h3 mb-2">Layout Nodes</h1>
 
-    {#each nodeList as node}
-        <SelectProxyButton proxy={node} tree={true}
+    {#each $layoutNodes.filter(n => !n.parent_node_id) as node}
+        <SelectProxyButton proxy={node} tree={true} {disabled}
             on:clickProxy={_onClick}
             on:dblclickProxy={_onDblClick}
         />

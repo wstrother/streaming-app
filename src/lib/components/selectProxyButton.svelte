@@ -7,13 +7,15 @@
 
     export let proxy: LayoutNodeProxy | StateVariableProxy
     export let tree: boolean = false
+    export let disabled: Number[] = []
 
     let children: LayoutNodeProxy[] = []
     if (proxy instanceof LayoutNodeProxy) children = $layoutNodes.filter((n) => n.parent_node_id === proxy.id)
 </script>
 
 
-<button class="btn btn-sm variant-filled-primary mb-1" 
+<button class="btn btn-sm variant-filled-primary mb-1"
+    disabled={disabled.includes(proxy.id ?? 0)}
     on:dblclick={() => dispatch("dblclickProxy", proxy)}  
     on:click={() => dispatch("clickProxy", proxy)}>
 
@@ -26,7 +28,7 @@
 {#if children && children.length && tree}
     <div class="container">
         {#each children as child}
-            <svelte:self proxy={child} tree={true} 
+            <svelte:self proxy={child} tree={true} {disabled}
                 on:clickProxy on:dblclickProxy/>
         {/each}
     </div>

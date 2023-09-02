@@ -25,7 +25,7 @@
                     node.setColumn("parent_node_id", e.detail.id)
                     modalStore.close()
                 },
-                exclude: [node]
+                exclude: [node.id, node.parent_node_id]
             }
         })
     }
