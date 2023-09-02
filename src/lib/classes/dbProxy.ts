@@ -31,8 +31,8 @@ export class ProxyDBRow<T extends DatabaseTableName> {
         this.client = client
     }
 
-    get id(): number|null {
-        return this.data.id ?? null
+    get id(): number {
+        return this.data.id
     }
 
     get unsaved(): boolean {
@@ -112,7 +112,16 @@ export class ProxyDBRow<T extends DatabaseTableName> {
         }
     }
 
-    saveChangesToProxy() {
+    saveChangesToProxy(update:DatabaseUpdate<'layout_nodes'>|null=null) {
+        if (update) {
+            Object.assign(this.data, update)
+           
+            Object.keys((k: keyof DatabaseUpdate<'layout_nodes'>) => { 
+                    // @ts-ignore
+                    delete this.changes[k] 
+                }
+            )
+        }
         Object.assign(this.data, this.changes)
         this.changes = {}
         this.broadcast()

@@ -68,13 +68,6 @@ function getVarByKey(vars: StateVariableProxy[], key: string): StateVarValue {
     return stateVariable
 }
 
-function getVarStore(id: number|null): Readable<StateVarValue> {
-    if (id) { return derived(varStore, (vars) => {
-        return getVarByID(vars, id)
-    })
-    } else return writable('')
-}
-
 export const stateVariables = {
     subscribe: varStore.subscribe, 
     set: varStore.set, 
@@ -92,10 +85,10 @@ export const stateVariables = {
         )
     },
 
-    getVarByID, getVarByKey, getVarStore,
+    getVarByID, getVarByKey,
 
     add: (vars: StateVariableProxy[], key: string, user_id: string, value: string) => {
-        const stateVar = StateVariableProxy.getAsInsert(key, user_id, value, () => varStore.set(vars))
+        const stateVar = StateVariableProxy.getAsInsert({key, user_id, value}, () => varStore.set(vars))
         vars.push(stateVar)
         varStore.set(vars)
     },

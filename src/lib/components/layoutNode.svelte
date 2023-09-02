@@ -25,7 +25,8 @@
     }
 
     // handle var values / interpolation
-    const varValue = stateVariables.getVarStore(node.variable_id)
+    let varText: string
+    $: varText = String(stateVariables.getVarByID($stateVariables, node.variable_id))
     let content: string
     $: content = node.interpolate(
         (key: string) => stateVariables.getVarByKey($stateVariables, key)
@@ -124,7 +125,7 @@
 
     {#if node.variable_id}
         <span class="layout-node-var">
-            {$varValue}
+            {varText}
         </span>
     {/if}
 

@@ -14,8 +14,7 @@
         ['left', 'number'],
         'classes',
         ['width', 'number'],
-        ['height', 'number'],
-        ["sibling_order", "number"]
+        ['height', 'number']
     ]
 
     let childNodes: LayoutNodeProxy[]
@@ -33,7 +32,7 @@
     </div>
     {#if childNodes.length}
     <div>
-        <button on:click={() => orderChildNodes(childNodes, modalStore)}>Order Child Nodes</button>
+        <button on:click={() => orderChildNodes(node, modalStore)}>Order Child Nodes</button>
     </div>
     {/if}
     <div>
