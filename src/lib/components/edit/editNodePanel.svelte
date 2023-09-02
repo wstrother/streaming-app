@@ -15,10 +15,11 @@
         'classes',
         ['width', 'number'],
         ['height', 'number'],
+        ["sibling_order", "number"]
     ]
 
     let childNodes: LayoutNodeProxy[]
-    $: childNodes = $layoutNodes.filter((n) => n.parent_node_id === node.id)
+    $: childNodes = layoutNodes.getChildren($layoutNodes, node)
 </script>
 
 <EditProxyPanel proxy={node} {attrs}/>

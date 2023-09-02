@@ -90,7 +90,7 @@
     }
 
     let childNodes: LayoutNodeProxy[]
-    $: childNodes = $layoutNodes.filter((n) => n.parent_node_id === node.id)
+    $: childNodes = layoutNodes.getChildren($layoutNodes, node)
 </script>
 
 <svelte:window on:mouseup={stopMovement} on:mousemove={move}  />
