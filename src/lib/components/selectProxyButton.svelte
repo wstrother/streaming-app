@@ -1,22 +1,23 @@
 <script lang="ts">
-    import { LayoutNodeProxy } from "$lib/classes/layoutNodes"
+    import { LayoutNodeProxy, layoutNodes } from "$lib/classes/layoutNodes"
 	import type { StateVariableProxy } from "$lib/classes/stateVariables";
-    import { activeProxyID } from "$lib/stores/editor"
 
-    import { getModalStore } from '@skeletonlabs/skeleton'
-    const modalStore = getModalStore()
+    import { createEventDispatcher } from "svelte"
+    const dispatch = createEventDispatcher()
 
     export let proxy: LayoutNodeProxy | StateVariableProxy
     export let tree: boolean = false
+    export let disabled: Number[] = []
 
     let children: LayoutNodeProxy[] = []
-    if (proxy instanceof LayoutNodeProxy) children = proxy.children
+    if (proxy instanceof LayoutNodeProxy) children = $layoutNodes.filter((n) => n.parent_node_id === proxy.id)
 </script>
 
 
-<button class="btn-style" 
-    on:dblclick={() => modalStore.close()}  
-    on:click={() => activeProxyID.set(proxy.id)}>
+<button class="btn btn-sm variant-filled-primary mb-1"
+    disabled={disabled.includes(proxy.id ?? 0)}
+    on:dblclick={() => dispatch("dblclickProxy", proxy)}  
+    on:click={() => dispatch("clickProxy", proxy)}>
 
     {proxy.key}
     {#if proxy.client}
@@ -27,19 +28,16 @@
 {#if children && children.length && tree}
     <div class="container">
         {#each children as child}
-            <svelte:self proxy={child} tree={true}/>
+            <svelte:self proxy={child} tree={true} {disabled}
+                on:clickProxy on:dblclickProxy/>
         {/each}
     </div>
 {/if}
 
 <style lang="postcss">
-    :global(.btn-style) {
-        @apply btn btn-sm mb-1 variant-ghost-primary
-    }
-
     .container {
         @apply border-2 rounded p-1 mb-4 mt-0 
-            border-primary-500 bg-primary-600 flex flex-col ml-4
+            border-primary-500 variant-glass-primary flex flex-col ml-4
             border-t-0 border-r-0
     }
 </style>

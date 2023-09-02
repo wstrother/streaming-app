@@ -1,6 +1,6 @@
 import { writable, derived, type Readable } from 'svelte/store'
 import { ProxyDBRow, getProxies, updateProxy } from './dbProxy'
-import type { DatabaseRow, DatabaseUpdate, StateVarTypesLiterals, StateVarValue } from './dbProxy'
+import type { DatabaseInsert, DatabaseRow, DatabaseUpdate, StateVarTypesLiterals, StateVarValue } from './dbProxy'
 
 export type StateVariableRow = DatabaseRow<'state_variables'>
 export type StateVariableUpdate = DatabaseUpdate<'state_variables'>
@@ -39,8 +39,17 @@ export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
         await super.deleteFromDB('state_variables')
     }
 
-    static getAsInsert(key: string, user_id: string, value: string, broadcast: Function) {
-        return new StateVariableProxy()
+    static getAsInsert(data: DatabaseInsert<'state_variables'>, broadcast: Function): StateVariableProxy {
+        const defaults: DatabaseRow<'state_variables'> = {
+            created_at:null,
+            id:0,
+            key:"",
+            type:"string",
+            user_id:"",
+            value: ""
+        }
+
+        return new StateVariableProxy({...defaults, ...data}, broadcast, true)
     }
 }
     

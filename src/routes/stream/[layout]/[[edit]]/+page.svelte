@@ -36,7 +36,7 @@
         if (edit) activeProxyID.set(null)
     }
 
-    const addNode = () => {
+    const addNode = (parent_node_id:number|null=null) => {
         modalStore.trigger({
             type: 'prompt',
             title: 'Enter Name',
@@ -44,11 +44,17 @@
             value: 'new_node',
             valueAttr: { type: 'text', minlength: 1, required: true },
 
-            response: (r: string) => {
-                if (!r) return
+            response: (key: string) => {
+                if (!key) return
                 if (!$userMeta.uid) throw Error("No User ID found in current userMeta")
 
-                layoutNodes.add($layoutNodes, r, $userMeta.uid, $page.data.layoutData.id)
+                layoutNodes.add($layoutNodes, {
+                    key, 
+                    user_id: $userMeta.uid, 
+                    layout_id: $page.data.layoutData.id,
+                    parent_node_id,
+                    classes: parent_node_id ? "" : "absolute"
+                })
             }
         })
     }
@@ -115,7 +121,9 @@
 
     <!-- Beginning of layout node elements -->
     {#each rootNodes as node}
-        <LayoutNode {node} {edit} on:deleteNode={(e) => deleteNode(e)}/>
+        <LayoutNode {node} {edit} 
+            on:addChildNode={(e) => addNode(e.detail.id)}
+            on:deleteNode={(e) => deleteNode(e)}/>
     {/each}
 </div>
 
@@ -167,7 +175,7 @@
     }
 
     #active-node-panel {
-        @apply absolute top-0 right-0 md:mr-20 sm:mr-2
+        @apply absolute top-0 right-0 md:mr-20 sm:mr-2 w-[400px]
     }
 
     #open-node-list-panel {

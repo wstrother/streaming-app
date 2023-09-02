@@ -11,10 +11,10 @@
 		fullNodeList: {ref: FullNodeList},
 	}
 
-
 </script>
 
-<Modal {components} background="bg-primary-600" 
+<Modal {components} transitions={false}
+	background="bg-primary-600" 
 	regionBackdrop="variant-soft-secondary"
 	regionBody="text-white" 
 	regionHeader="text-white text-2xl font-bold"/>

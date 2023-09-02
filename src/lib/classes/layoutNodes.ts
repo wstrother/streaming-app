@@ -1,12 +1,14 @@
 import { writable } from 'svelte/store'
 import { ProxyDBRow, getProxies, updateProxy } from './dbProxy'
-import type { DatabaseRow, DatabaseUpdate, StateVarValue } from './dbProxy'
+import type { DatabaseInsert, DatabaseRow, DatabaseUpdate, StateVarValue } from './dbProxy'
 
 export type LayoutNodeRow = DatabaseRow<'layout_nodes'>
 export type LayoutNodeUpdate = DatabaseUpdate<'layout_nodes'>
 
+let CLIENT_ID = -1
+
 export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
-    children: LayoutNodeProxy[] = []
+    parentNode: LayoutNodeProxy|null = null
 
     get key(): string { return this.getColumn("key") }
     get top(): number|null { return this.getColumn('top') }
@@ -75,41 +77,28 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
         })
     }
 
-    addChild(node: LayoutNodeProxy) {
-        this.children.push(node)
-        this.children.sort((a, b) => {
-            const {sa, sb} = {sa: a.sibling_order ?? 0, sb: b.sibling_order ?? 0}
-            if (sa > sb) return 1
-            if (sb > sa) return -1
-            return 0
-        })
-    }
-
-    removeChild(node: LayoutNodeProxy) {
-        this.children = this.children.filter(n => n.id !== node.id)
-    }
-
-    static getAsInsert(key: string, user_id: string, layout_id: number, broadcast: Function): LayoutNodeProxy {
-        const data: DatabaseRow<'layout_nodes'> = {
-            boolean_key: null,
-            classes: "absolute",
-            content: null,
-            created_at: "",
-            id: 0,
-            img_src: null,
-            key,
-            layout_id,
-            parent_node_id: null,
-            sibling_order: null,
-            user_id,
-            variable_id: null,
-            left: 0,
-            top: 0,
-            height: null,
-            width: null
+    static getAsInsert(data: DatabaseInsert<'layout_nodes'>, broadcast: Function): LayoutNodeProxy {
+        const defaults: DatabaseRow<'layout_nodes'> = {
+            boolean_key:null,
+            classes:"",
+            content:"",
+            created_at:"",
+            id:CLIENT_ID,
+            key:"",
+            layout_id:null,
+            user_id:"",
+            img_src:null,
+            parent_node_id:null,
+            sibling_order:null,
+            variable_id:null,
+            left:0,
+            top:0,
+            height:null,
+            width:null
         }
+        CLIENT_ID -= 1
 
-        return new LayoutNodeProxy(data, broadcast, true)
+        return new LayoutNodeProxy({...defaults, ...data}, broadcast, true)
     }
 }
 
@@ -131,13 +120,6 @@ export const layoutNodes = {
             nodes, set, LayoutNodeProxy
         )
 
-        proxies.forEach(n => {
-            if (!n.parent_node_id) return
-
-            const parent = proxies.filter(p=>p.id===n.parent_node_id)[0] ?? null
-            if (parent) parent.addChild(n)
-        })
-
         return proxies
     },
 
@@ -145,8 +127,8 @@ export const layoutNodes = {
         return nodes.filter(n=>n.id===id)[0] ?? null
     },
 
-    add: (nodes: LayoutNodeProxy[], key: string, user_id: string, layout_id: number) => {
-        const node = LayoutNodeProxy.getAsInsert(key, user_id, layout_id, () => set(nodes))
+    add: (nodes: LayoutNodeProxy[], data: DatabaseInsert<'layout_nodes'>) => {
+        const node = LayoutNodeProxy.getAsInsert(data, () => set(nodes))
         nodes.push(node)
         set(nodes)
     },
@@ -155,9 +137,5 @@ export const layoutNodes = {
         nodes.splice(nodes.indexOf(node), 1)
         set(nodes)
         node.deleteFromDB()
-        if (node.parent_node_id) {
-            const parent = nodes.filter(n => n.id === node.parent_node_id)[0]
-            parent.removeChild(node)
-        }
     }
 }

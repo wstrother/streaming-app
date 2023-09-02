@@ -1,7 +1,8 @@
 <script lang='ts'>
     import type { LayoutNodeProxy } from "$lib/classes/layoutNodes"
 	import type { StateVariableProxy } from "$lib/classes/stateVariables"
-	import SelectProxyButton from "./selectProxyButton.svelte";
+	import SelectProxyButton from "./selectProxyButton.svelte"
+    import { activeProxyID } from "$lib/stores/editor"
 
     export let proxies: LayoutNodeProxy[] | StateVariableProxy[]
     export let header: string = "Unsaved:"
@@ -27,7 +28,9 @@
 
         <h1 class="h3 mb-2">{header}</h1>
         {#each proxies as proxy}
-            <SelectProxyButton proxy={proxy} />
+            <SelectProxyButton proxy={proxy} 
+                on:clickProxy={(e) => activeProxyID.set(e.detail.id)}
+            />
         {/each}
 
         <div class="flex justify-around mt-2">
