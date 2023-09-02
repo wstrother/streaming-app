@@ -28,3 +28,27 @@ export const orderChildNodes = (parentNode: LayoutNodeProxy, modalStore: ModalSt
         meta: {parentNode}
     })
 }
+
+export const setVariableID = (node: LayoutNodeProxy, modalStore: ModalStore) => {
+
+}
+
+export const unsetVariableID = (node: LayoutNodeProxy) => {
+    node.setColumn("variable_id", null)
+}
+
+export const setBooleanID = (node: LayoutNodeProxy, modalStore: ModalStore) => {
+
+}
+
+export const unsetBooleanID = (node: LayoutNodeProxy) => {
+    node.setColumn("boolean_key", null)
+}
+
+export const setImageSrc = (node: LayoutNodeProxy, modalStore: ModalStore) => {
+
+}
+
+export const unsetImageSrc = (node: LayoutNodeProxy) => {
+    node.setColumn("img_src", null)
+}
