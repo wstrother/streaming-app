@@ -1,8 +1,9 @@
-import { getModalStore } from '@skeletonlabs/skeleton'
+// import { getModalStore } from '@skeletonlabs/skeleton'
+import type { ModalStore } from '@skeletonlabs/skeleton'
 import type { LayoutNodeProxy } from './classes/layoutNodes'
-const modalStore = getModalStore()
+// const modalStore = getModalStore()
 
-export const setParentID = (node: LayoutNodeProxy) => {
+export const setParentID = (node: LayoutNodeProxy, modalStore: ModalStore) => {
     modalStore.trigger({
         type: 'component',
         component: 'fullNodeList',

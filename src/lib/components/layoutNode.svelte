@@ -5,7 +5,9 @@
     import { activeProxyID, ctxMenu, scalePercent, type CtxMenu, type CtxMenuItem } from '$lib/stores/editor'
 	import { setParentID, unsetParentID } from '$lib/menuActions'
     import { page } from '$app/stores'
-    
+
+    import { getModalStore } from "@skeletonlabs/skeleton"
+    const modalStore = getModalStore()
     import { createEventDispatcher } from 'svelte'
     const dispatch = createEventDispatcher()
     
@@ -67,7 +69,7 @@
                 disabled: !node.unsaved, 
                 action: () => node.resetChanges()},
             {key: ''},
-            {key: 'Set Parent ID', action: () => setParentID(node)}
+            {key: 'Set Parent ID', action: () => setParentID(node, modalStore)}
         ]
 
         if (node.parent_node_id) {
