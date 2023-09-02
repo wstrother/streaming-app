@@ -1,7 +1,7 @@
 <script lang='ts'>
     import type { LayoutNodeProxy } from "$lib/classes/layoutNodes"
 	import type { StateVariableProxy } from "$lib/classes/stateVariables"
-	import SelectProxyButton from "./selectProxyButton.svelte"
+	import SelectProxyButton from "./modals/selectProxyButton.svelte"
     import { activeProxyID } from "$lib/stores/editor"
 
     export let proxies: LayoutNodeProxy[] | StateVariableProxy[]

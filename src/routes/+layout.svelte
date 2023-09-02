@@ -5,8 +5,8 @@
 	import { initializeStores } from '@skeletonlabs/skeleton'
 	initializeStores()
 
-	import FullNodeList from '$lib/components/fullNodeList.svelte'
-	import OrderNodesPanel from '$lib/components/orderNodesPanel.svelte'
+	import FullNodeList from '$lib/components/modals/fullNodeList.svelte'
+	import OrderNodesPanel from '$lib/components/modals/orderNodesPanel.svelte'
 
 	const components: Record<string, ModalComponent> = {
 		fullNodeList: {ref: FullNodeList},
