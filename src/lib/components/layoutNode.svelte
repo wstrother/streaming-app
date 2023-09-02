@@ -3,6 +3,7 @@
     import { layoutNodes, type LayoutNodeProxy } from '$lib/classes/layoutNodes'
     import { stateVariables } from '$lib/classes/stateVariables'
     import { activeProxyID, ctxMenu, scalePercent, type CtxMenu, type CtxMenuItem } from '$lib/stores/editor'
+	import { setParentID } from '$lib/menuActions'
     import { page } from '$app/stores'
     
     import { createEventDispatcher } from 'svelte'
@@ -57,18 +58,21 @@
         }
 	}
 
-    const getMenu = (n: LayoutNodeProxy): CtxMenu => {
+    const getMenu = (): CtxMenu => {
         const menu: CtxMenuItem[] = [
-            {key: `Save ${n.key}`, 
-                disabled: !n.unsaved, 
-                action: () => n.saveChangesToDB()},
-            {key: `Reset ${n.key}`, 
-                disabled: !n.unsaved, 
-                action: () => n.resetChanges()}
+            {key: `Save ${node.key}`, 
+                disabled: !node.unsaved, 
+                action: () => node.saveChangesToDB()},
+            {key: `Reset ${node.key}`, 
+                disabled: !node.unsaved, 
+                action: () => node.resetChanges()},
+            {key: ''},
+            {key: 'Set Parent ID', action: () => setParentID(node)}
         ]
 
         if (node.parent_node_id) {
             menu.push(
+                {key: 'Unset Parent ID'},
                 {key: 'Select Parent',
                     action: () => activeProxyID.set(node.parent_node_id)
                 })
@@ -77,7 +81,7 @@
         menu.push(
             {key: 'Add New Child Node', action: () => dispatch('addChildNode', node)},
             {key: ''},
-            {key: `Delete ${n.key}`, action: () => dispatch('deleteNode', node)}
+            {key: `Delete ${node.key}`, action: () => dispatch('deleteNode', node)}
         )
 
         return menu
@@ -93,7 +97,7 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <!-- svelte-ignore a11y-interactive-supports-focus -->
 <div
-    on:contextmenu|stopPropagation|preventDefault={e => ctxMenu.open(e, getMenu(node))}
+    on:contextmenu|stopPropagation|preventDefault={e => ctxMenu.open(e, getMenu())}
     on:mousedown|preventDefault|stopPropagation={isClicked} 
     id="layoutNode-{node.key}"
 

@@ -2,8 +2,7 @@
 	import type { ProxyAttrs } from "$lib/classes/dbProxy";
 	import type { LayoutNodeProxy } from "$lib/classes/layoutNodes"
 	import EditProxyPanel from "./editProxyPanel.svelte"
-    import { getModalStore } from '@skeletonlabs/skeleton'
-    const modalStore = getModalStore()
+    import { setParentID } from "$lib/menuActions"
 
     export let node: LayoutNodeProxy
 
@@ -15,26 +14,12 @@
         ['width', 'number'],
         ['height', 'number'],
     ]
-
-    const setParent = () => {
-        modalStore.trigger({
-            type: 'component',
-            component: 'fullNodeList',
-            meta: {
-                onClick: (e: CustomEvent) => {
-                    node.setColumn("parent_node_id", e.detail.id)
-                    modalStore.close()
-                },
-                exclude: [node.id, node.parent_node_id]
-            }
-        })
-    }
 </script>
 
 <EditProxyPanel proxy={node} {attrs}/>
 
 <div class="variant-glass-primary m-4 rounded p-3 text-white flex flex-col">
-    <button on:click={setParent}>Set Parent ID</button>
+    <button on:click={() => setParentID(node)}>Set Parent ID</button>
     <button>Set Variable ID</button>
     <button>Set Conditional Boolean ID</button>
 </div>
