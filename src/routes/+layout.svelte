@@ -5,9 +5,12 @@
 	import { initializeStores } from '@skeletonlabs/skeleton'
 	initializeStores()
 
+	export let data: PageData
+
 	import FullNodeList from '$lib/components/modals/fullNodeList.svelte'
 	import OrderNodesPanel from '$lib/components/modals/orderNodesPanel.svelte'
 	import FullVarsList from '$lib/components/modals/fullVarsList.svelte'
+	import type { PageData } from './$types';
 
 	const components: Record<string, ModalComponent> = {
 		fullNodeList: {ref: FullNodeList},
@@ -26,3 +29,11 @@
 <Toast />
 
 <slot />
+
+{#if !data.inOBS}
+	<div class='faux-bg bg-gray-700'/>
+{/if}
+
+<style>
+	.faux-bg {z-index: -100;}
+</style>

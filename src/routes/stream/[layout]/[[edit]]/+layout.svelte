@@ -30,31 +30,11 @@
 
 
 {#if data.edit}
-    {#if !data.inOBS}
-        <div id='faux-bg'/>
-    {/if}
-
     <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div id='scale-bg'
+    <div class="faux-bg"
         on:contextmenu|preventDefault
         on:wheel|preventDefault={wheel} 
         on:mousedown={() => activeProxyID.set(null)}/>
 {/if}
 
 <slot />
-
-<style>
-    #faux-bg {
-        background-color: #333;
-        position: absolute;
-        width: 100vw;
-        height: 100vh;
-        z-index: -100;
-    }
-
-    #scale-bg {
-        position: absolute;
-        width: 100vw;
-        height: 100vw;
-    }
-</style>
