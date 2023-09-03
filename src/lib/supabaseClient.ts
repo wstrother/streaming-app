@@ -1,7 +1,8 @@
-import { createClient, type AuthChangeEvent, type Session, type User } from "@supabase/supabase-js";
-import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL, PUBLIC_ADMIN_PASSWORD, PUBLIC_ADMIN_EMAIL } from "$env/static/public";
-import type { Database } from '$lib/types/supabase';
-import { writable, type Writable } from "svelte/store";
+import { createClient, type AuthChangeEvent, type Session, type User } from "@supabase/supabase-js"
+import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from "$env/static/public"
+import { ADMIN_PASSWORD, ADMIN_EMAIL } from "$env/static/private"
+import type { Database } from '$lib/types/supabase'
+import { writable, type Writable } from "svelte/store"
 
 export const supabase = createClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY)
 
@@ -9,8 +10,8 @@ export const supabase = createClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPAB
 export const devLogin = async (): Promise<User> => {
     if (import.meta.env.DEV) {
         const { data, error } = await supabase.auth.signInWithPassword({
-            email: PUBLIC_ADMIN_EMAIL,
-            password: PUBLIC_ADMIN_PASSWORD
+            email: ADMIN_EMAIL,
+            password: ADMIN_PASSWORD
         })
         
         if (error) throw new Error(error.message)
