@@ -1,4 +1,4 @@
-import { error as routeError } from '@sveltejs/kit'
+import { error as routeError, type ServerLoadEvent } from '@sveltejs/kit'
 import { supabase } from "$lib/supabaseClient"
 import type { DatabaseRow } from '$lib/classes/dbProxy'
 import { PUBLIC_SUPABASE_URL } from '$env/static/public'
@@ -40,13 +40,13 @@ const getStateVariables = async (): Promise<DatabaseRow<'state_variables'>[]> =>
     return []
 }
 
-export async function load({ params }) {
+export async function load({ params }:ServerLoadEvent) {
     if (params.edit && params.edit !== 'edit') {
         throw routeError(404, 'Layout not found')
     }
 
     try {
-        const layoutData = await getLayoutData(params.layout)
+        const layoutData = await getLayoutData(params.layout ?? '')
         const nodes = await getLayoutNodes(layoutData.id)
         const stateVariables = await getStateVariables()
 

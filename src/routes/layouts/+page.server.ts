@@ -1,6 +1,5 @@
 import { error as routeError } from '@sveltejs/kit'
 import { supabase } from "$lib/supabaseClient"
-import { PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { devLogin } from '$lib/devLogin'
 
 const getLayouts = async (user_id: string): Promise<{name: string}[]> => {
