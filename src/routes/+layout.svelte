@@ -26,7 +26,7 @@
 	<li><a href="/">Home</a></li>
 	<li class="crumb-separator" aria-hidden>/</li>
 
-	<li><a href="/stream">Layouts</a></li>
+	<li><a href="/layouts">Layouts</a></li>
 	<li class="crumb-separator" aria-hidden>/</li>
 	
 	<li><a href="/images">Images</a>
