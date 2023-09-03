@@ -1,6 +1,7 @@
 import { error as routeError } from '@sveltejs/kit'
-import { devLogin, supabase } from "$lib/supabaseClient"
+import { supabase } from "$lib/supabaseClient"
 import { PUBLIC_SUPABASE_URL } from '$env/static/public'
+import { devLogin } from '$lib/devLogin'
 
 const getImageData = async (user_id: string) => {
     let { data, error } = await supabase.storage.from('user_images').list(user_id)

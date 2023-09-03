@@ -1,3 +1,3 @@
-import { devLogin } from "$lib/supabaseClient"
+// import { devLogin } from "$lib/supabaseClient"
 
-devLogin()
+// devLogin()
