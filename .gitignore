@@ -11,4 +11,4 @@ vite.config.ts.timestamp-*
 src/lib/images
 src/lib/images/*
 .todo
-src/app.postcss
+src/custom.postcss
