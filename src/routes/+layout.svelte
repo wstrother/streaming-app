@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import '../app.postcss'
-	import { Modal } from '@skeletonlabs/skeleton'
+	import { Modal, Toast } from '@skeletonlabs/skeleton'
 	import type { ModalComponent } from '@skeletonlabs/skeleton'
 	import { initializeStores } from '@skeletonlabs/skeleton'
 	initializeStores()
@@ -22,5 +22,7 @@
 	regionBackdrop="variant-soft-secondary"
 	regionBody="text-white" 
 	regionHeader="text-white text-2xl font-bold"/>
+
+<Toast />
 
 <slot />
