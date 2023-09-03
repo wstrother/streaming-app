@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { supabase, userMeta } from "$lib/supabaseClient"
-	import type { FileDropzoneEvents } from "@skeletonlabs/skeleton/dist/components/FileDropzone/FileDropzone.svelte";
 	import type { PageData } from "./$types"
     import { getModalStore, getToastStore, FileDropzone } from '@skeletonlabs/skeleton'
     const modalStore = getModalStore()
