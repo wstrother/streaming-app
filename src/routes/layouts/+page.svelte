@@ -10,7 +10,7 @@
     <span>Open Layout:</span>
 
     {#each layoutNames as name}
-        <a href={`/stream/${name}`}
+        <a href={`/layouts/${name}`}
             class="bg-primary-500 rounded px-1 mb-2 hover:bg-primary-400">
             {name}
         </a>
