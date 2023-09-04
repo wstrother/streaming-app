@@ -1,23 +1,38 @@
 <script lang='ts'>
 	import '../app.postcss'
 	import '../custom.postcss'
+
 	import { Modal, Toast } from '@skeletonlabs/skeleton'
 	import type { ModalComponent } from '@skeletonlabs/skeleton'
 	import { initializeStores } from '@skeletonlabs/skeleton'
 	initializeStores()
 
-	export let data: PageData
-
-	import FullNodeList from '$lib/components/modals/fullNodeList.svelte'
-	import OrderNodesPanel from '$lib/components/modals/orderNodesPanel.svelte'
-	import FullVarsList from '$lib/components/modals/fullVarsList.svelte'
+	// import FullNodeList from '$lib/components/modals/fullNodeList.svelte'
+	// import OrderNodesPanel from '$lib/components/modals/orderNodesPanel.svelte'
+	// import FullVarsList from '$lib/components/modals/fullVarsList.svelte'
 	import type { PageData } from './$types';
+	import { onMount } from 'svelte';
+	import { invalidate } from '$app/navigation';
+		
+	export let data: PageData
+	let { supabase, session } = data
+	$: ({ supabase, session } = data)
 
-	const components: Record<string, ModalComponent> = {
-		fullNodeList: {ref: FullNodeList},
-		orderChildNodes: {ref: OrderNodesPanel},
-		fullVarsList: {ref: FullVarsList}
-	}
+	onMount(() => {
+		const {data: { subscription },} = supabase.auth.onAuthStateChange((event, _session) => {
+			if (_session?.expires_at !== session?.expires_at) {
+				invalidate('supabase:auth')
+			}
+		})
+
+		return () => subscription.unsubscribe()
+	})
+
+	// const components: Record<string, ModalComponent> = {
+	// 	fullNodeList: {ref: FullNodeList},
+	// 	orderChildNodes: {ref: OrderNodesPanel},
+	// 	fullVarsList: {ref: FullVarsList}
+	// }
 
 </script>
 
@@ -40,10 +55,10 @@
 
 <slot />
 
-<Modal {components} transitions={false}
+<!-- <Modal {components} transitions={false}
 	background="bg-primary-600" 
 	regionBackdrop="variant-soft-secondary"
 	regionBody="text-white" 
-	regionHeader="text-white text-2xl font-bold"/>
+	regionHeader="text-white text-2xl font-bold"/> -->
 
 <Toast />

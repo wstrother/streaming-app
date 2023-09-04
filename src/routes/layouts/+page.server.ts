@@ -15,6 +15,7 @@ const getLayouts = async (user_id: string): Promise<{name: string}[]> => {
 export async function load() {
     try {
         const user = await devLogin()
+        console.log(user)
         const layoutNames = (await getLayouts(user.id)).map(l => l.name)
 
         return { layoutNames }
