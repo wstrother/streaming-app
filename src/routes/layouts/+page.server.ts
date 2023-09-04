@@ -19,9 +19,8 @@ export async function load({depends, locals: { supabase, getSession }}:ServerLoa
         throw redirect(303, '/')
     }
     else {    
-        const layoutNames = (await getLayouts(supabase, user)).map(l => l.name)
         return {
-            layoutNames
+            layoutNames: (await getLayouts(supabase, user)).map(l => l.name)
         }
     }
 }
