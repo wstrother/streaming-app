@@ -23,6 +23,8 @@
 			if (_session?.expires_at !== session?.expires_at) {
 				invalidate('supabase:auth')
 			}
+
+			if (event === 'SIGNED_OUT') invalidate('supabase:auth')
 		})
 
 		return () => subscription.unsubscribe()
@@ -37,20 +39,24 @@
 </script>
 
 {#if !data.inOBS}
-<ol id="main-nav" class="breadcrumb bg-primary-600 z-50 justify-end pr-8">
-	<li><a href="/">Home</a></li>
-	<li class="crumb-separator" aria-hidden>/</li>
-
-	<li><a href="/layouts">Layouts</a></li>
-	<li class="crumb-separator" aria-hidden>/</li>
-	
-	<li><a href="/images">Images</a>
-	<li class="crumb-separator" aria-hidden>/</li>
-	
-	<li><a href="/vars">Variables</a></li>
-</ol>
-
 	<div class='faux-bg bg-gray-700 z-[-100]'/>
+
+	<ol id="main-nav" class="breadcrumb bg-primary-600 z-50 justify-end pr-8">
+		{#if session?.user }
+			<button class="btn btn-sm" on:click={() => supabase.auth.signOut()}>Log Out</button>
+			<li><a href="/">Home</a></li>
+			<li class="crumb-separator" aria-hidden>/</li>
+			
+			<li><a href="/layouts">Layouts</a></li>
+			<li class="crumb-separator" aria-hidden>/</li>
+			
+			<li><a href="/images">Images</a>
+			<li class="crumb-separator" aria-hidden>/</li>
+			
+			<li><a href="/vars">Variables</a></li>
+		{/if}
+	</ol>
+
 {/if}
 
 <slot />

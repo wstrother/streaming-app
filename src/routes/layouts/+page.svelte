@@ -1,7 +1,9 @@
 <script lang="ts">
     export let data
+    let { supabase, session } = data
+    $: ({ supabase, session } = data)
 
-    const layoutNames = data.layoutNames
+    const layoutNames: string[] = data.layoutNames ?? []
 </script>
 
 <div id="layouts" class="flex flex-col variant-ghost-primary m-4 w-1/2 p-2">

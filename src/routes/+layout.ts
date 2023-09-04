@@ -8,7 +8,6 @@ export const ssr = false
 export const load = async ({fetch, data, depends}: LayoutLoadEvent) => {
     depends('supabase:auth')
 
-    if (!data) throw new Error("auth session not found")
     const supabase = createSupabaseLoadClient<Database>({
         supabaseUrl: PUBLIC_SUPABASE_URL,
         supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
