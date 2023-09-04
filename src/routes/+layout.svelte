@@ -13,6 +13,8 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
+	import { stateVariables } from '$lib/classes/stateVariables';
+	import { activeProxyID } from '$lib/stores/editor';
 		
 	export let data: PageData
 	let { supabase, session } = data
@@ -24,7 +26,10 @@
 				invalidate('supabase:auth')
 			}
 
-			if (event === 'SIGNED_OUT') invalidate('supabase:auth')
+			if (event === 'SIGNED_OUT') {
+				invalidate('supabase:auth')
+				stateVariables.resetStore()
+			}
 		})
 
 		return () => subscription.unsubscribe()
@@ -39,19 +44,22 @@
 </script>
 
 {#if !data.inOBS}
-	<div class='faux-bg bg-gray-700 z-[-100]'/>
+	<!-- svelte-ignore a11y-click-events-have-key-events -->
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<div class='faux-bg z-0' on:click={() => activeProxyID.set(null)} />
+	<div class='faux-bg bg-gray-700 z-[-100]' />
 
 	<ol id="main-nav" class="breadcrumb bg-primary-600 z-50 justify-end pr-8">
 		{#if session?.user }
 			<button class="btn btn-sm" on:click={() => supabase.auth.signOut()}>Log Out</button>
 			<li><a href="/">Home</a></li>
-			<li class="crumb-separator" aria-hidden>/</li>
+			<li class="crumb-separator" aria-hidden>|</li>
 			
 			<li><a href="/layouts">Layouts</a></li>
-			<li class="crumb-separator" aria-hidden>/</li>
+			<li class="crumb-separator" aria-hidden>|</li>
 			
 			<li><a href="/images">Images</a>
-			<li class="crumb-separator" aria-hidden>/</li>
+			<li class="crumb-separator" aria-hidden>|</li>
 			
 			<li><a href="/vars">Variables</a></li>
 		{/if}
@@ -67,4 +75,4 @@
 	regionBody="text-white" 
 	regionHeader="text-white text-2xl font-bold"/> -->
 
-<Toast />
+<!-- <Toast /> -->

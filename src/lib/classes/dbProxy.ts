@@ -1,5 +1,5 @@
-import { supabase } from "$lib/supabaseClient"
 import type { Database } from "$lib/types/supabase"
+import type { SupabaseClient } from "@supabase/supabase-js"
 
 export type DatabaseTableName = keyof Database['public']['Tables']
 export type DatabaseTable = Database['public']['Tables']
@@ -23,12 +23,14 @@ export class ProxyDBRow<T extends DatabaseTableName> {
     changes: DatabaseUpdate<T>
     _broadcast: Function | null
     client: boolean
+    _table: DatabaseTableName|""
 
     constructor(data: DatabaseRow<T>, broadcast: Function, client: boolean=false) {
         this.data = data
         this.changes = {}
         this._broadcast = broadcast
         this.client = client
+        this._table = ""
     }
 
     get id(): number {
@@ -80,7 +82,9 @@ export class ProxyDBRow<T extends DatabaseTableName> {
         this.broadcast()
     }
 
-    async saveChangesToDB(table: DatabaseTableName) {
+    async saveChangesToDB(supabase: SupabaseClient) {
+        const table = this._table
+        
         if (!this.client) {
             const { error } = await supabase.from(table)
                 .update(this.changes).eq('id', this.data.id)
@@ -104,12 +108,12 @@ export class ProxyDBRow<T extends DatabaseTableName> {
     }
 
     async deleteFromDB(table: DatabaseTableName) {
-        if (!this.client) {
-            const { error } = await supabase.from(table)
-                .delete().eq("id", this.data.id).select().single()
+        // if (!this.client) {
+        //     const { error } = await supabase.from(table)
+        //         .delete().eq("id", this.data.id).select().single()
             
-            if (error) throw Error(error.message)
-        }
+        //     if (error) throw Error(error.message)
+        // }
     }
 
     saveChangesToProxy(update:DatabaseUpdate<'layout_nodes'>|null=null) {
@@ -146,8 +150,9 @@ export function updateProxy<T extends DatabaseTableName, P extends ProxyDBRow<T>
     proxy.saveChangesToProxy()
 }
 
-export function getProxies<T extends DatabaseTableName, R extends DatabaseRow<T>, P extends ProxyDBRow<T>>
-    (rows: R[], set: Function, constructor: { new(row: R, bc: Function): P}): P[] {
+export function initProxies
+    <T extends DatabaseTableName, R extends DatabaseRow<T>, P extends ProxyDBRow<T>>
+    (rows: R[], set: Function, constructor: { new(row: R, bc: Function): P}) {
 
         const proxies: P[] = []
         const broadcast = () => set(proxies)
@@ -158,5 +163,5 @@ export function getProxies<T extends DatabaseTableName, R extends DatabaseRow<T>
             )
         })
 
-        return proxies
+        set(proxies)
 }

@@ -9,12 +9,9 @@
         if ($activeProxyID) activeVar = stateVariables.getProxyByID($stateVariables, $activeProxyID)
         else activeVar = null
     }
-
 </script>
 
-
 <div id="vars-container">
-
     {#each $stateVariables as sv}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -30,7 +27,7 @@
     {/each}
 </div>
 
-{#if activeVar}  
+{#if activeVar}
     <div id="active-var-panel">
         <EditVarPanel proxy={activeVar} />
     </div>
@@ -50,6 +47,6 @@
     }
 
     #active-var-panel {
-        @apply absolute top-0 right-0
+        @apply absolute top-[30px] right-0
     }
 </style>

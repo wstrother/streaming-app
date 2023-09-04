@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
     import { stateVariables, type StateVariableUpdate } from '$lib/classes/stateVariables.js'
 	import { activeProxyID } from '$lib/stores/editor.js';
     import { supabase } from '$lib/supabaseClient.js'
@@ -14,9 +14,10 @@
                 stateVariables.updateData($stateVariables, payload.new as StateVariableUpdate)
             }
         }).subscribe()
-</script>
+</script> -->
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class='faux-bg' on:mousedown={() => activeProxyID.set(null)}/>
+<!-- <div class='faux-bg' on:mousedown={() => activeProxyID.set(null)}/>
+<slot /> -->
 <slot />

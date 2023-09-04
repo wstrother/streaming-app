@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store'
-import { ProxyDBRow, getProxies, updateProxy } from './dbProxy'
+import { ProxyDBRow, initProxies, updateProxy } from './dbProxy'
 import type { DatabaseInsert, DatabaseRow, DatabaseUpdate, StateVarValue } from './dbProxy'
 
 export type LayoutNodeRow = DatabaseRow<'layout_nodes'>
@@ -116,7 +116,7 @@ export const layoutNodes = {
     },
 
     getNodes: (nodes: LayoutNodeRow[]): LayoutNodeProxy[] => {
-        const proxies = getProxies<'layout_nodes', LayoutNodeRow, LayoutNodeProxy>(
+        const proxies = initProxies<'layout_nodes', LayoutNodeRow, LayoutNodeProxy>(
             nodes, set, LayoutNodeProxy
         )
 

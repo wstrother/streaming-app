@@ -3,9 +3,14 @@
 	import ProxyInput from "./proxyInput.svelte"
 	import type { StateVariableProxy } from "$lib/classes/stateVariables"
 	import type { ProxyAttrs } from "$lib/classes/dbProxy"
+    
+    import { page } from '$app/stores'
+    let { supabase } = $page.data
+    $: ({ supabase } = $page.data)
 
     export let proxy: LayoutNodeProxy | StateVariableProxy
     export let attrs: ProxyAttrs = []
+
     
     let unsaved: boolean
     $: unsaved = proxy?.unsaved || false
@@ -19,7 +24,7 @@
     const save = async () => {
         if (!proxy) return
 
-        await proxy.saveChangesToDB()
+        await proxy.saveChangesToDB(supabase)
     }
     
 </script>

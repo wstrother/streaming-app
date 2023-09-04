@@ -4,6 +4,10 @@
 	import SelectProxyButton from "./modals/selectProxyButton.svelte"
     import { activeProxyID } from "$lib/stores/editor"
 
+    import { page } from '$app/stores'
+    let { supabase } = $page.data
+    $: ({ supabase } = $page.data)
+
     export let proxies: LayoutNodeProxy[] | StateVariableProxy[]
     export let header: string = "Unsaved:"
 
@@ -16,7 +20,7 @@
     const save = async (proxy: LayoutNodeProxy|StateVariableProxy|null) => {
         if (!proxy) return
 
-        await proxy.saveChangesToDB()
+        await proxy.saveChangesToDB(supabase)
     }
     const saveAll = () => {proxies.forEach(n=>save(n))}
     const resetAll = () => {proxies.forEach(n=>reset(n))}

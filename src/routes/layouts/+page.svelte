@@ -1,7 +1,7 @@
 <script lang="ts">
-    export let data
-    let { supabase, session } = data
-    $: ({ supabase, session } = data)
+	import type { PageData } from "./$types";
+
+    export let data: PageData    
 
     const layoutNames: string[] = data.layoutNames ?? []
 </script>
