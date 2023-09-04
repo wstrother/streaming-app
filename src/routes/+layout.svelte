@@ -44,10 +44,11 @@
 
 </script>
 
+<svelte:body on:click|capture={() => activeProxyID.set(null)} />
+
 {#if !data.inOBS}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<!-- <div class='faux-bg z-0' on:click={() => activeProxyID.set(null)} /> -->
 	<div class='faux-bg bg-gray-700 z-[-100]' />
 
 	<ol id="main-nav" class="breadcrumb bg-primary-600 z-50 justify-end pr-8">
@@ -68,7 +69,9 @@
 
 {/if}
 
-<slot />
+<div class="bg-red-500">
+	<slot />
+</div>
 
 <Modal {components} transitions={false}
 	background="bg-primary-600" 
