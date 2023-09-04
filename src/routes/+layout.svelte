@@ -40,13 +40,14 @@
 	// 	orderChildNodes: {ref: OrderNodesPanel},
 	// 	fullVarsList: {ref: FullVarsList}
 	// }
+	const components = {}
 
 </script>
 
 {#if !data.inOBS}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div class='faux-bg z-0' on:click={() => activeProxyID.set(null)} />
+	<!-- <div class='faux-bg z-0' on:click={() => activeProxyID.set(null)} /> -->
 	<div class='faux-bg bg-gray-700 z-[-100]' />
 
 	<ol id="main-nav" class="breadcrumb bg-primary-600 z-50 justify-end pr-8">
@@ -69,10 +70,10 @@
 
 <slot />
 
-<!-- <Modal {components} transitions={false}
+<Modal {components} transitions={false}
 	background="bg-primary-600" 
 	regionBackdrop="variant-soft-secondary"
 	regionBody="text-white" 
-	regionHeader="text-white text-2xl font-bold"/> -->
+	regionHeader="text-white text-2xl font-bold"/>
 
 <!-- <Toast /> -->

@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { supabase, userMeta } from "$lib/supabaseClient"
-	import type { PageData } from "./$types"
+	// import { supabase, userMeta } from "$lib/supabaseClient"
     import { getModalStore, getToastStore, FileDropzone } from '@skeletonlabs/skeleton'
     const modalStore = getModalStore()
     const toastStore = getToastStore()
 
-    export let data: PageData
+    export let data
     let imageData = data.imageData
     let images: string[] = imageData.map(i => i.name)
+    let { supabase, user } = data
+	$: ({ supabase, user } = data)
+
 
     const getURI = (name: string): string => `${data.imageBaseUrl}${name}`
 
@@ -19,7 +21,7 @@
             response: async (r: boolean) => {
                 if (!r) return
                 else {
-                    const file_name = `${$userMeta.uid}/${name}`
+                    const file_name = `${user.id}/${name}`
                     const { error } = await supabase.storage.from('user_images')
                         .remove([file_name])
                     
@@ -38,7 +40,7 @@
         if (files.length) {
             const fileName = files[0].name
             const { data, error } = await supabase.storage.from('user_images')
-                .upload(`${$userMeta.uid}/${fileName}`, files[0])
+                .upload(`${user.id}/${fileName}`, files[0])
             
             if (error) throw new Error(error.message)
 
@@ -80,7 +82,7 @@
 
     #file-dropzone {
         @apply m-4 absolute;
-        top: 0;
+        top: 30px;
         left: 550px;
         width: 500px;
     }

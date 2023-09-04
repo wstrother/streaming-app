@@ -1,29 +1,32 @@
-import { error as routeError } from '@sveltejs/kit'
+import { redirect, type ServerLoadEvent } from '@sveltejs/kit'
 import { PUBLIC_SUPABASE_URL } from '$env/static/public'
+import type { SupabaseClient, User } from '@supabase/supabase-js'
 
-// const getImageData = async (user_id: string) => {
-//     let { data, error } = await supabase.storage.from('user_images').list(user_id)
+const getImageData = async (supabase: SupabaseClient, user: User) => {
+    let { data, error } = await supabase.storage.from('user_images').list(user.id)
 
-//     if (error) throw new Error(error.message)
+    if (error) throw new Error(error.message)
 
-//     return data ?? []
-// }
+    return data ?? []
+}
 
-// export async function load() {
-//     try {
-//         const user = await devLogin()
+export async function load({depends, locals: { supabase, getSession }}:ServerLoadEvent) {
+    depends('supabase:auth')
 
-//         const imageData = await getImageData(user.id)
+    const session = await getSession()
+    const { user = null } = session ?? {}
+    if (!user) {
+        throw redirect(303, '/')
+    }
 
-//         const imageBaseUrl = `${PUBLIC_SUPABASE_URL}/storage/v1/object/public/user_images/${user.id}/`
+    const imageData = await getImageData(supabase, user)
 
-//         return {
-//             imageData,
-//             imageBaseUrl
-//         }
-//     }
+    const imageBaseUrl = `${PUBLIC_SUPABASE_URL}/storage/v1/object/public/user_images/${user.id}/`
+
+    return {
+        imageData,
+        imageBaseUrl,
+        user
+    }
     
-//      catch {
-//         throw routeError(404, 'Layout not found')
-//     }
-// }
+}
