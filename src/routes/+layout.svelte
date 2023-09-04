@@ -69,9 +69,7 @@
 
 {/if}
 
-<div class="bg-red-500">
-	<slot />
-</div>
+<slot />
 
 <Modal {components} transitions={false}
 	background="bg-primary-600" 

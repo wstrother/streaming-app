@@ -57,7 +57,7 @@
     {#each images as image, i}
     <div class="bg-primary-600 rounded p-2 mb-1 text-white">
         <div class="flex items-center justify-between">
-            <span class="font-bold">{image}</span>
+            <span class="font-bold overflow-x-hidden text-ellipsis">{image}</span>
 
             <button on:click={() => deleteImage(image, i)}
                 class="btn btn-sm variant-filled-primary">
