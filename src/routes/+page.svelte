@@ -4,31 +4,61 @@
     $: ({ supabase, session } = data)
     
     const handleSignIn = async () => {
+      loading = true
       await supabase.auth.signInWithPassword({
-        email: "wyatt.strother@gmail.com",
-        password: "mooshu11",
+        email,
+        password,
       })
+      email = ""
+      password = ""
+      loading = false
     }
   
     const handleSignOut = async () => {
+      loading = true
       await supabase.auth.signOut()
-    }
-
-    const getLayouts = async () => {
-        const { data, error } = await supabase.from('layouts')
-            .select('name')
-        
-        console.log(data)
+      loading = false
     }
 
     let email: string, password: string
+    let loading: boolean = false
   </script>
 
+<div class="p-4 w-[600px]">
+  
+  {#if session}
+    <div class="variant-glass-primary flex flex-col gap-2 p-4">
+  
+      <button class="btn btn-sm variant-filled-primary"
+        on:click={handleSignOut} disabled={loading}>
+        Sign out
+      </button>
+  
+    </div>
+  {:else}
+    <form class="variant-ghost-primary flex flex-col gap-y-4 p-4 m-2">
+  
+      <div class="flex items-center">
+        <label for="email">Email:</label>
+        <input name="email" type="text" bind:value={email} />
+      </div>
+  
+      <div class="flex items-center">
+        <label for="password">Password:</label>
+        <input name="password" type="password" bind:value={password} />
+      </div>
+  
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
+      <input type="submit" class="btn btn-sm variant-filled-primary"
+        on:click={handleSignIn} disabled={loading}
+        value="Sign In" />
+    </form>
+  {/if}
+</div>
 
-<button on:click={handleSignIn} class="btn btn-sm variant-filled-primary">Sign in</button>
-<button on:click={handleSignOut} class="btn btn-sm variant-filled-primary">Sign out</button>
-<button on:click={getLayouts} class="btn btn-sm variant-filled-primary">Get Layouts</button>
-
-{#if session}
-  <pre>{session.user.email}</pre>
-{/if}
+<style lang="postcss">
+  label {
+    @apply w-[120px] text-white font-bold flex justify-end pr-2
+  }
+</style>
