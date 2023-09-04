@@ -113,7 +113,7 @@
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
         <img src={streamBG} alt="stream bg" 
-            on:mousedown|preventDefault={() => unselectNode()}
+           
             on:contextmenu|preventDefault
         />
     {/if}

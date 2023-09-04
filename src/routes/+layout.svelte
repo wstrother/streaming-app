@@ -42,9 +42,14 @@
 	// }
 	const components = {}
 
+	const unselect = ({target}: MouseEvent) => {
+		if (target && (target as HTMLElement).tagName === 'BODY') {
+			activeProxyID.set(null)
+		}
+	}
 </script>
 
-<svelte:body on:click|capture={() => activeProxyID.set(null)} />
+<svelte:body on:mousedown|capture={unselect}/>
 
 {#if !data.inOBS}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->

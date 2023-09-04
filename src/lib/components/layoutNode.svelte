@@ -103,7 +103,7 @@
 <!-- svelte-ignore a11y-interactive-supports-focus -->
 <div
     on:contextmenu|stopPropagation|preventDefault={e => ctxMenu.open(e, getMenu())}
-    on:mousedown|preventDefault|stopPropagation={isClicked} 
+    on:mousedown|preventDefault|stopPropagation={isClicked}
     id="layoutNode-{node.key}"
 
     style:top={`${node.top}px`}
