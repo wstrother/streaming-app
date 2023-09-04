@@ -107,13 +107,13 @@ export class ProxyDBRow<T extends DatabaseTableName> {
         }
     }
 
-    async deleteFromDB(table: DatabaseTableName) {
-        // if (!this.client) {
-        //     const { error } = await supabase.from(table)
-        //         .delete().eq("id", this.data.id).select().single()
+    async deleteFromDB(supabase: SupabaseClient) {
+        if (!this.client) {
+            const { error } = await supabase.from(this._table)
+                .delete().eq("id", this.data.id).select().single()
             
-        //     if (error) throw Error(error.message)
-        // }
+            if (error) throw Error(error.message)
+        }
     }
 
     saveChangesToProxy(update:DatabaseUpdate<'layout_nodes'>|null=null) {

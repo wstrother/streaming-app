@@ -5,6 +5,8 @@
     import { activeProxyID, ctxMenu, scalePercent, type CtxMenu, type CtxMenuItem } from '$lib/stores/editor'
 	import { setParentID, unsetParentID } from '$lib/menuActions'
     import { page } from '$app/stores'
+    let { supabase } = $page.data
+	$: ({ supabase } = $page.data)
 
     import { getModalStore } from "@skeletonlabs/skeleton"
     const modalStore = getModalStore()
@@ -65,7 +67,7 @@
         const menu: CtxMenuItem[] = [
             {key: `Save ${node.key}`, 
                 disabled: !node.unsaved, 
-                action: () => node.saveChangesToDB()},
+                action: () => node.saveChangesToDB(supabase)},
             {key: `Reset ${node.key}`, 
                 disabled: !node.unsaved, 
                 action: () => node.resetChanges()},

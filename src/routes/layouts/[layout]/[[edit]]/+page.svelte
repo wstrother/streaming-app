@@ -1,5 +1,4 @@
 <script lang='ts'>
-    import { userMeta } from '$lib/supabaseClient.js'
     import { getModalStore } from '@skeletonlabs/skeleton'
     const modalStore = getModalStore()
     let modalOpen: boolean
@@ -18,8 +17,8 @@
     import ContextMenu from '$lib/components/menu/contextMenu.svelte'
 
     export let data
-    let edit: boolean
-    $: edit = data.edit
+    let { supabase, user, edit } = data
+	$: ({ supabase, user, edit } = data)
 
     let activeNode: LayoutNodeProxy|null
     $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeProxyID)
@@ -46,11 +45,11 @@
 
             response: (key: string) => {
                 if (!key) return
-                if (!$userMeta.uid) throw Error("No User ID found in current userMeta")
+                if (!user.id) throw Error("No User ID found in current userMeta")
 
                 layoutNodes.add($layoutNodes, {
                     key, 
-                    user_id: $userMeta.uid, 
+                    user_id: user.id, 
                     layout_id: $page.data.layoutData.id,
                     parent_node_id,
                     classes: parent_node_id ? "" : "absolute"
@@ -75,7 +74,7 @@
     const getMenu = (): CtxMenu => ([
         {key: "Save All",     
             disabled: !unsavedNodes.length, 
-            action: () => unsavedNodes.forEach(n => n.saveChangesToDB())
+            action: () => unsavedNodes.forEach(n => n.saveChangesToDB(supabase))
         },
         {key: "Reset All",    
             disabled: !unsavedNodes.length, 

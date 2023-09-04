@@ -1,11 +1,12 @@
 import { get, writable } from 'svelte/store'
 import { ProxyDBRow, initProxies, updateProxy } from './dbProxy'
 import type { DatabaseInsert, DatabaseRow, DatabaseTableName, DatabaseUpdate, StateVarTypesLiterals, StateVarValue } from './dbProxy'
-import type { SupabaseClient } from '@supabase/supabase-js'
 
 export type StateVariableRow = DatabaseRow<'state_variables'>
 export type StateVariableUpdate = DatabaseUpdate<'state_variables'>
 export type StateVariableInsert = DatabaseInsert<'state_variables'>
+
+let CLIENT_ID = -1
 
 export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
     _table = "state_variables" as const
@@ -41,20 +42,29 @@ export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
     //     await super.saveChangesToDB('state_variables', supabase)
     // }
 
-    async deleteFromDB() {
-        await super.deleteFromDB('state_variables')
-    }
+    // async deleteFromDB() {
+    //     await super.deleteFromDB('state_variables')
+    // }
 
-    static getAsInsert(data: DatabaseInsert<'state_variables'>, broadcast: Function, client: boolean=true): StateVariableProxy {
-        const defaults: DatabaseRow<'state_variables'> = {
-            created_at:null,
-            id:0,
-            key:"",
-            type:"string",
-            user_id:"",
-            value: ""
-        }
-        return new StateVariableProxy({...defaults, ...data}, broadcast, client)
+    static getAsInsert(
+        data: StateVariableInsert, broadcast: Function, client: boolean=true
+        ): StateVariableProxy {
+
+            const defaults: DatabaseRow<'state_variables'> = {
+                created_at:null,
+                id:CLIENT_ID,
+                key:"",
+                type:"string",
+                user_id:"",
+                value: ""
+            }
+            CLIENT_ID -= 1
+
+            return new StateVariableProxy(
+                {...defaults, ...data}, 
+                broadcast, 
+                client
+            )
     }
 }
 
@@ -102,8 +112,9 @@ export const stateVariables = {
 
     getValueByID, getValueByKey,
 
-    add: (vars: StateVariableProxy[], key: string, user_id: string, value: string) => {
-        const stateVar = StateVariableProxy.getAsInsert({key, user_id, value}, () => varStore.set(vars))
+    add: (vars: StateVariableProxy[], data: StateVariableInsert) => {
+        const stateVar = StateVariableProxy.getAsInsert(
+            data, () => varStore.set(vars))
         vars.push(stateVar)
         varStore.set(vars)
     },

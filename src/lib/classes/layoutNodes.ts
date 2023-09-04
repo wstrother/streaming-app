@@ -1,13 +1,15 @@
-import { writable } from 'svelte/store'
+import { get, writable } from 'svelte/store'
 import { ProxyDBRow, initProxies, updateProxy } from './dbProxy'
 import type { DatabaseInsert, DatabaseRow, DatabaseUpdate, StateVarValue } from './dbProxy'
 
 export type LayoutNodeRow = DatabaseRow<'layout_nodes'>
 export type LayoutNodeUpdate = DatabaseUpdate<'layout_nodes'>
+export type LayoutNodeInsert = DatabaseInsert<'layout_nodes'>
 
 let CLIENT_ID = -1
 
 export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
+    _table = 'layout_nodes' as const
     parentNode: LayoutNodeProxy|null = null
 
     get key(): string { return this.getColumn("key") }
@@ -57,13 +59,9 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
         this.update({classes})
     }
 
-    async saveChangesToDB() {
-        await super.saveChangesToDB('layout_nodes')
-    }
-
-    async deleteFromDB() {
-        await super.deleteFromDB('layout_nodes')
-    }
+    // async deleteFromDB() {
+    //     await super.deleteFromDB('layout_nodes')
+    // }
 
     interpolate(getVarByKey: (key: string) => StateVarValue): string {
         return this.content.replace(/{([^}]+)}/g, (match: string, key: string) => {
@@ -77,66 +75,94 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
         })
     }
 
-    static getAsInsert(data: DatabaseInsert<'layout_nodes'>, broadcast: Function): LayoutNodeProxy {
-        const defaults: DatabaseRow<'layout_nodes'> = {
-            boolean_id:null,
-            classes:"",
-            content:"",
-            created_at:"",
-            id:CLIENT_ID,
-            key:"",
-            layout_id:null,
-            user_id:"",
-            img_src:null,
-            parent_node_id:null,
-            sibling_order:null,
-            variable_id:null,
-            left:0,
-            top:0,
-            height:null,
-            width:null
-        }
-        CLIENT_ID -= 1
+    static getAsInsert(
+        data: LayoutNodeInsert, broadcast: Function, client: boolean = true
+        ): LayoutNodeProxy {
 
-        return new LayoutNodeProxy({...defaults, ...data}, broadcast, true)
+            const defaults: DatabaseRow<'layout_nodes'> = {
+                boolean_id:null,
+                classes:"",
+                content:"",
+                created_at:"",
+                id:CLIENT_ID,
+                key:"",
+                layout_id:null,
+                user_id:"",
+                img_src:null,
+                parent_node_id:null,
+                sibling_order:null,
+                variable_id:null,
+                left:0,
+                top:0,
+                height:null,
+                width:null
+            }
+            CLIENT_ID -= 1
+
+            return new LayoutNodeProxy(
+                {...defaults, ...data}, 
+                broadcast, 
+                client
+            )
     }
 }
 
 
-const {subscribe, set, update} = writable<LayoutNodeProxy[]>([])
-
+const nodeStore = writable<LayoutNodeProxy[]>([])
+let nodeStoreInitialized = false
 
 export const layoutNodes = {
-    subscribe, set, update,
+    subscribe: nodeStore.subscribe, 
+    set: nodeStore.set, 
+    update: nodeStore.update,
 
-    updateData: (nodes: LayoutNodeProxy[], update: LayoutNodeUpdate) => {
+    updateData: (update: LayoutNodeUpdate) => {
+        const nodeArray = get(nodeStore)
         updateProxy<'layout_nodes', LayoutNodeProxy>(
-            nodes, update, 'layout_nodes'
+            nodeArray, update, 'layout_nodes'
         )
     },
 
-    getNodes: (nodes: LayoutNodeRow[]): LayoutNodeProxy[] => {
-        const proxies = initProxies<'layout_nodes', LayoutNodeRow, LayoutNodeProxy>(
-            nodes, set, LayoutNodeProxy
-        )
+    init: (nodes: LayoutNodeRow[]) => {
+        if (!nodeStoreInitialized) {
+            console.log("initializing layout nodes")
+            initProxies<'layout_nodes', LayoutNodeRow, LayoutNodeProxy>(
+                nodes, nodeStore.set, LayoutNodeProxy
+            )
+            nodeStoreInitialized = true
+        }
+    },
 
-        return proxies
+    resetStore: () => {
+        nodeStore.set([])
+        nodeStoreInitialized = false
     },
 
     getNodeByID: (nodes: LayoutNodeProxy[], id: number|null): LayoutNodeProxy|null => {
         return nodes.filter(n=>n.id===id)[0] ?? null
     },
 
-    add: (nodes: LayoutNodeProxy[], data: DatabaseInsert<'layout_nodes'>) => {
-        const node = LayoutNodeProxy.getAsInsert(data, () => set(nodes))
+    // refactor in both files, prefer get(nodeStore)
+    add: (nodes: LayoutNodeProxy[], data: LayoutNodeInsert) => {
+        const node = LayoutNodeProxy.getAsInsert(
+            data, () => nodeStore.set(nodes))
         nodes.push(node)
-        set(nodes)
+        nodeStore.set(nodes)
+    },
+
+    addFromDB: (data: LayoutNodeInsert) => {
+        const nodeArray = get(nodeStore)
+        nodeArray.push(LayoutNodeProxy.getAsInsert(
+            data,
+            () => nodeStore.set(nodeArray),
+            false   // client = false
+        ))
     },
 
     delete: (nodes: LayoutNodeProxy[], node: LayoutNodeProxy) => {
         nodes.splice(nodes.indexOf(node), 1)
-        set(nodes)
-        node.deleteFromDB()
+        nodeStore.set(nodes)
+        // node.deleteFromDB()
     },
 
     getChildren: (nodes: LayoutNodeProxy[], node:LayoutNodeProxy): LayoutNodeProxy[] => {

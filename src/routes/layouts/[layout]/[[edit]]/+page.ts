@@ -1,14 +1,11 @@
-import { stateVariables, type StateVariableInsert, type StateVariableUpdate } from "$lib/classes/stateVariables"
-import type { SupabaseClient, User } from "@supabase/supabase-js"
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from "$env/static/public"
 import type { Database } from "$lib/types/supabase"
 import { createSupabaseLoadClient } from "@supabase/auth-helpers-sveltekit"
 import { redirect } from "@sveltejs/kit"
+import type { PageLoadEvent } from "../../../vars/$types"
+import type { SupabaseClient, User } from "@supabase/supabase-js"
+import { layoutNodes, type LayoutNodeInsert, type LayoutNodeUpdate } from "$lib/classes/layoutNodes"
 
-/* **FUTURE:** The subscription stays open in the background even after navigating away.
-    This isn't ideal but it's probably better than rerunning the DB query in +page.server
-    every time the page is navigated to.
-*/
 const subscribeToVars = (supabase: SupabaseClient, user: User) => {
     supabase.channel('state_vars_realtime').on('postgres_changes', {
             event: '*', 
@@ -21,8 +18,8 @@ const subscribeToVars = (supabase: SupabaseClient, user: User) => {
             const data = payload?.new ?? null
 
             if (!data || eventType === 'DELETE') return
-            if (eventType === 'UPDATE') stateVariables.updateData(data as StateVariableUpdate)
-            if (eventType === 'INSERT') stateVariables.addFromDB(data as StateVariableInsert)
+            if (eventType === 'UPDATE') layoutNodes.updateData(data as LayoutNodeUpdate)
+            if (eventType === 'INSERT') layoutNodes.addFromDB(data as LayoutNodeInsert)
             // don't delete proxies based on DB subscription, 
             // prefer to resolve the error
             // when the UPDATE query is sent to the DB
@@ -34,6 +31,8 @@ const subscribeToVars = (supabase: SupabaseClient, user: User) => {
 export const load = ({fetch, data, depends}) => {
     depends('supabase:auth')
 
+    console.log('hello')
+    debugger
     const { user = null } = data.session ?? {}
     if (!user) throw redirect(303, '/')
 
@@ -44,8 +43,7 @@ export const load = ({fetch, data, depends}) => {
         serverSession: data.session,
     })
 
-    stateVariables.init(data.stateVarRows)
-    subscribeToVars(supabase, user)
+    layoutNodes.init(data.layoutNodeRows)
 
     return data
 }

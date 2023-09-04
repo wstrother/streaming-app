@@ -1,6 +1,6 @@
 import type { DatabaseRow } from '$lib/classes/dbProxy'
 import type { SupabaseClient, User } from '@supabase/supabase-js'
-import { redirect, type ServerLoadEvent } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
 
 
 const getStateVariables = async (supabase: SupabaseClient, user: User): 
@@ -13,7 +13,7 @@ const getStateVariables = async (supabase: SupabaseClient, user: User):
         return data ?? []
 }
 
-export async function load({depends, locals: { supabase, getSession }}:ServerLoadEvent) {
+export async function load({depends, locals: { supabase, getSession }}) {
     depends('supabase:auth')
 
     const session = await getSession()
