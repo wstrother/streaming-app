@@ -7,7 +7,7 @@
     import { page } from "$app/stores"
     import { activeProxyID, ctxMenu, scalePercent, type CtxMenu } from "$lib/stores/editor.js"
     import { layoutNodes, LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
-    import { wheel } from "$lib/stores/editor.js"
+    import { zoom as zoom } from "$lib/stores/editor.js"
 
     import streamBG from "$lib/images/stream-bg.png"
     import LayoutNode from "$lib/components/layoutNode.svelte"
@@ -15,8 +15,6 @@
     import ScalePanel from "$lib/components/scalePanel.svelte"
     import UnsavedPanel from "$lib/components/unsavedPanel.svelte"
     import ContextMenu from '$lib/components/menu/contextMenu.svelte'
-	import { onMount } from 'svelte';
-	import { invalidate } from '$app/navigation';
 
     export let data
     let { supabase, user, edit } = data
@@ -68,7 +66,7 @@
             body: 'Confirm you want to delete this node. This is not reversible!',
             response: (r: boolean) => {
                 if (!r) return
-                else layoutNodes.delete($layoutNodes, nodeToDelete)
+                else layoutNodes.delete(nodeToDelete, supabase)
             }
         })
     }
@@ -88,6 +86,7 @@
 </script>
 <svelte:window 
     on:click={ctxMenu.close} 
+    on:wheel={zoom}
     on:contextmenu|preventDefault={(e) => {if (!modalOpen) ctxMenu.open(e, getMenu())}}
 />
 <ContextMenu />
@@ -103,17 +102,14 @@
     </div>
 {/if}
 
+
 <!-- layout node tree -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<div id="stream-layout-container" 
-    on:wheel={wheel}
-    style={edit ? `transform: scale(${$scalePercent}%)` : ''}>
+<div id="stream-layout-container" style={edit ? `transform: scale(${$scalePercent}%)` : ''}>
 
     <!-- Optional stream bg  -->
     {#if streamBG && edit && !$page.data.inOBS}
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
         <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
         <img src={streamBG} alt="stream bg" 
             on:click={unselectNode}
             on:contextmenu|preventDefault
@@ -131,7 +127,7 @@
 <!-- Beginning of actual edit UI elements -->
 {#if edit}
 
-    <div id="active-node-panel">
+    <div id="active-node-panel" on:wheel|stopPropagation>
         {#if activeNode}
             <EditNodePanel node={activeNode} />
         {/if}
