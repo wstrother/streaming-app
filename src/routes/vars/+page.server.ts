@@ -13,6 +13,7 @@ const getStateVariables = async (supabase: SupabaseClient, user: User):
         return data ?? []
 }
 
+// @ts-ignore
 export async function load({depends, locals: { supabase, getSession }}) {
     depends('supabase:auth')
 
