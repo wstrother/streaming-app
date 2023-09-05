@@ -125,12 +125,13 @@ export const layoutNodes = {
     },
 
     init: (nodes: LayoutNodeRow[]) => {
-        if (!nodeStoreInitialized) {
+        // **FUTURE:** implement proper caching
+        // if (!nodeStoreInitialized) {
             initProxies<'layout_nodes', LayoutNodeRow, LayoutNodeProxy>(
                 nodes, nodeStore.set, LayoutNodeProxy
             )
             nodeStoreInitialized = true
-        }
+        // }
     },
 
     resetStore: () => {

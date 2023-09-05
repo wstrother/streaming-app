@@ -86,12 +86,13 @@ export const stateVariables = {
     },
 
     init: (vars: StateVariableRow[]) => {
-        if (!varStoreInitialized) {
+        // **FUTURE:** implement proper caching
+        // if (!varStoreInitialized) {
             initProxies<'state_variables', StateVariableRow, StateVariableProxy>(
                 vars, varStore.set, StateVariableProxy
             )
             varStoreInitialized = true
-        }
+        // }
     },
 
     resetStore: () => {

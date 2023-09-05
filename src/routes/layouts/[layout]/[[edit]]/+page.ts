@@ -21,7 +21,7 @@ export const load = ({fetch, data, depends}) => {
 
     layoutNodes.init(data.layoutNodeRows)
     layoutNodes.subscribeToDB(supabase, user)
-    
+
     stateVariables.init(data.stateVariableRows)
     stateVariables.subscribeToDB(supabase, user)
 

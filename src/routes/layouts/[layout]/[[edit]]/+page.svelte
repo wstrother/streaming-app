@@ -15,6 +15,8 @@
     import ScalePanel from "$lib/components/scalePanel.svelte"
     import UnsavedPanel from "$lib/components/unsavedPanel.svelte"
     import ContextMenu from '$lib/components/menu/contextMenu.svelte'
+	import { onMount } from 'svelte';
+	import { invalidate } from '$app/navigation';
 
     export let data
     let { supabase, user, edit } = data
@@ -83,7 +85,6 @@
         {key: "Add New Node", action: addNode},
         {key: "Open Node List", action: openNodeList}
     ])
-
 </script>
 <svelte:window 
     on:click={ctxMenu.close} 
