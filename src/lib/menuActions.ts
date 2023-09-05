@@ -2,6 +2,7 @@ import type { ModalStore } from '@skeletonlabs/skeleton'
 import type { LayoutNodeProxy } from './classes/layoutNodes'
 import type { StateVariableProxy, StateVarStore } from './classes/stateVariables'
 import { get } from 'svelte/store'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 export const setParentID = (node: LayoutNodeProxy, modalStore: ModalStore) => {
     modalStore.trigger({
@@ -60,13 +61,9 @@ export const setBooleanID = (node: LayoutNodeProxy, modalStore: ModalStore) => {
     })
 }
 
-export const toggleBoolean = (node: LayoutNodeProxy, svObj: StateVarStore) => {
-    const stateVariables = get(svObj)
-    if (node.boolean_id) {
-        const bool = svObj.getProxyByID(stateVariables, node.boolean_id)
-        bool.setColumn("value", String(!bool.value))
-        bool.saveChangesToDB()
-    }
+export const toggleBoolean = (bool: StateVariableProxy, supabase: SupabaseClient) => {
+    bool.setColumn("value", String(!bool.value))
+    bool.saveChangesToDB(supabase)
 }
 
 export const unsetBooleanID = (node: LayoutNodeProxy) => {

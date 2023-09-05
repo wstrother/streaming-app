@@ -3,9 +3,13 @@
 	import { type LayoutNodeProxy, layoutNodes } from "$lib/classes/layoutNodes"
 	import EditProxyPanel from "./editProxyPanel.svelte"
     import { orderChildNodes, setBooleanID, setParentID, setVariableID, toggleBoolean, unsetBooleanID, unsetParentID, unsetVariableID } from "$lib/menuActions"
-    import { getModalStore } from "@skeletonlabs/skeleton"
 	import { stateVariables } from "$lib/classes/stateVariables";
+    import { getModalStore } from "@skeletonlabs/skeleton"
+	import { page } from "$app/stores";
     const modalStore = getModalStore()
+
+	let { supabase } = $page.data
+	$: ({ supabase  } = $page.data)
 
     export let node: LayoutNodeProxy
 
@@ -48,7 +52,7 @@
     {#if node.boolean_id}
     <div>
         <button 
-            on:click={() => toggleBoolean(node, stateVariables)}>
+            on:click={() => toggleBoolean(stateVariables.getProxyByID(node.boolean_id ?? 0), supabase)}>
             Toggle Boolean
         </button>
         <button on:click={() => unsetBooleanID(node)}>Unset Boolean ID</button>

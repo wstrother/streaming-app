@@ -7,16 +7,15 @@
 	import { initializeStores } from '@skeletonlabs/skeleton'
 	initializeStores()
 
-	// import FullNodeList from '$lib/components/modals/fullNodeList.svelte'
-	// import OrderNodesPanel from '$lib/components/modals/orderNodesPanel.svelte'
-	// import FullVarsList from '$lib/components/modals/fullVarsList.svelte'
-	import type { PageData } from './$types';
+	import FullNodeList from '$lib/components/modals/fullNodeList.svelte'
+	import OrderNodesPanel from '$lib/components/modals/orderNodesPanel.svelte'
+	import FullVarsList from '$lib/components/modals/fullVarsList.svelte'
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
 	import { stateVariables } from '$lib/classes/stateVariables';
 	import { activeProxyID } from '$lib/stores/editor';
 		
-	export let data: PageData
+	export let data
 	let { supabase, session } = data
 	$: ({ supabase, session } = data)
 
@@ -35,12 +34,11 @@
 		return () => subscription.unsubscribe()
 	})
 
-	// const components: Record<string, ModalComponent> = {
-	// 	fullNodeList: {ref: FullNodeList},
-	// 	orderChildNodes: {ref: OrderNodesPanel},
-	// 	fullVarsList: {ref: FullVarsList}
-	// }
-	const components = {}
+	const components: Record<string, ModalComponent> = {
+		fullNodeList: {ref: FullNodeList},
+		orderChildNodes: {ref: OrderNodesPanel},
+		fullVarsList: {ref: FullVarsList}
+	}
 
 	const unselect = ({target}: MouseEvent) => {
 		if (target && (target as HTMLElement).tagName === 'BODY') {
@@ -82,4 +80,4 @@
 	regionBody="text-white" 
 	regionHeader="text-white text-2xl font-bold"/>
 
-<!-- <Toast /> -->
+<Toast />

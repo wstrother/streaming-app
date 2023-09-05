@@ -134,8 +134,9 @@ export const stateVariables = {
         varStore.set(vars)
     },
 
-    getProxyByID: (vars: StateVariableProxy[], varID: Number): StateVariableProxy => {
-        return vars.filter(v => v.id === varID)[0]
+    getProxyByID: (varID: Number): StateVariableProxy => {
+        const varArray = get(varStore)
+        return varArray.filter(v => v.id === varID)[0]
     },
 
     getProxyByKey: (vars: StateVariableProxy[], key: String): StateVariableProxy => {
