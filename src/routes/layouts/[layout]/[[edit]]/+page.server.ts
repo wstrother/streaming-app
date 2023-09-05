@@ -1,6 +1,6 @@
 import type { DatabaseRow } from '$lib/classes/dbProxy'
 import { PUBLIC_SUPABASE_URL } from '$env/static/public'
-import { redirect, type ServerLoadEvent } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
 import type { SupabaseClient, User } from '@supabase/supabase-js'
 
 
@@ -58,7 +58,7 @@ export async function load(
 
         const layoutData = await getLayoutData(supabase, user, layout)
         const layoutNodeRows = await getLayoutNodes(supabase, user, layoutData.id)
-        const stateVariables = await getStateVariables(supabase, user, layoutData.id)
+        const stateVariableRows = await getStateVariables(supabase, user, layoutData.id)
 
         const imageBaseUrl = `${PUBLIC_SUPABASE_URL}/storage/v1/object/public/user_images/`
 
@@ -67,7 +67,7 @@ export async function load(
             user,
             layoutData,
             layoutNodeRows,
-            stateVariables,
+            stateVariableRows,
             imageBaseUrl,
             session
         }

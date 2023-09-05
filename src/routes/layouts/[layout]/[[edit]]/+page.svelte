@@ -112,8 +112,9 @@
     {#if streamBG && edit && !$page.data.inOBS}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <img src={streamBG} alt="stream bg" 
-           
+            on:click={unselectNode}
             on:contextmenu|preventDefault
         />
     {/if}

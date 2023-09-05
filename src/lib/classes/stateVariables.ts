@@ -1,6 +1,7 @@
 import { get, writable } from 'svelte/store'
 import { ProxyDBRow, initProxies, updateProxy } from './dbProxy'
 import type { DatabaseInsert, DatabaseRow, DatabaseTableName, DatabaseUpdate, StateVarTypesLiterals, StateVarValue } from './dbProxy'
+import type { SupabaseClient, User } from '@supabase/supabase-js'
 
 export type StateVariableRow = DatabaseRow<'state_variables'>
 export type StateVariableUpdate = DatabaseUpdate<'state_variables'>
@@ -71,18 +72,6 @@ export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
 const varStore = writable<StateVariableProxy[]>([])
 let varStoreInitialized = false
 
-// move these later
-function getValueByID(vars: StateVariableProxy[], id: number | null): StateVarValue {
-    const stateVariable = vars.filter(v => v.id===id)[0]
-    if (stateVariable === undefined) return null
-    return stateVariable.value
-}
-
-function getValueByKey(vars: StateVariableProxy[], key: string): StateVarValue {
-    const stateVariable = vars.filter(v => v.key===key)[0]?.value
-    if (stateVariable === undefined) return null
-    return stateVariable
-}
 
 export const stateVariables = {
     subscribe: varStore.subscribe, 
@@ -110,7 +99,17 @@ export const stateVariables = {
         varStoreInitialized = false
     },
 
-    getValueByID, getValueByKey,
+    getValueByID: (vars: StateVariableProxy[], id: number | null): StateVarValue => {
+        const stateVariable = vars.filter(v => v.id===id)[0]
+        if (stateVariable === undefined) return null
+        return stateVariable.value
+    }, 
+    
+    getValueByKey: (vars: StateVariableProxy[], key: string): StateVarValue => {
+        const stateVariable = vars.filter(v => v.key===key)[0]?.value
+        if (stateVariable === undefined) return null
+        return stateVariable
+    },
 
     add: (vars: StateVariableProxy[], data: StateVariableInsert) => {
         const stateVar = StateVariableProxy.getAsInsert(
@@ -140,6 +139,28 @@ export const stateVariables = {
 
     getProxyByKey: (vars: StateVariableProxy[], key: String): StateVariableProxy => {
         return vars.filter(v => v.key === key)[0]
+    },
+
+    subscribeToDB: (supabase: SupabaseClient, user: User) => {
+        supabase.channel('state_vars_realtime').on('postgres_changes', {
+                event: '*', 
+                schema: 'public', 
+                table: 'state_variables', 
+                filter:`user_id=eq.${user.id}`},
+    
+            payload => {
+                const { eventType } = payload
+                const data = payload?.new ?? null
+    
+                if (!data || eventType === 'DELETE') return
+                if (eventType === 'UPDATE') stateVariables.updateData(data as StateVariableUpdate)
+                if (eventType === 'INSERT') stateVariables.addFromDB(data as StateVariableInsert)
+                // don't delete proxies based on DB subscription, 
+                // prefer to resolve the error
+                // when the UPDATE query is sent to the DB
+                // **FUTURE:** Push toast notification to page
+            }
+        ).subscribe()
     }
 }
 

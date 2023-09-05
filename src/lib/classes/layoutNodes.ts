@@ -1,6 +1,7 @@
 import { get, writable } from 'svelte/store'
 import { ProxyDBRow, initProxies, updateProxy } from './dbProxy'
 import type { DatabaseInsert, DatabaseRow, DatabaseUpdate, StateVarValue } from './dbProxy'
+import type { SupabaseClient, User } from '@supabase/supabase-js'
 
 export type LayoutNodeRow = DatabaseRow<'layout_nodes'>
 export type LayoutNodeUpdate = DatabaseUpdate<'layout_nodes'>
@@ -125,7 +126,6 @@ export const layoutNodes = {
 
     init: (nodes: LayoutNodeRow[]) => {
         if (!nodeStoreInitialized) {
-            console.log("initializing layout nodes")
             initProxies<'layout_nodes', LayoutNodeRow, LayoutNodeProxy>(
                 nodes, nodeStore.set, LayoutNodeProxy
             )
@@ -172,5 +172,27 @@ export const layoutNodes = {
             if (sb > sa) return -1
             return 0
         })
+    },
+
+    subscribeToDB: (supabase: SupabaseClient, user: User) => {
+        supabase.channel('layout_nodes_realtime').on('postgres_changes', {
+                event: '*', 
+                schema: 'public', 
+                table: 'layout_nodes', 
+                filter:`user_id=eq.${user.id}`},
+    
+            payload => {
+                const { eventType } = payload
+                const data = payload?.new ?? null
+    
+                if (!data || eventType === 'DELETE') return
+                if (eventType === 'UPDATE') layoutNodes.updateData(data as LayoutNodeUpdate)
+                if (eventType === 'INSERT') layoutNodes.addFromDB(data as LayoutNodeInsert)
+                // don't delete proxies based on DB subscription, 
+                // prefer to resolve the error
+                // when the UPDATE query is sent to the DB
+                // **FUTURE:** Push toast notification to page
+            }
+        ).subscribe()
     }
 }
