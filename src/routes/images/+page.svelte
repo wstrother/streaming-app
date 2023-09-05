@@ -1,5 +1,4 @@
 <script lang="ts">
-	// import { supabase, userMeta } from "$lib/supabaseClient"
     import { getModalStore, getToastStore, FileDropzone } from '@skeletonlabs/skeleton'
     const modalStore = getModalStore()
     const toastStore = getToastStore()
@@ -36,15 +35,13 @@
 
     let files: FileList
     const onChange = async () => {
-        console.log(files)
         if (files.length) {
             const fileName = files[0].name
-            const { data, error } = await supabase.storage.from('user_images')
+            const { error } = await supabase.storage.from('user_images')
                 .upload(`${user.id}/${fileName}`, files[0])
             
             if (error) throw new Error(error.message)
 
-            console.log(data)
             images.push(fileName)
             images = images
             toastStore.trigger({message: `${fileName}`})
