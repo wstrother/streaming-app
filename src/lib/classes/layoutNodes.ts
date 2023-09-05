@@ -106,17 +106,20 @@ export class LayoutNodeProxy extends ProxyDBRow<'layout_nodes'> {
 
 
 const nodeStore = writable<LayoutNodeProxy[]>([])
+type NodeArray = LayoutNodeProxy[]
 // let nodeStoreInitialized = false
 
+/* 
+    **FUTURE**: Figure out a way to refactor so passing vars array to mutations not needed
+*/
 export const layoutNodes = {
     subscribe: nodeStore.subscribe, 
     set: nodeStore.set, 
     update: nodeStore.update,
 
-    updateData: (update: LayoutNodeUpdate) => {
-        const nodeArray = get(nodeStore)
+    updateData: (nodes: NodeArray, update: LayoutNodeUpdate) => {
         updateProxy<'layout_nodes', LayoutNodeProxy>(
-            nodeArray, update, 'layout_nodes'
+            nodes, update, 'layout_nodes'
         )
     },
 
@@ -149,23 +152,21 @@ export const layoutNodes = {
         nodeStore.set(nodes)
     },
 
-    addFromDB: (data: LayoutNodeInsert) => {
-        const nodeArray = get(nodeStore)
-        nodeArray.push(LayoutNodeProxy.getAsInsert(
+    addFromDB: (nodes: NodeArray, data: LayoutNodeInsert) => {
+        nodes.push(LayoutNodeProxy.getAsInsert(
             data,
-            () => nodeStore.set(nodeArray),
+            () => nodeStore.set(nodes),
             false   // client = false
         ))
     },
 
-    delete: (node: LayoutNodeProxy, supabase: SupabaseClient) => {
-        const nodeArray = get(nodeStore)
+    delete: (nodeArray: NodeArray, node: LayoutNodeProxy, supabase: SupabaseClient) => {
         nodeArray.splice(nodeArray.indexOf(node), 1)
         nodeStore.set(nodeArray)
         node.deleteFromDB(supabase)
     },
 
-    getChildren: (nodes: LayoutNodeProxy[], node:LayoutNodeProxy): LayoutNodeProxy[] => {
+    getChildren: (nodes: NodeArray, node:LayoutNodeProxy): LayoutNodeProxy[] => {
         return nodes.filter(n => n.parent_node_id === node.id).sort((a, b) => {
             const {sa, sb} = {sa: a.sibling_order ?? 0, sb: b.sibling_order ?? 0}
             if (sa > sb) return 1
@@ -184,14 +185,15 @@ export const layoutNodes = {
             payload => {
                 const { eventType } = payload
                 const data = payload?.new ?? null
+                const nodeArray = get(nodeStore)
     
                 if (!data || eventType === 'DELETE') return
                 
                 const nodeID = (data as LayoutNodeRow).id
                 const nodeExists = get(nodeStore).map(n => n.id).includes(nodeID)
 
-                if (nodeExists) layoutNodes.updateData(data as LayoutNodeUpdate)
-                else layoutNodes.addFromDB(data as LayoutNodeInsert)
+                if (nodeExists) layoutNodes.updateData(nodeArray, data as LayoutNodeUpdate)
+                else layoutNodes.addFromDB(nodeArray, data as LayoutNodeInsert)
             
                 // don't delete proxies based on DB subscription, 
                 // prefer to resolve the error

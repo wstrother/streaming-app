@@ -39,14 +39,6 @@ export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
         return this.getColumn('type')
     }
 
-    // async saveChangesToDB(supabase: SupabaseClient) {
-    //     await super.saveChangesToDB('state_variables', supabase)
-    // }
-
-    // async deleteFromDB() {
-    //     await super.deleteFromDB('state_variables')
-    // }
-
     static getAsInsert(
         data: StateVariableInsert, broadcast: Function, client: boolean=true
         ): StateVariableProxy {
@@ -70,18 +62,19 @@ export class StateVariableProxy extends ProxyDBRow<'state_variables'> {
 }
 
 const varStore = writable<StateVariableProxy[]>([])
-let varStoreInitialized = false
+type VarArray = StateVariableProxy[]
 
-
+/* 
+    **FUTURE**: Figure out a way to refactor so passing vars array to mutations not needed
+*/
 export const stateVariables = {
     subscribe: varStore.subscribe, 
     set: varStore.set, 
     update: varStore.update,
 
-    updateData: (update: StateVariableUpdate) => {
-        const svArray = get(varStore)
+    updateData: (vars: VarArray, update: StateVariableUpdate) => {
         updateProxy<'state_variables', StateVariableProxy>(
-            svArray, update, 'state_variables'
+            vars, update, 'state_variables'
         )
     },
 
@@ -91,13 +84,13 @@ export const stateVariables = {
             initProxies<'state_variables', StateVariableRow, StateVariableProxy>(
                 vars, varStore.set, StateVariableProxy
             )
-            varStoreInitialized = true
+            // varStoreInitialized = true
         // }
     },
 
     resetStore: () => {
         varStore.set([])
-        varStoreInitialized = false
+        // varStoreInitialized = false
     },
 
     getValueByID: (vars: StateVariableProxy[], id: number | null): StateVarValue => {
@@ -119,14 +112,13 @@ export const stateVariables = {
         varStore.set(vars)
     },
 
-    addFromDB: (data: StateVariableInsert) => {
-        const varArray = get(varStore)
-        varArray.push(StateVariableProxy.getAsInsert(
+    addFromDB: (vars: VarArray, data: StateVariableInsert) => {
+        vars.push(StateVariableProxy.getAsInsert(
             data, 
-            () => varStore.set(varArray),   // I don't understand how this isn't a bug
+            () => varStore.set(vars),   // I don't understand how this isn't a bug
             false   // client = false
         ))
-        varStore.set(varArray)
+        varStore.set(vars)
     },
 
     delete: (vars: StateVariableProxy[], stateVariable: StateVariableProxy) => {
@@ -134,9 +126,8 @@ export const stateVariables = {
         varStore.set(vars)
     },
 
-    getProxyByID: (varID: Number): StateVariableProxy => {
-        const varArray = get(varStore)
-        return varArray.filter(v => v.id === varID)[0]
+    getProxyByID: (vars: VarArray, varID: Number): StateVariableProxy => {
+        return vars.filter(v => v.id === varID)[0]
     },
 
     getProxyByKey: (vars: StateVariableProxy[], key: String): StateVariableProxy => {
@@ -155,8 +146,8 @@ export const stateVariables = {
                 const data = payload?.new ?? null
     
                 if (!data || eventType === 'DELETE') return
-                if (eventType === 'UPDATE') stateVariables.updateData(data as StateVariableUpdate)
-                if (eventType === 'INSERT') stateVariables.addFromDB(data as StateVariableInsert)
+                if (eventType === 'UPDATE') stateVariables.updateData(get(varStore), data as StateVariableUpdate)
+                if (eventType === 'INSERT') stateVariables.addFromDB(get(varStore), data as StateVariableInsert)
                 // don't delete proxies based on DB subscription, 
                 // prefer to resolve the error
                 // when the UPDATE query is sent to the DB

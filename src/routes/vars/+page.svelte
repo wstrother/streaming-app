@@ -6,7 +6,7 @@
 
     let activeVar: StateVariableProxy | null
     $: {
-        if ($activeProxyID) activeVar = stateVariables.getProxyByID($activeProxyID)
+        if ($activeProxyID) activeVar = stateVariables.getProxyByID($stateVariables, $activeProxyID)
         else activeVar = null
     }
 </script>

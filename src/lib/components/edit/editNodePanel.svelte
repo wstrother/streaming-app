@@ -52,7 +52,9 @@
     {#if node.boolean_id}
     <div>
         <button 
-            on:click={() => toggleBoolean(stateVariables.getProxyByID(node.boolean_id ?? 0), supabase)}>
+            on:click={() => toggleBoolean(
+                stateVariables.getProxyByID($stateVariables, node.boolean_id ?? 0),
+                supabase)}>
             Toggle Boolean
         </button>
         <button on:click={() => unsetBooleanID(node)}>Unset Boolean ID</button>

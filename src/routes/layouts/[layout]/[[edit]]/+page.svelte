@@ -66,7 +66,7 @@
             body: 'Confirm you want to delete this node. This is not reversible!',
             response: (r: boolean) => {
                 if (!r) return
-                else layoutNodes.delete(nodeToDelete, supabase)
+                else layoutNodes.delete($layoutNodes, nodeToDelete, supabase)
             }
         })
     }
