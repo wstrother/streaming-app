@@ -21,9 +21,9 @@
     let imgURL: string 
     $: imgURL = `${$page.data.imageBaseUrl}/${node.user_id}/${node.image}`
 
-    let display: StateVarValue = true
+    let boolDisplay: boolean = true
     $: if (node.boolean_id) {
-        display = stateVariables.getValueByID($stateVariables, node.boolean_id)
+        boolDisplay = Boolean(stateVariables.getValueByID($stateVariables, node.boolean_id))
     }
 
     // handle var values / interpolation
@@ -111,8 +111,8 @@
     style:width={node.width ? `${node.width}px` : null}
     style:height={node.height ? `${node.height}px` : null}
     style:background-image={node.image ? `url(${imgURL})` : null}
-    style:display={!display ? 'none' : null}
-
+    
+    class:_bool-display={!boolDisplay ? 'hidden' : null}
     class="{node.classes} layout-node
         select-none cursor-pointer"
     class:absolute={!child}
