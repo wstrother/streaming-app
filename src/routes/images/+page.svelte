@@ -36,15 +36,17 @@
     let files: FileList
     const onChange = async () => {
         if (files.length) {
-            const fileName = files[0].name
-            const { error } = await supabase.storage.from('user_images')
-                .upload(`${user.id}/${fileName}`, files[0])
-            
-            if (error) throw new Error(error.message)
-
-            images.push(fileName)
-            images = images
-            toastStore.trigger({message: `${fileName}`})
+            for (let file of files) {
+                const fileName = file.name
+                const { error } = await supabase.storage.from('user_images')
+                    .upload(`${user.id}/${fileName}`, file)
+                
+                if (error) throw new Error(error.message)
+    
+                images.push(fileName)
+                images = images
+                toastStore.trigger({message: `${fileName}`})
+            }
         }
 
     }
@@ -67,7 +69,7 @@
 </div>
 
 <div id="file-dropzone">
-    <FileDropzone name="files" bind:files={files} on:change={onChange}/>
+    <FileDropzone name="files" bind:files={files} on:change={onChange} multiple/>
 </div>
 
 <style lang="postcss">
