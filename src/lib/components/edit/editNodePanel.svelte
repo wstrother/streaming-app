@@ -8,8 +8,8 @@
 	import { page } from "$app/stores";
     const modalStore = getModalStore()
 
-	let { supabase } = $page.data
-	$: ({ supabase  } = $page.data)
+	let { supabase, user } = $page.data
+	$: ({ supabase, user  } = $page.data)
 
     export let node: LayoutNodeProxy
 
@@ -47,7 +47,7 @@
         {/if}
     </div>
     <div>
-        <button on:click={() => setBooleanID(node, modalStore)}>Set Boolean ID</button>
+        <button on:click={() => setBooleanID(node, modalStore, supabase, user)}>Set Boolean ID</button>
     </div>
     {#if node.boolean_id}
     <div>

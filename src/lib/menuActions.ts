@@ -1,8 +1,8 @@
 import type { ModalStore } from '@skeletonlabs/skeleton'
 import type { LayoutNodeProxy } from './classes/layoutNodes'
-import type { StateVariableProxy, StateVarStore } from './classes/stateVariables'
+import { stateVariables, type StateVariableProxy, type StateVarStore } from './classes/stateVariables'
 import { get } from 'svelte/store'
-import type { SupabaseClient } from '@supabase/supabase-js'
+import type { SupabaseClient, User } from '@supabase/supabase-js'
 
 export const setParentID = (node: LayoutNodeProxy, modalStore: ModalStore) => {
     modalStore.trigger({
@@ -47,13 +47,26 @@ export const unsetVariableID = (node: LayoutNodeProxy) => {
     node.setColumn("variable_id", null)
 }
 
-export const setBooleanID = (node: LayoutNodeProxy, modalStore: ModalStore) => {
+export const setBooleanID = (
+        node: LayoutNodeProxy, modalStore: ModalStore, 
+        supabase: SupabaseClient, user: User) => {
     modalStore.trigger({
         type: 'component',
         component: 'fullVarsList',
         meta: {
             onClick: (sv: StateVariableProxy) => {
                 node.setColumn("boolean_id", sv.id)
+                modalStore.close()
+            },
+            onAdd: async () => {
+                const newVar = await stateVariables.addToDB(
+                    supabase, {
+                    key: `${node.key}_boolean`,
+                    user_id: user.id,
+                    type: 'boolean',
+                    value: 'true'
+                })
+                node.setColumn("boolean_id", newVar.id)
                 modalStore.close()
             },
             typeFilter: "boolean"

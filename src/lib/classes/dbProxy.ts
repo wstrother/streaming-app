@@ -1,5 +1,6 @@
 import type { Database } from "$lib/types/supabase"
 import type { SupabaseClient } from "@supabase/supabase-js"
+import type { StateVariableInsert, StateVariableRow } from "./stateVariables"
 
 export type DatabaseTableName = keyof Database['public']['Tables']
 export type DatabaseTable = Database['public']['Tables']
@@ -114,6 +115,17 @@ export class ProxyDBRow<T extends DatabaseTableName> {
             
             if (error) throw Error(error.message)
         }
+    }
+
+    static async addToDB(
+        supabase: SupabaseClient, table: DatabaseTableName, _data: StateVariableInsert): 
+        Promise<StateVariableRow> {
+            const { data, error } = await supabase.from(table)
+                    .insert(_data).select().single()
+                
+            if (error) throw Error(error.message)
+            if (data && data.id) return data
+            throw Error('nothing returned from DB on insert')
     }
 
     saveChangesToProxy(update:DatabaseUpdate<'layout_nodes'>|null=null) {

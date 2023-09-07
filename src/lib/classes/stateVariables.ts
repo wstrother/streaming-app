@@ -115,10 +115,14 @@ export const stateVariables = {
     addFromDB: (vars: VarArray, data: StateVariableInsert) => {
         vars.push(StateVariableProxy.getAsInsert(
             data, 
-            () => varStore.set(vars),   // I don't understand how this isn't a bug
+            () => varStore.set(vars),
             false   // client = false
         ))
         varStore.set(vars)
+    },
+
+    addToDB: async (supabase: SupabaseClient, data: StateVariableInsert) => {
+        return await StateVariableProxy.addToDB(supabase, 'state_variables', data)
     },
 
     delete: (vars: StateVariableProxy[], stateVariable: StateVariableProxy) => {
