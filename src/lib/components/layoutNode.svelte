@@ -5,6 +5,8 @@
     import { activeProxyID, ctxMenu, scalePercent, type CtxMenu, type CtxMenuItem } from '$lib/stores/editor'
 	import { setParentID, unsetParentID } from '$lib/menuActions'
     import { page } from '$app/stores'
+    let { supabase } = $page.data
+	$: ({ supabase } = $page.data)
 
     import { getModalStore } from "@skeletonlabs/skeleton"
     const modalStore = getModalStore()
@@ -65,7 +67,7 @@
         const menu: CtxMenuItem[] = [
             {key: `Save ${node.key}`, 
                 disabled: !node.unsaved, 
-                action: () => node.saveChangesToDB()},
+                action: () => node.saveChangesToDB(supabase)},
             {key: `Reset ${node.key}`, 
                 disabled: !node.unsaved, 
                 action: () => node.resetChanges()},
@@ -101,7 +103,7 @@
 <!-- svelte-ignore a11y-interactive-supports-focus -->
 <div
     on:contextmenu|stopPropagation|preventDefault={e => ctxMenu.open(e, getMenu())}
-    on:mousedown|preventDefault|stopPropagation={isClicked} 
+    on:mousedown|preventDefault|stopPropagation={isClicked}
     id="layoutNode-{node.key}"
 
     style:top={`${node.top}px`}

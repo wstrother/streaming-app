@@ -60,8 +60,9 @@
             on:blur={endEditing}
             on:keyup={onkey}
             bind:value={fieldValue} />
+    {/if}
 
-    {:else if inputType === 'number'}
+    {#if inputType === 'number'}
         <input id={elId} name={elId} type='number'
             placeholder={nullable ? "null" : "0"}
             on:focus={startEditing}

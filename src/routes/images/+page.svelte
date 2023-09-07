@@ -1,13 +1,14 @@
 <script lang="ts">
-	import { supabase, userMeta } from "$lib/supabaseClient"
-	import type { PageData } from "./$types"
     import { getModalStore, getToastStore, FileDropzone } from '@skeletonlabs/skeleton'
     const modalStore = getModalStore()
     const toastStore = getToastStore()
 
-    export let data: PageData
+    export let data
     let imageData = data.imageData
     let images: string[] = imageData.map(i => i.name)
+    let { supabase, user } = data
+	$: ({ supabase, user } = data)
+
 
     const getURI = (name: string): string => `${data.imageBaseUrl}${name}`
 
@@ -19,7 +20,7 @@
             response: async (r: boolean) => {
                 if (!r) return
                 else {
-                    const file_name = `${$userMeta.uid}/${name}`
+                    const file_name = `${user.id}/${name}`
                     const { error } = await supabase.storage.from('user_images')
                         .remove([file_name])
                     
@@ -34,15 +35,13 @@
 
     let files: FileList
     const onChange = async () => {
-        console.log(files)
         if (files.length) {
             const fileName = files[0].name
-            const { data, error } = await supabase.storage.from('user_images')
-                .upload(`${$userMeta.uid}/${fileName}`, files[0])
+            const { error } = await supabase.storage.from('user_images')
+                .upload(`${user.id}/${fileName}`, files[0])
             
             if (error) throw new Error(error.message)
 
-            console.log(data)
             images.push(fileName)
             images = images
             toastStore.trigger({message: `${fileName}`})
@@ -55,7 +54,7 @@
     {#each images as image, i}
     <div class="bg-primary-600 rounded p-2 mb-1 text-white">
         <div class="flex items-center justify-between">
-            <span class="font-bold">{image}</span>
+            <span class="font-bold overflow-x-hidden text-ellipsis">{image}</span>
 
             <button on:click={() => deleteImage(image, i)}
                 class="btn btn-sm variant-filled-primary">
@@ -80,7 +79,7 @@
 
     #file-dropzone {
         @apply m-4 absolute;
-        top: 0;
+        top: 30px;
         left: 550px;
         width: 500px;
     }

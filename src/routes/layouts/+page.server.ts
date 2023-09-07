@@ -1,26 +1,25 @@
-import { error as routeError } from '@sveltejs/kit'
-import { supabase } from "$lib/supabaseClient"
-import { devLogin } from '$lib/devLogin'
+import type { SupabaseClient, User } from '@supabase/supabase-js'
+import { redirect, error as routeError, type ServerLoadEvent } from '@sveltejs/kit'
 
-const getLayouts = async (user_id: string): Promise<{name: string}[]> => {
-    let { data, error } = await supabase.from('layouts').select('name')
-        .eq('user_id', user_id)
-    
-    if (error) throw new Error(error.message)
+const getLayouts = async (
+    supabase: SupabaseClient, user: User): Promise<{name: string}[]> => {
+        let { data, error } = await supabase.from('layouts').select('name')
+            .eq('user_id', user.id)
+        
+        if (error) throw new Error(error.message)
 
-    return data ?? []
+        return data ?? []
 }
 
+export async function load({depends, locals: { supabase, getSession }}:ServerLoadEvent) {
+    depends('supabase:auth')
 
-export async function load() {
-    try {
-        const user = await devLogin()
-        const layoutNames = (await getLayouts(user.id)).map(l => l.name)
-
-        return { layoutNames }
+    const { user = null } = await getSession() ?? {}
+    if (!user) {
+        throw redirect(303, '/')
     }
-    
-     catch {
-        throw routeError(404, 'Layout not found')
+
+    return {
+        layoutNames: (await getLayouts(supabase, user)).map(l => l.name)
     }
 }

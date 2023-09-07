@@ -1,3 +1,7 @@
-// import { devLogin } from "$lib/supabaseClient"
+import type { ServerLoadEvent } from "@sveltejs/kit"
 
-// devLogin()
+export const load = async ({ locals: { getSession } }:ServerLoadEvent) => {
+  return {
+    session: await getSession(),
+  }
+}

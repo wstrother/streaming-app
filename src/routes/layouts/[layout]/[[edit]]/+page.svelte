@@ -1,5 +1,4 @@
 <script lang='ts'>
-    import { userMeta } from '$lib/supabaseClient.js'
     import { getModalStore } from '@skeletonlabs/skeleton'
     const modalStore = getModalStore()
     let modalOpen: boolean
@@ -8,7 +7,7 @@
     import { page } from "$app/stores"
     import { activeProxyID, ctxMenu, scalePercent, type CtxMenu } from "$lib/stores/editor.js"
     import { layoutNodes, LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
-    import { wheel } from "$lib/stores/editor.js"
+    import { zoom as zoom } from "$lib/stores/editor.js"
 
     import streamBG from "$lib/images/stream-bg.png"
     import LayoutNode from "$lib/components/layoutNode.svelte"
@@ -18,8 +17,8 @@
     import ContextMenu from '$lib/components/menu/contextMenu.svelte'
 
     export let data
-    let edit: boolean
-    $: edit = data.edit
+    let { supabase, user, edit } = data
+	$: ({ supabase, user, edit } = data)
 
     let activeNode: LayoutNodeProxy|null
     $: activeNode = layoutNodes.getNodeByID($layoutNodes, $activeProxyID)
@@ -46,11 +45,11 @@
 
             response: (key: string) => {
                 if (!key) return
-                if (!$userMeta.uid) throw Error("No User ID found in current userMeta")
+                if (!user.id) throw Error("No User ID found in current userMeta")
 
                 layoutNodes.add($layoutNodes, {
                     key, 
-                    user_id: $userMeta.uid, 
+                    user_id: user.id, 
                     layout_id: $page.data.layoutData.id,
                     parent_node_id,
                     classes: parent_node_id ? "" : "absolute"
@@ -67,7 +66,7 @@
             body: 'Confirm you want to delete this node. This is not reversible!',
             response: (r: boolean) => {
                 if (!r) return
-                else layoutNodes.delete($layoutNodes, nodeToDelete)
+                else layoutNodes.delete($layoutNodes, nodeToDelete, supabase)
             }
         })
     }
@@ -75,7 +74,7 @@
     const getMenu = (): CtxMenu => ([
         {key: "Save All",     
             disabled: !unsavedNodes.length, 
-            action: () => unsavedNodes.forEach(n => n.saveChangesToDB())
+            action: () => unsavedNodes.forEach(n => n.saveChangesToDB(supabase))
         },
         {key: "Reset All",    
             disabled: !unsavedNodes.length, 
@@ -84,10 +83,10 @@
         {key: "Add New Node", action: addNode},
         {key: "Open Node List", action: openNodeList}
     ])
-
 </script>
 <svelte:window 
     on:click={ctxMenu.close} 
+    on:wheel={zoom}
     on:contextmenu|preventDefault={(e) => {if (!modalOpen) ctxMenu.open(e, getMenu())}}
 />
 <ContextMenu />
@@ -103,18 +102,16 @@
     </div>
 {/if}
 
+
 <!-- layout node tree -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<div id="stream-layout-container" 
-    on:wheel={wheel}
-    style={edit ? `transform: scale(${$scalePercent}%)` : ''}>
+<div id="stream-layout-container" style={edit ? `transform: scale(${$scalePercent}%)` : ''}>
 
     <!-- Optional stream bg  -->
     {#if streamBG && edit && !$page.data.inOBS}
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
         <img src={streamBG} alt="stream bg" 
-            on:mousedown|preventDefault={() => unselectNode()}
+            on:click={unselectNode}
             on:contextmenu|preventDefault
         />
     {/if}
@@ -130,7 +127,7 @@
 <!-- Beginning of actual edit UI elements -->
 {#if edit}
 
-    <div id="active-node-panel">
+    <div id="active-node-panel" on:wheel|stopPropagation>
         {#if activeNode}
             <EditNodePanel node={activeNode} />
         {/if}

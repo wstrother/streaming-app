@@ -1,11 +1,11 @@
 <script lang="ts">
     import { RangeSlider } from "@skeletonlabs/skeleton"
-    import { scalePercent, wheel } from "$lib/stores/editor"
+    import { scalePercent, zoom } from "$lib/stores/editor"
 
     
 </script>
 
-<div id="scale-slider-container" on:wheel={wheel}
+<div id="scale-slider-container" on:wheel={zoom}
     class="absolute m-4 bottom-0 w-[200px] variant-glass-primary p-4 rounded">
 
     <RangeSlider 

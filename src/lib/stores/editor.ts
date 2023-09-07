@@ -6,7 +6,7 @@ import { get } from "svelte/store"
 export const activeProxyID = writable<number|null>(null)
 export const scalePercent: Writable<number> = localStorageStore('scalePercent', 100)
 
-export const wheel = (e: WheelEvent) => {
+export const zoom = (e: WheelEvent) => {
     let value = get(scalePercent)
     if (e.deltaY > 0) {
         scalePercent.set(Math.max(value - 5, 25))
