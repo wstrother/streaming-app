@@ -19,7 +19,8 @@
         ['left', 'number'],
         'classes',
         ['width', 'number'],
-        ['height', 'number']
+        ['height', 'number'],
+        'img_src'
     ]
 
     let childNodes: LayoutNodeProxy[]
