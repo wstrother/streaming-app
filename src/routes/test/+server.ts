@@ -1,26 +1,24 @@
 import postcss from 'postcss'
 import tailwindcss from 'tailwindcss'
-import { skeleton } from '@skeletonlabs/tw-plugin'
-import typography from '@tailwindcss/typography'
 
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
+import cssnano from 'cssnano'
+import autoprefixer from 'autoprefixer'
+
 
 const sourceCSS = '@tailwind base; @tailwind components; @tailwind utilities';
-const config = {
-  content: [{ raw: '<div class="bg-red-500"></div>' }],
-  plugins: [
-  ]
-};
 
+export const GET: RequestHandler = async ({ url }) => {
+    const classNames = url.searchParams.get('css')
+    const rawConfig = {content: [{raw: `<div class="${classNames}"></div>`, extension: 'html'}]}
 
-
-export const GET: RequestHandler = async () => {
     const compiledCss = await postcss([
-        tailwindcss(config)
+        tailwindcss(rawConfig),
+        autoprefixer(),
+        cssnano()
     ]).process(sourceCSS)
     
-    console.log(compiledCss)
 
-    return json({output: compiledCss})
+    return json({output: compiledCss.css})
 };

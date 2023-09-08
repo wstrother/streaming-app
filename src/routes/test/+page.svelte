@@ -3,12 +3,19 @@
     // import postcss from 'postcss'
 
     let cssClasses: string = ""
+    let compiledCss: string = ""
 
     const onChange = async (e: Event) => {
-        // console.log(e)
-        console.log((await fetch('/test').then(r => r.json())))
+        compiledCss = (
+            await fetch(`/test?css=${cssClasses}`).then(r => r.json())
+        ).output
+        console.log(compiledCss)
     }
 </script>
+
+<svelte:head>
+    {@html `<style type="text/css">${compiledCss}</style>`}
+</svelte:head>
 
 <input type="text" 
     placeholder="class names here" 
