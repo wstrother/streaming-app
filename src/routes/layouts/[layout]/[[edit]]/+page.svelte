@@ -7,7 +7,7 @@
     import { page } from "$app/stores"
     import { activeProxyID, ctxMenu, scalePercent, type CtxMenu } from "$lib/stores/editor.js"
     import { layoutNodes, LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
-    import { zoom as zoom } from "$lib/stores/editor.js"
+    import { zoom } from "$lib/stores/editor.js"
 
     import streamBG from "$lib/images/stream-bg.png"
     import LayoutNode from "$lib/components/layoutNode.svelte"
@@ -83,10 +83,21 @@
         {key: "Add New Node", action: addNode},
         {key: "Open Node List", action: openNodeList}
     ])
+
+    const onZoom = (e: WheelEvent) => {
+        const target = (e.target as HTMLElement)
+        console.log(e)
+		if (target) {
+            const fromBody = target.tagName === 'BODY'
+            const fromBG = target.id === 'stream-background'
+            const fromNode = target.id.includes('layoutNode')
+            if (fromBG || fromBody || fromNode) zoom(e)
+        }
+	}
 </script>
 <svelte:window 
     on:click={ctxMenu.close} 
-    on:wheel={zoom}
+    on:wheel={(e) => onZoom(e)}
     on:contextmenu|preventDefault={(e) => {if (!modalOpen) ctxMenu.open(e, getMenu())}}
 />
 <ContextMenu />
@@ -107,10 +118,10 @@
 <div id="stream-layout-container" style={edit ? `transform: scale(${$scalePercent}%)` : ''}>
 
     <!-- Optional stream bg  -->
-    {#if streamBG && edit && !$page.data.inOBS}
+    {#if streamBG && !$page.data.inOBS}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-        <img src={streamBG} alt="stream bg" 
+        <img src={streamBG} alt="stream background" id="stream-background" 
             on:click={unselectNode}
             on:contextmenu|preventDefault
         />
