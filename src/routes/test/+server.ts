@@ -1,24 +1,10 @@
-import postcss from 'postcss'
-import tailwindcss from 'tailwindcss'
+import { ViteSSGContext } from 'vite-ssg';
+import { createServer, IncomingMessage, ServerResponse } from 'http';
+import { parse } from 'url';
+import { getTailwindCSS } from '$lib/utils';
 
-import { json } from '@sveltejs/kit'
-import type { RequestHandler } from './$types'
-import cssnano from 'cssnano'
-import autoprefixer from 'autoprefixer'
-
-
-const sourceCSS = '@tailwind base; @tailwind components; @tailwind utilities';
-
-export const GET: RequestHandler = async ({ url }) => {
-    const classNames = url.searchParams.get('css')
-    const rawConfig = {content: [{raw: `<div class="${classNames}"></div>`, extension: 'html'}]}
-
-    const compiledCss = await postcss([
-        tailwindcss(rawConfig),
-        autoprefixer(),
-        cssnano()
-    ]).process(sourceCSS)
-    
-
-    return json({output: compiledCss.css})
-};
+export function handler(req: IncomingMessage, res: ServerResponse, ctx: ViteSSGContext) {
+  const { query } = parse(req.url, true);
+  const css = getTailwindCSS(query.css);
+  res.end(css);
+}
