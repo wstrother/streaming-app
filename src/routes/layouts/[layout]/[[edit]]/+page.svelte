@@ -27,6 +27,27 @@
     $: rootNodes = $layoutNodes.filter(n => !n.parent_node_id)
     $: unsavedNodes = $layoutNodes.filter(n => n.unsaved)
 
+    let cssClasses: string = ""
+    let cssClassesPrev: string = ""
+    let compiledCss: string = ""
+    $: {
+        cssClasses = $layoutNodes.reduce((classList: string[], node) =>
+            classList.concat(node.classes.split(' ')
+            .filter(c => c && !classList.includes(c))), [])
+            .toSorted().join(' ')
+
+        if (cssClasses !== cssClassesPrev) {
+            generateCSS()
+            cssClassesPrev = cssClasses
+        }
+    }
+
+    const generateCSS = async () => {
+        compiledCss = (
+            await fetch(`/api/css?css=${cssClasses}`).then(r => r.json())
+        ).output
+    }
+
     const openNodeList = () => {
         modalStore.trigger({type: 'component', component: 'fullNodeList'})
     }
@@ -95,6 +116,10 @@
         }
 	}
 </script>
+<svelte:head>
+    {@html `<style type="text/css">${compiledCss}</style>`}
+</svelte:head>
+
 <svelte:window 
     on:click={ctxMenu.close} 
     on:wheel={(e) => onZoom(e)}

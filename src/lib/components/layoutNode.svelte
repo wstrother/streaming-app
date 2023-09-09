@@ -112,8 +112,7 @@
     style:background-image={node.image ? `url(${imgURL})` : null}
     
     class:_bool-display={!boolDisplay ? 'hidden' : null}
-    class="{node.classes} layout-node
-        select-none cursor-pointer"
+    class=" {node.classes} layout-node select-none cursor-pointer"
     class:absolute={!child}
     class:layout-node-active={$activeProxyID === node.id}
     class:layout-node-edit={edit}
