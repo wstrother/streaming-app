@@ -8,7 +8,7 @@ import autoprefixer from 'autoprefixer'
 import { skeleton } from '@skeletonlabs/tw-plugin'
 import typography from '@tailwindcss/typography'
 
-const sourceCSS = '@tailwind base; @tailwind components; @tailwind utilities';
+const sourceCSS = '@tailwind components; @tailwind utilities';
 
 export const GET: RequestHandler = async ({ url }) => {
     const classNames = url.searchParams.get('css') ?? ''
