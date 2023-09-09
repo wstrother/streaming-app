@@ -27,24 +27,24 @@
     $: rootNodes = $layoutNodes.filter(n => !n.parent_node_id)
     $: unsavedNodes = $layoutNodes.filter(n => n.unsaved)
 
-    let cssClasses: string = ""
-    let cssClassesPrev: string = ""
+    let cssClasses: string[] = []
+    let cssQueryString: string = ""
     let compiledCss: string = ""
     $: {
         cssClasses = $layoutNodes.reduce((classList: string[], node) =>
             classList.concat(node.classes.split(' ')
             .filter(c => c && !classList.includes(c))), [])
-            .toSorted().join(' ')
+        cssClasses.sort()
 
-        if (cssClasses !== cssClassesPrev) {
+        if (cssClasses.join(' ') !== cssQueryString) {
+            cssQueryString = cssClasses.join(' ')
             generateCSS()
-            cssClassesPrev = cssClasses
         }
     }
 
     const generateCSS = async () => {
         compiledCss = (
-            await fetch(`/api/css?css=${cssClasses}`).then(r => r.json())
+            await fetch(`/api/css?css=${cssQueryString}`).then(r => r.json())
         ).output
     }
 
