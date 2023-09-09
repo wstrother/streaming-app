@@ -87,7 +87,7 @@
     const onZoom = (e: WheelEvent) => {
         const target = (e.target as HTMLElement)
         console.log(e)
-		if (target) {
+		if (target && edit) {
             const fromBody = target.tagName === 'BODY'
             const fromBG = target.id === 'stream-background'
             const fromNode = target.id.includes('layoutNode')
@@ -115,7 +115,7 @@
 
 
 <!-- layout node tree -->
-<div id="stream-layout-container" style={edit ? `transform: scale(${$scalePercent}%)` : ''}>
+<div id="stream-layout-container" style={`transform: scale(${$scalePercent}%)`}>
 
     <!-- Optional stream bg  -->
     {#if streamBG && !$page.data.inOBS}
