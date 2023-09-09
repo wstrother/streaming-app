@@ -1,5 +1,4 @@
 <script lang="ts">
-    import type { StateVarValue } from '$lib/classes/dbProxy';
     import { layoutNodes, type LayoutNodeProxy } from '$lib/classes/layoutNodes'
     import { stateVariables } from '$lib/classes/stateVariables'
     import { activeProxyID, ctxMenu, scalePercent, type CtxMenu, type CtxMenuItem } from '$lib/stores/editor'
@@ -113,20 +112,19 @@
     style:background-image={node.image ? `url(${imgURL})` : null}
     
     class:_bool-display={!boolDisplay ? 'hidden' : null}
-    class="{node.classes} layout-node
-        select-none cursor-pointer"
+    class=" {node.classes} layout-node select-none cursor-pointer"
     class:absolute={!child}
     class:layout-node-active={$activeProxyID === node.id}
     class:layout-node-edit={edit}
 >
     {#if content}
-        <span class="layout-node-content">
+        <span class="layout-node-content" id={`layoutNode-content-${node.key}`}>
             {content ?? ''}
         </span>
     {/if}
 
     {#if node.variable_id}
-        <span class="layout-node-var">
+        <span class="layout-node-var" id={`layoutNode-var-${node.key}`}>
             {varText}
         </span>
     {/if}

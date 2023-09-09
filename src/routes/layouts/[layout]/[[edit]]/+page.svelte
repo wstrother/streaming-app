@@ -7,7 +7,7 @@
     import { page } from "$app/stores"
     import { activeProxyID, ctxMenu, scalePercent, type CtxMenu } from "$lib/stores/editor.js"
     import { layoutNodes, LayoutNodeProxy } from "$lib/classes/layoutNodes.js"
-    import { zoom as zoom } from "$lib/stores/editor.js"
+    import { zoom } from "$lib/stores/editor.js"
 
     import streamBG from "$lib/images/stream-bg.png"
     import LayoutNode from "$lib/components/layoutNode.svelte"
@@ -26,6 +26,27 @@
     let rootNodes: LayoutNodeProxy[], unsavedNodes: LayoutNodeProxy[]
     $: rootNodes = $layoutNodes.filter(n => !n.parent_node_id)
     $: unsavedNodes = $layoutNodes.filter(n => n.unsaved)
+
+    let cssClasses: string = ""
+    let cssClassesPrev: string = ""
+    let compiledCss: string = ""
+    $: {
+        cssClasses = $layoutNodes.reduce((classList: string[], node) =>
+            classList.concat(node.classes.split(' ')
+            .filter(c => c && !classList.includes(c))), [])
+            .toSorted().join(' ')
+
+        if (cssClasses !== cssClassesPrev) {
+            generateCSS()
+            cssClassesPrev = cssClasses
+        }
+    }
+
+    const generateCSS = async () => {
+        compiledCss = (
+            await fetch(`/api/css?css=${cssClasses}`).then(r => r.json())
+        ).output
+    }
 
     const openNodeList = () => {
         modalStore.trigger({type: 'component', component: 'fullNodeList'})
@@ -83,10 +104,25 @@
         {key: "Add New Node", action: addNode},
         {key: "Open Node List", action: openNodeList}
     ])
+
+    const onZoom = (e: WheelEvent) => {
+        const target = (e.target as HTMLElement)
+        console.log(e)
+		if (target && edit) {
+            const fromBody = target.tagName === 'BODY'
+            const fromBG = target.id === 'stream-background'
+            const fromNode = target.id.includes('layoutNode')
+            if (fromBG || fromBody || fromNode) zoom(e)
+        }
+	}
 </script>
+<svelte:head>
+    {@html `<style type="text/css">${compiledCss}</style>`}
+</svelte:head>
+
 <svelte:window 
     on:click={ctxMenu.close} 
-    on:wheel={zoom}
+    on:wheel={(e) => onZoom(e)}
     on:contextmenu|preventDefault={(e) => {if (!modalOpen) ctxMenu.open(e, getMenu())}}
 />
 <ContextMenu />
@@ -104,13 +140,13 @@
 
 
 <!-- layout node tree -->
-<div id="stream-layout-container" style={edit ? `transform: scale(${$scalePercent}%)` : ''}>
+<div id="stream-layout-container" style={`transform: scale(${$scalePercent}%)`}>
 
     <!-- Optional stream bg  -->
-    {#if streamBG && edit && !$page.data.inOBS}
+    {#if streamBG && !$page.data.inOBS}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-        <img src={streamBG} alt="stream bg" 
+        <img src={streamBG} alt="stream background" id="stream-background" 
             on:click={unselectNode}
             on:contextmenu|preventDefault
         />
