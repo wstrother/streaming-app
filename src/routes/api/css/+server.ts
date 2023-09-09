@@ -13,6 +13,8 @@ const sourceCSS = '@tailwind components; @tailwind utilities';
 export const GET: RequestHandler = async ({ url }) => {
     const classNames = url.searchParams.get('css') ?? ''
     const rawContent = [{raw: classNames, extension: 'html'}]
+    // use safelist instead of rawContent
+    // pre-render on page load and cache against local storage
 
     const compiledCss = await postcss([
         tailwindcss({
