@@ -1,7 +1,4 @@
 <script lang="ts">
-    // import tailwind from 'tailwindcss'
-    // import postcss from 'postcss'
-
     let cssClasses: string = ""
     let compiledCss: string = ""
 
