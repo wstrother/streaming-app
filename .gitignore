@@ -11,6 +11,5 @@ vite.config.ts.timestamp-*
 src/lib/images
 src/lib/images/*
 .todo
-src/custom.postcss
 src/lib/devLogin.ts
 .vscode/settings.json
