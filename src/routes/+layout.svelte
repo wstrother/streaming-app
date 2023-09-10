@@ -75,7 +75,7 @@
 <slot />
 
 <Modal {components} transitions={false}
-	background="bg-primary-600" 
+	background="bg-primary-500" 
 	regionBackdrop="variant-soft-secondary"
 	regionBody="text-white" 
 	regionHeader="text-white text-2xl font-bold"/>
