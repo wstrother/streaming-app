@@ -57,6 +57,13 @@
 	<ol id="main-nav" class="breadcrumb bg-primary-600 z-50 justify-end pr-8">
 		{#if session?.user }
 			<button class="btn btn-sm" on:click={() => supabase.auth.signOut()}>Log Out</button>
+			{#if session.user.email}
+			<button class="btn btn-sm" on:click={() => supabase.auth.resetPasswordForEmail(session.user.email ?? '', {
+				redirectTo: 'http://127.0.0.1:5173/auth/callback?next=/account/update-password',
+			  })}>Reset Password
+			</button>
+			{/if}
+
 			<li><a href="/">Home</a></li>
 			<li class="crumb-separator" aria-hidden>|</li>
 			
