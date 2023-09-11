@@ -1,5 +1,4 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import postcss from './postcss.config.cjs';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -7,8 +6,5 @@ export default defineConfig({
 	test: {
 		globals: true,
 		environment: 'jsdom'
-	},
-	css: {
-		postcss,
 	}
 });
