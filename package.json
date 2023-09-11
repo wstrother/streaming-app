@@ -46,9 +46,12 @@
 		"@skeletonlabs/tw-plugin": "^0.1.0",
 		"@supabase/auth-helpers-sveltekit": "^0.10.2",
 		"@supabase/supabase-js": "^2.33.1",
+		"@tailwindcss/line-clamp": "^0.4.4",
+		"@tailwindcss/oxide": "^0.0.0-insiders.8fb9ae8f",
 		"@tailwindcss/typography": "^0.5.9",
 		"autoprefixer": "^10.4.14",
 		"cssnano": "^6.0.1",
+		"lightningcss": "^1.21.8",
 		"postcss": "^8.4.29",
 		"tailwindcss": "^3.3.3"
 	}
