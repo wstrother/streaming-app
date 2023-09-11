@@ -1,5 +1,5 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import postcss from './postcss.config.cjs';
+import postcss from './postcss.config'
 import { defineConfig } from 'vite';
 
 export default defineConfig({
