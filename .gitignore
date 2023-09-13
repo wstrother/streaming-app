@@ -12,3 +12,6 @@ vite.config.ts.timestamp-*
 src/lib/devLogin.ts
 .vscode/settings.json
 .vercel/*
+.dockerignore
+Dockerfile
+fly.toml
